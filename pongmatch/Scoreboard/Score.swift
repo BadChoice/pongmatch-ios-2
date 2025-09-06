@@ -2,12 +2,17 @@ import SwiftUI
 
 @Observable
 class Score {
+    let started_at = Date()
+    var ended_at:Date? = nil
+    
     let players:[User]
     
     var score:(Int, Int) = (0, 0)
     var sets:[(Int, Int)]  = []
     
     let gamePoints:Int = 11
+    let setsToWin:Int = 3
+    
     private var firstServer:Int = 0
     
     init(player1:User, player2:User) {
@@ -43,6 +48,20 @@ class Score {
         return nil
     }
     
+    func matchWinner() -> User?{
+        guard winner() != nil else { return nil }
+        
+        if setsResult.0 == setsToWin {
+            return player1
+        }
+        
+        if setsResult.1 == setsToWin {
+            return player2
+        }
+        
+        return nil
+    }
+    
     /**
      The total result in sets
      */
@@ -73,9 +92,18 @@ class Score {
     
     func startNext(){
         sets.append(score)
+        
+        if setsResult.0 == setsToWin || setsResult.1 == setsToWin {
+            return gameFinished()
+        }
+        
         score       = (0, 0)
         firstServer = (firstServer + 1) % 2
         history     = []
+    }
+    
+    func gameFinished(){
+        ended_at = Date()
     }
         
     func undo(){

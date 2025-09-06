@@ -17,7 +17,16 @@ struct ScoreboardView: View {
             VStack {
                 // HEADER
                 HStack(spacing: 20) {
-                    AvatarView(user: score.player1).frame(width:40)
+                    ZStack {
+                        AvatarView(user: score.player1).frame(width:40)
+                        if score.matchWinner()?.id == score.player1.id {
+                            Image(systemName:"trophy.fill")
+                                .foregroundStyle(.black)
+                                .padding(4)
+                                .background(.green)
+                                .clipShape(.circle)
+                        }
+                    }
                     
                     HStack {
                         Text("\(score.setsResult.0)")
@@ -25,7 +34,16 @@ struct ScoreboardView: View {
                         Text("\(score.setsResult.1)")
                     }
                     
-                    AvatarView(user: score.player2).frame(width:40)
+                    ZStack {
+                        AvatarView(user: score.player2).frame(width:40)
+                        if score.matchWinner()?.id == score.player2.id {
+                            Image(systemName:"trophy.fill")
+                                .foregroundStyle(.black)
+                                .padding(4)
+                                .background(.green)
+                                .clipShape(.circle)
+                        }
+                    }
                 }
                 
                 Spacer()
