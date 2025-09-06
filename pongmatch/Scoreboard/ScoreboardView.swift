@@ -36,7 +36,7 @@ struct ScoreboardView : View {
             HStack(alignment:.top, spacing: 30) {
                 ScoreboardScoreView(
                     score:score.score.0,
-                    isMatchPoint: score.isMatchPointFor(players:0),
+                    isMatchPoint: score.isMatchPointFor(player:0),
                     serving:score.server == 0,
                     isSecondServe:score.isSecondServe
                 ).onTapGesture {

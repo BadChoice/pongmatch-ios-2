@@ -1,6 +1,6 @@
 import Foundation
 
-struct User {
+struct User : Codable {
     let id:Int
     let name:String
     let elo:Int
