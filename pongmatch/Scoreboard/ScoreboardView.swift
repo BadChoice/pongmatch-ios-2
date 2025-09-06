@@ -1,6 +1,13 @@
 import SwiftUI
 
 struct ScoreboardView : View {
+    
+    @State private var score:Score
+    
+    public init(score: Score) {
+        _score = .init(initialValue: score)
+    }
+    
     var body: some View {
         VStack(spacing: 20){
             HStack(spacing:24) {
@@ -10,13 +17,26 @@ struct ScoreboardView : View {
             }
             
             HStack (spacing:40) {
-                UserView(user: User(name: "Jordi Puigdellivol", elo: 1111, avavar: nil))
-                UserView(user: User(name: "Gerard Miralles",    elo: 1111, avavar: nil))
+                UserView(user: score.player1)
+                UserView(user: score.player2)
             }
             
             HStack(alignment:.top, spacing: 40) {
-                ScoreboardScoreView()
-                ScoreboardScoreView()
+                ScoreboardScoreView(
+                    score:score.player1Score,
+                    serving:score.serving == 0,
+                    isSecondServe:score.isSecondServe
+                ).onTapGesture {
+                    score.score(player: 0)
+                }
+                
+                ScoreboardScoreView(
+                    score:score.player2Score,
+                    serving:score.serving == 1,
+                    isSecondServe:score.isSecondServe
+                ).onTapGesture {
+                    score.score(player: 1)
+                }
             }
         }
     }
@@ -24,27 +44,40 @@ struct ScoreboardView : View {
 
 struct ScoreboardScoreView: View {
     
+    let score:Int
+    let serving:Bool
+    let isSecondServe:Bool
+    
     var body: some View {
         VStack(alignment: .center){
-            Text("0")
+            Text("\(score)")
                 .font(.system(size: 50, weight:.bold))
-                .padding(28)
+                .frame(width:180, height:180)
+                //.padding(28)
                 .background(.cyan)
                 .cornerRadius(8)
             
-            HStack {
-                Image(systemName: "circle.fill").font(.system(size: 8))
-                Image(systemName: "circle.fill").font(.system(size: 8))
+            if serving {
+                HStack {
+                    Image(systemName: "circle.fill").font(.system(size: 8))
+                    if isSecondServe{
+                        Image(systemName: "circle.fill").font(.system(size: 8))
+                    }
+                }
+                .frame(width:180)
+                .foregroundStyle(.white)
+                .padding(.vertical, 6)
+                .background(.red)
+                .clipShape(.capsule)
             }
-            .foregroundStyle(.white)
-            .padding(4)
-            .background(.red)
-            .clipShape(.capsule)
         }
     }
 }
 
 
 #Preview {
-    ScoreboardView()
+    ScoreboardView(score: Score(
+        player1: User(id:1, name: "Jordi Puigdellivol", elo: 1111, avavar: nil),
+        player2: User(id:2, name: "Gerard Miralles",    elo: 1111, avavar: nil)
+    ))
 }
