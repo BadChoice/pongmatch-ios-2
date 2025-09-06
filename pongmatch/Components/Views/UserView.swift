@@ -22,5 +22,5 @@ struct UserView : View {
 }
 
 #Preview {
-    UserView(user: User(id:1, name: "Jordi Puigdellivol", elo: 1500, avavar: nil))
+    UserView(user: User.me())
 }
