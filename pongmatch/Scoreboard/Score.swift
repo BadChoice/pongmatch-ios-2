@@ -28,13 +28,12 @@ class Score {
     var server:Int {
         (Int(history.count / 2) + firstServer) % 2
     }
-    
-    var isMatchPointForPlayer1:Bool {
-        score.0 >= 10 && score.0 >= score.1 + 1
-    }
-    
-    var isMatchPointForPlayer2:Bool {
-        score.1 >= 10 && score.1 >= score.0 + 1
+        
+    func isMatchPointFor(player:Int) -> Bool {
+        if player == 0 {
+            return score.0 >= 10 && score.0 >= score.1 + 1
+        }
+        return score.1 >= 10 && score.1 >= score.0 + 1
     }
     
     func winner() -> User? {

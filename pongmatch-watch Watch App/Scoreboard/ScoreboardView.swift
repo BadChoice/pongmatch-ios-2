@@ -52,7 +52,7 @@ struct ScoreboardView: View {
                 HStack(spacing:20) {
                     ScoreView(
                         score: score.score.0,
-                        matchPoint:score.isMatchPointForPlayer1,
+                        matchPoint:score.isMatchPointFor(player:0),
                         serving:score.server == 0,
                         secondServe:score.isSecondServe,
                     ).onTapGesture {
@@ -61,7 +61,7 @@ struct ScoreboardView: View {
                     
                     ScoreView(
                         score: score.score.1,
-                        matchPoint:score.isMatchPointForPlayer2,
+                        matchPoint:score.isMatchPointFor(player:1),
                         serving:score.server == 1,
                         secondServe:score.isSecondServe,
                     ).onTapGesture {
