@@ -8,6 +8,8 @@ struct ScoreboardView : View {
     @Namespace private var namespace
     @State private var showResetConfirmation = false
     
+    @Environment(\.dismiss) private var dismiss
+    
     public init(score: Score) {
         _score = .init(initialValue: score)
     }
@@ -25,9 +27,9 @@ struct ScoreboardView : View {
             HStack (spacing:40) {
                 UserView(user: score.player1).frame(width:200)
                 HStack {
-                    Text("\(score.setsResult.0)")
+                    Text("\(score.setsResult.0)").bold()
                     Text("-")
-                    Text("\(score.setsResult.1)")
+                    Text("\(score.setsResult.1)").bold()
                 }
                 UserView(user: score.player2).frame(width:200)
             }
@@ -91,7 +93,17 @@ struct ScoreboardView : View {
 
                     }
 
-                    if score.winner() != nil {
+                    if score.matchWinner() != nil {
+                        Image(systemName: "flag.pattern.checkered").onTapGesture{
+                            dismiss
+                        }
+                        .frame(width: 50.0, height: 50.0)
+                        .glassEffect()
+                        .glassEffectID("next", in: namespace)
+                        .glassEffectUnion(id: "2", namespace: namespace)
+                    }
+                    
+                    else if score.winner() != nil {
                         Image(systemName: "play.fill").onTapGesture{
                             withAnimation { score.startNext() }
                         }
