@@ -86,4 +86,11 @@ class Score {
             score.1 -= 1
         }
     }
+    
+    func reset(){
+        sets = []
+        score = (0, 0)
+        history = []
+        firstServer = Int.random(in: 0...1)
+    }
 }

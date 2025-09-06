@@ -1,8 +1,11 @@
 import SwiftUI
 
+@available(macOS 26.0, *)
 struct ScoreboardView : View {
     
     @State private var score:Score
+    
+    @Namespace private var namespace
     
     public init(score: Score) {
         _score = .init(initialValue: score)
@@ -10,6 +13,8 @@ struct ScoreboardView : View {
     
     var body: some View {
         VStack(spacing: 14){
+            
+            // Header
             HStack(spacing:24) {
                 Text("Standard")
                 Text("Friendly")
@@ -26,6 +31,8 @@ struct ScoreboardView : View {
                 UserView(user: score.player2).frame(width:200)
             }
             
+            
+            // Score
             HStack(alignment:.top, spacing: 30) {
                 ScoreboardScoreView(
                     score:score.score.0,
@@ -33,7 +40,9 @@ struct ScoreboardView : View {
                     serving:score.server == 0,
                     isSecondServe:score.isSecondServe
                 ).onTapGesture {
-                    score.addScore(player: 0)
+                    withAnimation {
+                        score.addScore(player: 0)
+                    }
                 }
                 
                 SetsScoreView(score: score)
@@ -44,19 +53,45 @@ struct ScoreboardView : View {
                     serving:score.server == 1,
                     isSecondServe:score.isSecondServe
                 ).onTapGesture {
-                    score.addScore(player: 1)
+                    withAnimation {
+                        score.addScore(player: 1)
+                    }
                 }
             }
             
-            HStack {
-                if score.history.count > 0 {
-                    Button("", systemImage:"arrow.uturn.backward") {
-                        score.undo()
+            // Bottom bar
+            GlassEffectContainer(spacing: 40.0) {
+                HStack {
+                    if score.history.count > 0 || score.sets.count > 0 {
+                        Image(systemName: "trash").onTapGesture{
+                            withAnimation { score.reset() }
+                        }
+                        .frame(width: 40.0, height: 40.0)
+                        .glassEffect()
+                        .glassEffectID("reset", in: namespace)
+                        .glassEffectUnion(id: "1", namespace: namespace)
+
                     }
-                }
-                if score.winner() != nil {
-                    Button("", systemImage: "play") {
-                        score.startNext()
+                    
+                    if score.history.count > 0 {
+                        Image(systemName: "arrow.uturn.backward").onTapGesture{
+                            withAnimation { score.undo() }
+                        }
+                        .frame(width: 40.0, height: 40.0)
+                        .glassEffect()
+                        .glassEffectID("undo", in: namespace)
+                        .glassEffectUnion(id: "1", namespace: namespace)
+
+                    }
+
+                    if score.winner() != nil {
+                        Image(systemName: "play.fill").onTapGesture{
+                            withAnimation { score.startNext() }
+                        }
+                        .frame(width: 50.0, height: 50.0)
+                        .glassEffect()
+                        .glassEffectID("next", in: namespace)
+                        .glassEffectUnion(id: "2", namespace: namespace)
                     }
                 }
             }
@@ -117,8 +152,10 @@ struct SetsScoreView : View {
 
 
 #Preview {
-    ScoreboardView(score: Score(
-        player1: User(id:1, name: "Jordi Puigdellivol", elo: 1111, avavar: nil),
-        player2: User(id:2, name: "Gerard Miralles",    elo: 1111, avavar: nil)
-    ))
+    if #available(macOS 26.0, *) {
+        ScoreboardView(score: Score(
+            player1: User(id:1, name: "Jordi Puigdellivol", elo: 1111, avavar: nil),
+            player2: User(id:2, name: "Gerard Miralles",    elo: 1111, avavar: nil)
+        ))
+    }
 }
