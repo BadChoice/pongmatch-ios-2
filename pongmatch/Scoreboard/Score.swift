@@ -4,8 +4,8 @@ import SwiftUI
 class Score {
     let players:[User]
     
-    var player1Score:Int = 0
-    var player2Score:Int = 0
+    var score:(Int, Int) = (0, 0)
+    var sets:[(Int, Int)]  = []
     
     let gamePoints:Int = 11
     private var firstServer:Int = 0
@@ -25,23 +25,34 @@ class Score {
     }
     
     var isMatchPointForPlayer1:Bool {
-        player1Score >= 10 && player1Score >= player2Score + 1
+        score.0 >= 10 && score.0 >= score.1 + 1
     }
     
     var isMatchPointForPlayer2:Bool {
-        player2Score >= 10 && player2Score >= player1Score + 1
+        score.1 >= 10 && score.1 >= score.0 + 1
     }
     
     func winner() -> User? {
-        if player1Score >= 11 && player1Score >= player2Score + 2 {
+        if score.0 >= 11 && score.0 >= score.1 + 2 {
             return player1
         }
         
-        if player2Score >= 11 && player2Score >= player1Score + 2 {
+        if score.1 >= 11 && score.1 >= score.0 + 2 {
             return player2
         }
-        
         return nil
+    }
+    
+    /**
+     The total result in sets
+     */
+    var setsResult:(Int,Int){
+        var result = (0, 0)
+        sets.forEach { a, b in
+            if a > b { result.0 += 1}
+            else     { result.1 += 1}
+        }
+        return result
     }
         
     var isSecondServe: Bool {
@@ -54,18 +65,25 @@ class Score {
         history.append(player)
         
         if player == 0 {
-            player1Score += 1
+            score.0 += 1
         } else {
-            player2Score += 1
+            score.1 += 1
         }
+    }
+    
+    func startNext(){
+        sets.append(score)
+        score       = (0, 0)
+        firstServer = (firstServer + 1) % 2
+        history     = []
     }
         
     func undo(){
         guard history.count > 0 else { return }
         if history.popLast() == 0 {
-            player1Score -= 1
+            score.0 -= 1
         } else {
-            player2Score -= 1
+            score.1 -= 1
         }
     }
 }

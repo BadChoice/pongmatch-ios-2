@@ -17,13 +17,18 @@ struct ScoreboardView : View {
             }
             
             HStack (spacing:40) {
-                UserView(user: score.player1)
-                UserView(user: score.player2)
+                UserView(user: score.player1).frame(width:200)
+                HStack {
+                    Text("\(score.setsResult.0)")
+                    Text("-")
+                    Text("\(score.setsResult.1)")
+                }
+                UserView(user: score.player2).frame(width:200)
             }
             
-            HStack(alignment:.top, spacing: 40) {
+            HStack(alignment:.top, spacing: 30) {
                 ScoreboardScoreView(
-                    score:score.player1Score,
+                    score:score.score.0,
                     isMatchPoint: score.isMatchPointForPlayer1,
                     serving:score.server == 0,
                     isSecondServe:score.isSecondServe
@@ -31,8 +36,10 @@ struct ScoreboardView : View {
                     score.addScore(player: 0)
                 }
                 
+                SetsScoreView(score: score)
+                
                 ScoreboardScoreView(
-                    score:score.player2Score,
+                    score:score.score.1,
                     isMatchPoint: score.isMatchPointForPlayer2,
                     serving:score.server == 1,
                     isSecondServe:score.isSecondServe
@@ -42,8 +49,15 @@ struct ScoreboardView : View {
             }
             
             HStack {
-                Button("", systemImage:"arrow.uturn.backward") {
-                    score.undo()
+                if score.history.count > 0 {
+                    Button("", systemImage:"arrow.uturn.backward") {
+                        score.undo()
+                    }
+                }
+                if score.winner() != nil {
+                    Button("", systemImage: "play") {
+                        score.startNext()
+                    }
                 }
             }
         }
@@ -61,7 +75,7 @@ struct ScoreboardScoreView: View {
         VStack(alignment: .center){
             Text("\(score)")
                 .font(.system(size: 50, weight:.bold))
-                .frame(width:180, height:180)
+                .frame(width:200, height:180)
                 .foregroundStyle(.white)
                 .background(isMatchPoint ? .green : .black)
                 .cornerRadius(8)
@@ -73,7 +87,7 @@ struct ScoreboardScoreView: View {
                         Image(systemName: "circle.fill").font(.system(size: 8))
                     }
                 }
-                .frame(width:180)
+                .frame(width:200)
                 .foregroundStyle(.white)
                 .padding(.vertical, 6)
                 .background(.red)
@@ -81,6 +95,24 @@ struct ScoreboardScoreView: View {
             }
         }
     }
+}
+
+struct SetsScoreView : View {
+    let score:Score
+    
+    var body: some View {
+        VStack {
+            ForEach(score.sets.indices, id: \.self) { index in
+                let set = score.sets[index]
+                HStack {
+                    Text("\(set.0)")
+                    Text("-")
+                    Text("\(set.1)")
+                }
+            }
+        }
+    }
+    
 }
 
 
