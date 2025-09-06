@@ -9,7 +9,7 @@ struct ScoreboardView : View {
     }
     
     var body: some View {
-        VStack(spacing: 20){
+        VStack(spacing: 14){
             HStack(spacing:24) {
                 Text("Standard")
                 Text("Friendly")
@@ -24,18 +24,26 @@ struct ScoreboardView : View {
             HStack(alignment:.top, spacing: 40) {
                 ScoreboardScoreView(
                     score:score.player1Score,
-                    serving:score.serving == 0,
+                    isMatchPoint: score.isMatchPointForPlayer1,
+                    serving:score.server == 0,
                     isSecondServe:score.isSecondServe
                 ).onTapGesture {
-                    score.score(player: 0)
+                    score.addScore(player: 0)
                 }
                 
                 ScoreboardScoreView(
                     score:score.player2Score,
-                    serving:score.serving == 1,
+                    isMatchPoint: score.isMatchPointForPlayer2,
+                    serving:score.server == 1,
                     isSecondServe:score.isSecondServe
                 ).onTapGesture {
-                    score.score(player: 1)
+                    score.addScore(player: 1)
+                }
+            }
+            
+            HStack {
+                Button("", systemImage:"arrow.uturn.backward") {
+                    score.undo()
                 }
             }
         }
@@ -45,6 +53,7 @@ struct ScoreboardView : View {
 struct ScoreboardScoreView: View {
     
     let score:Int
+    let isMatchPoint:Bool
     let serving:Bool
     let isSecondServe:Bool
     
@@ -53,8 +62,8 @@ struct ScoreboardScoreView: View {
             Text("\(score)")
                 .font(.system(size: 50, weight:.bold))
                 .frame(width:180, height:180)
-                //.padding(28)
-                .background(.cyan)
+                .foregroundStyle(.white)
+                .background(isMatchPoint ? .green : .black)
                 .cornerRadius(8)
             
             if serving {
