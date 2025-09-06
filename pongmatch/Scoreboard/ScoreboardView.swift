@@ -15,11 +15,11 @@ struct ScoreboardView : View {
         VStack(spacing: 14){
             
             // Header
-            HStack(spacing:24) {
+            /*HStack(spacing:24) {
                 Text("Standard")
                 Text("Friendly")
                 Text("Best of 3")
-            }
+            }*/
             
             HStack (spacing:40) {
                 UserView(user: score.player1).frame(width:200)

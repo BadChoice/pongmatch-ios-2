@@ -5,8 +5,7 @@ struct UserView : View {
     
     var body: some View {
         HStack{
-            Image(systemName: "person.circle.fill")
-                .font(.system(size: 48))
+            AvatarView(user:user).frame(width: 48)
             
             VStack(alignment: .leading, spacing:4){
                 Text(user.name).font(.headline)
