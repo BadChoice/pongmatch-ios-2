@@ -6,6 +6,7 @@ struct ScoreboardView : View {
     @State private var score:Score
     
     @Namespace private var namespace
+    @State private var showResetConfirmation = false
     
     public init(score: Score) {
         _score = .init(initialValue: score)
@@ -64,7 +65,13 @@ struct ScoreboardView : View {
                 HStack {
                     if score.history.count > 0 || score.sets.count > 0 {
                         Image(systemName: "trash").onTapGesture{
-                            withAnimation { score.reset() }
+                            showResetConfirmation = true
+                        }
+                        .alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
+                            Button("Cancel", role: .cancel) {}
+                            Button("Reset", role: .destructive) {
+                                score.reset()
+                            }
                         }
                         .frame(width: 40.0, height: 40.0)
                         .glassEffect()
