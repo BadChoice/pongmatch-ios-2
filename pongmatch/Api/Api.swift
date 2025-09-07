@@ -4,10 +4,18 @@ import RevoHttp
 
 class Api {
     
-    enum Errors : Error {
+    enum Errors : Error, CustomStringConvertible {
         case not200
         case cantDecodeResponse
         case emptyResponse
+        
+        var description: String {
+            switch self {
+            case .not200: return "Invalid credentials or server error."
+            case .cantDecodeResponse: return "Unexpected server response."
+            case .emptyResponse: return "No data received from server."
+            }
+        }
     }
     
     static let url = "http://pongmatch.test/api/"

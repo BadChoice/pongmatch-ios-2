@@ -11,20 +11,22 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
+    @StateObject private var session = AuthViewModel()
+    
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 20) {
-                NavigationLink("Scoreboard") {
-                    ScoreboardView(score:Score(player1: User.me(), player2: User.unknown()))
+        Group {
+            if session.isAuthenticated {
+                NavigationStack {
+                    DashboardView()
+                        .toolbar {
+                            Button("Logout") { session.logout() }
+                        }
                 }
-                .glassEffect()
-                .buttonStyle(.borderedProminent)
+            } else {
+                LoginView()
             }
-            .navigationTitle("Pongmatch")
-            .padding()
-        }
+        }.environmentObject(session)
     }
-
 }
 
 #Preview {
