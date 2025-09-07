@@ -95,7 +95,7 @@ struct ScoreboardView : View {
 
                     if score.matchWinner() != nil {
                         Image(systemName: "flag.pattern.checkered").onTapGesture{
-                            dismiss
+                            dismiss()
                         }
                         .frame(width: 50.0, height: 50.0)
                         .glassEffect()
@@ -174,7 +174,7 @@ struct SetsScoreView : View {
     if #available(macOS 26.0, *) {
         ScoreboardView(score: Score(
             player1: User.me(),
-            player2: User(id:2, name: "Gerard Miralles",    ranking: 1111, avatar: "https://pongmatch.app/img/default-avatar.png")
+            player2: User.unknown()
         ))
     }
 }

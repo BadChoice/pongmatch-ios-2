@@ -17,8 +17,7 @@ class Api {
             }
         }
     }
-    
-    static let url = "http://pongmatch.test/api/"
+
     
     let token:String
     
@@ -32,7 +31,7 @@ class Api {
             let token:String
         }
         
-        let response:TokenResponse = try await Self.call(method: .post, url: url + "login", params:[
+        let response:TokenResponse = try await Self.call(method: .post, url: "login", params:[
             "email": email,
             "password": password,
             "device_name" : deviceName
@@ -44,7 +43,7 @@ class Api {
     }
     
     func me() async throws -> User {
-        try await Self.call(method: .get, url: Api.url + "me", headers: headers)
+        try await Self.call(method: .get, url: "me", headers: headers)
     }
     
     var headers:[String:String] {
@@ -58,7 +57,7 @@ class Api {
                 
         try await withCheckedThrowingContinuation { continuation in
             print("Calling API: \(method) \(url)")
-            Http.call(method, url:url, params: params, headers:headers) { response in
+            Http.call(method, url:Pongmatch.url + "api/" + url, params: params, headers:headers) { response in
                 
                 print("API Response: " + response.toString)
                 

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AvatarView : View {
+    
+    @State var image:UIImage?
     let url:String?
     let name:String?
     
@@ -16,19 +18,28 @@ struct AvatarView : View {
     
     var body: some View {
         VStack {
-            if let url = url, let data = try? Data(contentsOf: URL(string: url)!) {
-                Image(uiImage: UIImage(data: data)!)
+            if let image {
+                Image(uiImage: image)
                     .resizable()
                     .scaledToFit()
                     //.frame(width: 100, height: 100)
                     .clipShape(Circle())
             } else {
-                Text("JP")
+                Text(name ?? "")
                     .scaledToFit()
                     .font(.largeTitle)
                     //.frame(width: 100, height: 100)
                     .background(.gray)
                     .clipShape(Circle())
+            }
+        }
+        .task {
+            Task.detached {
+                if let url = await Images.avatar(url), let data = try? Data(contentsOf: url) {
+                    await MainActor.run {
+                        image = UIImage(data: data)!
+                    }
+                }
             }
         }
     }

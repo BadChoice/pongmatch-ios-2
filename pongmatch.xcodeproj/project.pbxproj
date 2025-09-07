@@ -76,7 +76,9 @@
 		EAE787472E6C754300FB8998 /* Exceptions for "pongmatch" folder in "pongmatch-watch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Api/Pongmatch.swift,
 				Models/User.swift,
+				Services/Images.swift,
 				Services/Score.swift,
 				Services/Storage.swift,
 				Views/Components/AvatarView.swift,
@@ -186,6 +188,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BB2F542C2E6DCC9900F1BD62 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		BBD09A032E6B5B4200110F8C = {
 			isa = PBXGroup;
 			children = (
@@ -195,6 +204,7 @@
 				BBD09A282E6B5B4300110F8C /* pongmatchUITests */,
 				EAE787272E6C748300FB8998 /* pongmatch-watch Watch AppTests */,
 				EAE787312E6C748300FB8998 /* pongmatch-watch Watch AppUITests */,
+				BB2F542C2E6DCC9900F1BD62 /* Frameworks */,
 				BBD09A0D2E6B5B4200110F8C /* Products */,
 			);
 			sourceTree = "<group>";

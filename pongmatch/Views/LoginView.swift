@@ -15,6 +15,9 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
+            
+            Image("logo")
+            
             TextField("Email", text: $email)
                 .textInputAutocapitalization(.never)
                 .keyboardType(.emailAddress)
