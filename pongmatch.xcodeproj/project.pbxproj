@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BB2F53CB2E6D780000F1BD62 /* RevoHttp in Frameworks */ = {isa = PBXBuildFile; productRef = BB2F53CA2E6D780000F1BD62 /* RevoHttp */; };
 		EAE787382E6C748300FB8998 /* pongmatch-watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = EAE787182E6C748000FB8998 /* pongmatch-watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -124,6 +125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BB2F53CB2E6D780000F1BD62 /* RevoHttp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,6 +215,7 @@
 			);
 			name = pongmatch;
 			packageProductDependencies = (
+				BB2F53CA2E6D780000F1BD62 /* RevoHttp */,
 			);
 			productName = pongmatch;
 			productReference = BBD09A0C2E6B5B4200110F8C /* pongmatch.app */;
@@ -375,6 +378,9 @@
 			);
 			mainGroup = BBD09A032E6B5B4200110F8C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BB2F53C92E6D780000F1BD62 /* XCRemoteSwiftPackageReference "revohttp" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BBD09A0D2E6B5B4200110F8C /* Products */;
 			projectDirPath = "";
@@ -1041,6 +1047,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BB2F53C92E6D780000F1BD62 /* XCRemoteSwiftPackageReference "revohttp" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/revosystems/revohttp";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BB2F53CA2E6D780000F1BD62 /* RevoHttp */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BB2F53C92E6D780000F1BD62 /* XCRemoteSwiftPackageReference "revohttp" */;
+			productName = RevoHttp;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BBD09A042E6B5B4200110F8C /* Project object */;
 }
