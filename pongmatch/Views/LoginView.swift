@@ -8,14 +8,10 @@
 import SwiftUI
 
 struct LoginView: View {
-    @EnvironmentObject private var session: AuthViewModel
+    @EnvironmentObject private var auth: AuthViewModel
 
-    
-    // Input
     @State private var email:String = ""
     @State private var password:String = ""
-    @State private var deviceName:String = (UIDevice.current.name)
-    @State private var showPassword:Bool = false
     
     var body: some View {
         VStack {
@@ -41,26 +37,25 @@ struct LoginView: View {
                 
             Button {
                 Task {
-                    await session.login(email: email, password: password, deviceName: deviceName)
+                    await auth.login(
+                        email: email,
+                        password: password,
+                        deviceName: UIDevice.current.name
+                    )
                 }
             } label: {
                 HStack {
-                    if session.isLoading { ProgressView().tint(.white) }
-                    Text(session.isLoading ? "Signing In..." : "Login")
+                    if auth.isLoading { ProgressView().tint(.white) }
+                    Text(auth.isLoading ? "Signing In..." : "Login")
                 }
             }
-            .disabled(session.isLoading || email.isEmpty || password.isEmpty)
+            .disabled(auth.isLoading || email.isEmpty || password.isEmpty)
             .padding()
             .background(.black)
             .cornerRadius(8)
             .foregroundColor(.white)
             
         }
-    }
-    
-    private func login() async throws {
-        let token = try await Api.login(email: email, password: password, deviceName: deviceName)
-        Storage().save(.apiToken, value: token)
     }
 }
 

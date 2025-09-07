@@ -11,21 +11,21 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
-    @StateObject private var session = AuthViewModel()
+    @StateObject private var auth = AuthViewModel()
     
     var body: some View {
         Group {
-            if session.isAuthenticated {
+            if auth.isAuthenticated {
                 NavigationStack {
                     DashboardView()
                         .toolbar {
-                            Button("Logout") { session.logout() }
+                            Button("Logout") { auth.logout() }
                         }
                 }
             } else {
                 LoginView()
             }
-        }.environmentObject(session)
+        }.environmentObject(auth)
     }
 }
 

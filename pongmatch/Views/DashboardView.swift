@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct DashboardView : View {
+    
+    @EnvironmentObject private var auth: AuthViewModel
+    
     var body: some View {
         VStack(spacing: 20) {
             NavigationLink("Scoreboard") {
@@ -11,5 +14,11 @@ struct DashboardView : View {
         }
         .navigationTitle("Pongmatch")
         .padding()
+        
+        .task {
+            Task {
+                try await auth.fetchMe()
+            }
+        }
     }
 }
