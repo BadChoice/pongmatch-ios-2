@@ -3,7 +3,7 @@ import Foundation
 struct User : Codable {
     let id:Int
     let name:String
-    let elo:Int
+    let ranking:Int
     let avatar:String?
     
     var initials:String {
@@ -18,7 +18,7 @@ struct User : Codable {
         User(
             id:1,
             name:"Jordi Puigdellívol",
-            elo:1500,
+            ranking:1500,
             avatar:"http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png"
         )
     }
@@ -27,7 +27,7 @@ struct User : Codable {
         User(
             id: 0,
             name: "Unknown",
-            elo: 0,
+            ranking: 0,
             avatar: "https://pongmatch.app/img/default-avatar.png"
         )
     }

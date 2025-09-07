@@ -174,7 +174,7 @@ struct SetsScoreView : View {
     if #available(macOS 26.0, *) {
         ScoreboardView(score: Score(
             player1: User.me(),
-            player2: User(id:2, name: "Gerard Miralles",    elo: 1111, avatar: "https://pongmatch.app/img/default-avatar.png")
+            player2: User(id:2, name: "Gerard Miralles",    ranking: 1111, avatar: "https://pongmatch.app/img/default-avatar.png")
         ))
     }
 }

@@ -9,7 +9,7 @@ struct UserView : View {
             
             VStack(alignment: .leading, spacing:4){
                 Text(user.name).font(.headline)
-                Text("\(user.elo)").font(.system(size:12, weight: .bold))
+                Text("\(user.ranking)").font(.system(size:12, weight: .bold))
                     .foregroundStyle(.white)
                     .padding(.vertical, 4)
                     .padding(.horizontal, 8)

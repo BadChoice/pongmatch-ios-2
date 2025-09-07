@@ -5,7 +5,7 @@ import RevoHttp
 class Api {
     
     enum Errors : Error {
-        case generic
+        case not200
         case cantDecodeResponse
         case emptyResponse
     }
@@ -18,41 +18,49 @@ class Api {
         self.token = token
     }
 
-    static func token(email:String, password:String, deviceName:String) async throws -> String {
+    static func login(email:String, password:String, deviceName:String) async throws -> String {
         
         struct TokenResponse : Codable {
             let token:String
         }
         
-        let response:TokenResponse = try await Self.call(method: .post, url: url + "token", params:[
+        let response:TokenResponse = try await Self.call(method: .post, url: url + "login", params:[
             "email": email,
             "password": password,
             "device_name" : deviceName
+        ], headers:[
+            "Accept": "application/json"
         ])
         
         return response.token
     }
     
+    func me() async throws -> User {
+        try await Self.call(method: .get, url: Api.url + "me", headers: headers)
+    }
+    
     var headers:[String:String] {
         [
-            "Authentication" : "Bearer \(token)",
+            "Authorization" : "Bearer \(token)",
             "Accept": "application/json",
         ]
     }
     
     static func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
-        
+                
         try await withCheckedThrowingContinuation { continuation in
-            Http.post(url, params: params) { response in
+            print("Calling API: \(method) \(url)")
+            Http.call(method, url:url, params: params, headers:headers) { response in
+                
+                print("API Response: " + response.toString)
+                
                 guard response.statusCode >= 200 && response.statusCode < 300 else {
-                    return continuation.resume(throwing: Errors.generic)
+                    return continuation.resume(throwing: Errors.not200)
                 }
                 
                 guard let data = response.data else {
                     return continuation.resume(throwing: Errors.emptyResponse)
-                }
-                
-                print("API Response: " + response.toString)
+                }                
                 
                 do {
                     let response = try JSONDecoder().decode(T.self, from: data)
