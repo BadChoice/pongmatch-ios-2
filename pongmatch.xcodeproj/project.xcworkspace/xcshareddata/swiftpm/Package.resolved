@@ -1,0 +1,24 @@
+{
+  "originHash" : "963602565124615728180b3736de6d6cbc4d68f01f7cb7581cb5beba323d6315",
+  "pins" : [
+    {
+      "identity" : "foundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/revosystems/foundation",
+      "state" : {
+        "revision" : "b4f40362a29cad49f99194e9565ffc3507248306",
+        "version" : "0.3.13"
+      }
+    },
+    {
+      "identity" : "revohttp",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/revosystems/revohttp",
+      "state" : {
+        "revision" : "1a56ad42b9c50ffd49c8b8de0434fe351889831c",
+        "version" : "0.3.9"
+      }
+    }
+  ],
+  "version" : 3
+}

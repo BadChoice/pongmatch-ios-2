@@ -76,11 +76,25 @@
 		EAE787472E6C754300FB8998 /* Exceptions for "pongmatch" folder in "pongmatch-watch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Components/Views/AvatarView.swift,
 				Models/User.swift,
-				Scoreboard/Score.swift,
+				Services/Score.swift,
+				Views/Components/AvatarView.swift,
 			);
 			target = EAE787172E6C748000FB8998 /* pongmatch-watch Watch App */;
+		};
+		EAE787842E6DB2FD00FB8998 /* Exceptions for "pongmatch" folder in "pongmatch" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BBD09A0B2E6B5B4200110F8C /* pongmatch */;
+		};
+		EAE787862E6DB38400FB8998 /* Exceptions for "pongmatchTests" folder in "pongmatchTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BBD09A1A2E6B5B4300110F8C /* pongmatchTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -88,6 +102,7 @@
 		BBD09A0E2E6B5B4200110F8C /* pongmatch */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				EAE787842E6DB2FD00FB8998 /* Exceptions for "pongmatch" folder in "pongmatch" target */,
 				EAE787472E6C754300FB8998 /* Exceptions for "pongmatch" folder in "pongmatch-watch Watch App" target */,
 			);
 			path = pongmatch;
@@ -95,6 +110,9 @@
 		};
 		BBD09A1E2E6B5B4300110F8C /* pongmatchTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EAE787862E6DB38400FB8998 /* Exceptions for "pongmatchTests" folder in "pongmatchTests" target */,
+			);
 			path = pongmatchTests;
 			sourceTree = "<group>";
 		};
@@ -568,6 +586,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -624,6 +644,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -644,6 +666,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pongmatch/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -688,6 +713,9 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pongmatch/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -727,6 +755,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SV3ZXK4PZF;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pongmatchTests/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;
@@ -753,6 +784,9 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SV3ZXK4PZF;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = pongmatchTests/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.0;

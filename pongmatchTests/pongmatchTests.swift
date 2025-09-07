@@ -6,11 +6,17 @@
 //
 
 import Testing
+@testable import pongmatch
 
 struct pongmatchTests {
 
     @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+        let result = try await Api.token(
+            email: "jordi@gloobus.net",
+            password: "supersecret",
+            deviceName: "iOS Device"
+        )
+        
     }
 
 }
