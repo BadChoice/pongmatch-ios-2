@@ -43,7 +43,12 @@ class Api {
     }
     
     func me() async throws -> User {
-        try await Self.call(method: .get, url: "me", headers: headers)
+        do{
+            return try await Self.call(method: .get, url: "me", headers: headers)
+        } catch {
+            print(error)
+            throw error
+        }
     }
     
     var headers:[String:String] {
@@ -70,7 +75,7 @@ class Api {
                 }                
                 
                 do {
-                    let response = try JSONDecoder().decode(T.self, from: data)
+                    let response = try jsonDecoder().decode(T.self, from: data)
                     continuation.resume(returning: response)
                 } catch {
                     return continuation.resume(throwing: error)
@@ -79,4 +84,9 @@ class Api {
         }
     }
     
+    private static func jsonDecoder() -> JSONDecoder{
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601 // For ISO 8601 format
+        return decoder
+    }    
 }

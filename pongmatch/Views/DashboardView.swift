@@ -42,7 +42,7 @@ struct HomeView : View {
         VStack(spacing: 20) {
             UserView(user: auth.user ?? User.unknown())
             VStack(spacing:8) {
-                if let lastPlayed = auth.user.last_match_date {
+                if let lastPlayed = auth.user?.last_match_date {
                     Text("Last played \(lastPlayed.displayForHumans)")
                         .font(.caption2)
                         .foregroundStyle(.secondary)
