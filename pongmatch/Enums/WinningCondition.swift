@@ -1,4 +1,4 @@
-enum WinningCondition : String, Codable, CaseIterable {
+enum WinningCondition : String, Codable, CaseIterable, CustomStringConvertible {
     case single = "single"
     case bestof3 = "bestof3"
     case bestof5 = "bestof5"
@@ -30,6 +30,15 @@ enum WinningCondition : String, Codable, CaseIterable {
         case .bestof3 : 10
         case .bestof5 : 15
         case .bestof7 : 20
+        }
+    }
+    
+    var description: String {
+        switch self {
+            case .single : "Single game"
+            case .bestof3 : "Best of 3"
+            case .bestof5 : "Best of 5"
+            case .bestof7 : "Best of 7"
         }
     }
 }

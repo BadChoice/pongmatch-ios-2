@@ -15,16 +15,15 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
     
-    func fetchSyncedScore() -> Score? {
-        scoreFromContext(WCSession.default.receivedApplicationContext)
+    func retrieve() -> Score? {
+        fromContext(WCSession.default.receivedApplicationContext)
     }
     
     // Send to watch
-    func onScoreUpdated() {
+    func sync() {
         guard let data = try? JSONEncoder().encode(score) else {
             return
         }
-
         try? WCSession.default.updateApplicationContext(["score" : data])
     }
     
@@ -34,7 +33,7 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
     
-    func clearScore(){
+    func clear(){
         var context = WCSession.default.receivedApplicationContext
         context.removeValue(forKey: "score") // remove the key
         try? WCSession.default.updateApplicationContext(context)
@@ -44,14 +43,14 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
     func session(_ session: WCSession,
                  didReceiveApplicationContext applicationContext: [String : Any]) {
 
-        guard let score = scoreFromContext(applicationContext) else { return }
+        guard let score = fromContext(applicationContext) else { return }
         
         DispatchQueue.main.async {
             self.score = score
         }
     }
     
-    private func scoreFromContext(_ context: [String: Any]) -> Score? {
+    private func fromContext(_ context: [String: Any]) -> Score? {
         guard let data = context["score"] as? Data else {
             return nil
         }

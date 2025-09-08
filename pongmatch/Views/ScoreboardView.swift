@@ -29,6 +29,21 @@ struct ScoreboardView : View {
                  Text("Best of 3")
                  }*/
                 
+                HStack(spacing: 30) {
+                    Text("Standard")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                    
+                    Text("Friendly")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                    
+                    Text(syncedScore.score.winningCondition.description)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+                    
+                
                 HStack (spacing:40) {
                     UserView(user: syncedScore.score.player1).frame(width:200)
                     HStack {
@@ -50,7 +65,7 @@ struct ScoreboardView : View {
                     ).onTapGesture {
                         withAnimation {
                             syncedScore.score.addScore(player: .player1)
-                            syncedScore.onScoreUpdated()
+                            syncedScore.sync()
                         }
                     }
                     
@@ -64,7 +79,7 @@ struct ScoreboardView : View {
                     ).onTapGesture {
                         withAnimation {
                             syncedScore.score.addScore(player: .player2)
-                            syncedScore.onScoreUpdated()
+                            syncedScore.sync()
                         }
                     }
                 }
@@ -80,7 +95,7 @@ struct ScoreboardView : View {
                                 Button("Cancel", role: .cancel) {}
                                 Button("Reset", role: .destructive) {
                                     syncedScore.score.reset()
-                                    syncedScore.onScoreUpdated()
+                                    syncedScore.sync()
                                 }
                             }
                             .frame(width: 40.0, height: 40.0)
@@ -94,7 +109,7 @@ struct ScoreboardView : View {
                             Image(systemName: "arrow.uturn.backward").onTapGesture{
                                 withAnimation {
                                     syncedScore.score.undo()
-                                    syncedScore.onScoreUpdated()
+                                    syncedScore.sync()
                                 }
                             }
                             .frame(width: 40.0, height: 40.0)
@@ -118,7 +133,7 @@ struct ScoreboardView : View {
                             Image(systemName: "play.fill").onTapGesture{
                                 withAnimation {
                                     syncedScore.score.startNext()
-                                    syncedScore.onScoreUpdated()
+                                    syncedScore.sync()
                                 }
                             }
                             .frame(width: 50.0, height: 50.0)
@@ -133,7 +148,7 @@ struct ScoreboardView : View {
         .task {
             if let newScore {
                 syncedScore.replace(score: newScore)
-                syncedScore.onScoreUpdated()
+                syncedScore.sync()
             }
         }
     }
