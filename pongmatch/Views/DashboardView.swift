@@ -127,7 +127,7 @@ struct HomeView : View {
                 showScoreboardSelectionModal = false
                 nav.push("scoreboard")
             }
-            .presentationDetents([.medium]) // Bottom sheet style
+            .presentationDetents([.fraction(0.33), .medium]) // Bottom sheet style
             .presentationDragIndicator(.visible)    // Show the small slider on top
         }
     }
@@ -135,22 +135,29 @@ struct HomeView : View {
 
 struct ScoreboardSelectionView : View {
     
-    var onSelect: (Int) -> Void
+    var onSelect: (WinningCondition) -> Void
 
-    @State private var sliderValue: Double = 3
+    @State private var winCondition:WinningCondition = .bestof3
 
     var body: some View {
-        VStack(alignment: .center) {
-            Text("Scoreboard").font(.largeTitle)
-            Text("Game points: 11")
+        VStack(alignment: .leading) {
+            Text("Scoreboard")
+                .padding(.top)
+                .font(.largeTitle)
+            
             HStack{
-                Text("Win condition")
-                Slider(value: $sliderValue, in: 1...5, step: 1)
-                    .padding(.horizontal)
+                Text("Win condition").bold()
+                Spacer()
+                Picker("Win condition", selection: $winCondition) {
+                    ForEach(WinningCondition.allCases, id:\.self) { condition in
+                        Text(condition.rawValue.capitalized)
+                    }
+                }
             }
+            
             Spacer()
             Button("START", systemImage: "circle.fill") {
-                onSelect(Int(sliderValue))
+                onSelect(winCondition)
             }
             .padding()
             .frame(minWidth: 0, maxWidth: .infinity)

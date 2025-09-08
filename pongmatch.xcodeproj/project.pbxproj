@@ -77,6 +77,10 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Api/Pongmatch.swift,
+				Enums/GameStatus.swift,
+				Enums/InitialScore.swift,
+				Enums/RankingType.swift,
+				Enums/WinningCondition.swift,
 				Models/Game.swift,
 				Models/GameUser.swift,
 				Models/User.swift,
