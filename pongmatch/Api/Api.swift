@@ -5,17 +5,24 @@ import RevoHttp
 class Api {
     
     enum Errors : Error, CustomStringConvertible {
-        case not200
+        case not200(_ status:Int)
         case cantDecodeResponse
         case emptyResponse
+        case errorResponse(_ error:ErrorResponse)
         
         var description: String {
             switch self {
-            case .not200: return "Invalid credentials or server error."
+            case .not200(let status): return "Invalid credentials or server error. \(status)"
             case .cantDecodeResponse: return "Unexpected server response."
             case .emptyResponse: return "No data received from server."
+            case .errorResponse(let error): return "Error response \(error.message)"
             }
         }
+    }
+    
+    struct ErrorResponse : Codable {
+        let message:String
+        let errors:[String:[String]]?
     }
 
     
@@ -67,7 +74,7 @@ class Api {
                 print("API Response: " + response.toString)
                 
                 guard response.statusCode >= 200 && response.statusCode < 300 else {
-                    return continuation.resume(throwing: Errors.not200)
+                    return continuation.resume(throwing: Errors.not200(response.statusCode))
                 }
                 
                 guard let data = response.data else {
@@ -78,7 +85,12 @@ class Api {
                     let response = try jsonDecoder().decode(T.self, from: data)
                     continuation.resume(returning: response)
                 } catch {
-                    return continuation.resume(throwing: error)
+                    do{
+                        let errorResponse = try jsonDecoder().decode(ErrorResponse.self, from: data)
+                        continuation.resume(throwing: Errors.errorResponse(errorResponse))
+                    } catch {
+                        return continuation.resume(throwing: error)
+                    }
                 }
             }
         }
@@ -88,5 +100,5 @@ class Api {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601 // For ISO 8601 format
         return decoder
-    }    
+    }
 }
