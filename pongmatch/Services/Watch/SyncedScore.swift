@@ -2,13 +2,12 @@ import Foundation
 import Combine
 import WatchConnectivity
 
-class IPhoneScoreboardSync : NSObject, ObservableObject, WCSessionDelegate {
+class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
+    static let shared = SyncedScore()
     
-    static let shared = IPhoneScoreboardSync()
-
     @Published var score:Score!
     
-    private override init() {
+    override private init() {
         super.init()
         if WCSession.isSupported() {
             WCSession.default.delegate = self
@@ -19,8 +18,8 @@ class IPhoneScoreboardSync : NSObject, ObservableObject, WCSessionDelegate {
     func fetchSyncedScore() -> Score? {
         scoreFromContext(WCSession.default.receivedApplicationContext)
     }
-
-    // Send to iphone
+    
+    // Send to watch
     func onScoreUpdated() {
         guard let data = try? JSONEncoder().encode(score) else {
             return
@@ -29,24 +28,27 @@ class IPhoneScoreboardSync : NSObject, ObservableObject, WCSessionDelegate {
         try? WCSession.default.updateApplicationContext(["score" : data])
     }
     
-    func clearScore(){
-        var context = WCSession.default.receivedApplicationContext
-        context.removeValue(forKey: "score") // remove the key
-        try? WCSession.default.updateApplicationContext(context)
-    }
-        
-    // Receive from iPhone
-    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
-        
-        guard let score = scoreFromContext(applicationContext) else { return }
-        
+    func replace(score:Score){
         DispatchQueue.main.async {
             self.score = score
         }
     }
     
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+    func clearScore(){
+        var context = WCSession.default.receivedApplicationContext
+        context.removeValue(forKey: "score") // remove the key
+        try? WCSession.default.updateApplicationContext(context)
+    }
+    
+    // Receive from watch
+    func session(_ session: WCSession,
+                 didReceiveApplicationContext applicationContext: [String : Any]) {
+
+        guard let score = scoreFromContext(applicationContext) else { return }
         
+        DispatchQueue.main.async {
+            self.score = score
+        }
     }
     
     private func scoreFromContext(_ context: [String: Any]) -> Score? {
@@ -59,4 +61,20 @@ class IPhoneScoreboardSync : NSObject, ObservableObject, WCSessionDelegate {
         
         return score
     }
+    
+    // MARK: - Session delegate
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+        
+    }
+    
+    
+    #if os(iOS)
+    func sessionDidBecomeInactive(_ session: WCSession) {
+        
+    }
+    
+    func sessionDidDeactivate(_ session: WCSession) {
+        
+    }
+    #endif
 }

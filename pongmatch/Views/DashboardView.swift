@@ -49,6 +49,7 @@ struct HomeView : View {
     @EnvironmentObject private var auth: AuthViewModel
     @EnvironmentObject private var nav: NavigationManager
     
+    @ObservedObject private var syncedScore = SyncedScore.shared
     @State private var showScoreboardSelectionModal = false
 
     var body: some View {
@@ -109,16 +110,15 @@ struct HomeView : View {
             
             Spacer()
             
-            Button("Scoreboard"){
+            Button("New Scoreboard"){
                 showScoreboardSelectionModal = true
             }
             
-            NavigationLink("New Game") {
-                ScoreboardView(score:Score(
-                    player1: auth.user ?? User.unknown(),
-                    player2: User.unknown())
-                )
-            }
+            if syncedScore.score != nil {
+                NavigationLink("Continue scoreboard") {
+                    ScoreboardView()
+                }
+            }            
             
             Spacer()
         }

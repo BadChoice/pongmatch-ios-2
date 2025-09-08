@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @ObservedObject var syncedScoreboard = SyncedScore.shared
+    
     var body: some View {
         NavigationStack {
             VStack {
                 Text("Pongmatch")
-                NavigationLink("Start match") {
+                if syncedScoreboard.score != nil {
+                    NavigationLink("Continue match"){
+                        ScoreboardView()
+                    }
+                }
+                
+                NavigationLink("New match") {
                     ScoreboardView(score: Score(
                         player1: User.me(),
                         player2: User.unknown()
