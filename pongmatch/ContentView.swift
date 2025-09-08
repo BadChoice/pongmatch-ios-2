@@ -17,10 +17,7 @@ struct ContentView: View {
         Group {
             if auth.isAuthenticated {
                 NavigationStack {
-                    DashboardView()
-                        .toolbar {
-                            Button("Logout") { auth.logout() }
-                        }
+                    DashboardView()                        
                 }
             } else {
                 LoginView()

@@ -10,9 +10,17 @@ struct DashboardView : View {
             if isLoadingUser {
                 ProgressView()
             } else {
-                HomeView()
-                Community()
+                HomeView().tabItem {
+                    Image(systemName: "house")      //.renderingMode(.template)
+                }
+                Community().tabItem {
+                    Image(systemName: "person.3")   //.renderingMode(.template)
+                }
             }
+        }
+        .toolbar {
+            Button("Logout") { auth.logout() }
+            Button("New") { /* TODO */ }
         }
         .task {
             Task {
@@ -51,13 +59,61 @@ struct HomeView : View {
                     Text("\(auth.user?.games_lost ?? 0)").frame(width:80)
                 }.bold()
             }
+            
+            
+            VStack(alignment: .leading){
+                Text("Next Games").font(.headline)
+            
+                ScrollView(.horizontal){
+                    HStack{
+                        GameView(game: Game(
+                            id: 1,
+                            information: "A nice game",
+                            date: Date(),
+                            status: .planned,
+                            created_at: Date(),
+                            updated_at: nil
+                        ))
+                        GameView(game: Game(
+                            id: 1,
+                            information: "A nice game",
+                            date: Date(),
+                            status: .planned,
+                            created_at: Date(),
+                            updated_at: nil
+                        ))
+                        GameView(game: Game(
+                            id: 1,
+                            information: "A nice game",
+                            date: Date(),
+                            status: .planned,
+                            created_at: Date(),
+                            updated_at: nil
+                        ))
+                        GameView(game: Game(
+                            id: 1,
+                            information: "A nice game",
+                            date: Date(),
+                            status: .planned,
+                            created_at: Date(),
+                            updated_at: nil
+                        ))
+                    }
+                }
+            }.padding()
+            
             Spacer()
+            
+            NavigationLink("New Game") {
+                ScoreboardView(score:Score(player1: auth.user ?? User.unknown(), player2: User.unknown()))
+            }
             
             NavigationLink("Scoreboard") {
                 ScoreboardView(score:Score(player1: auth.user ?? User.unknown(), player2: User.unknown()))
             }
-            .padding()
-            .glassEffect()
+            
+            
+            Spacer()
         }
     }
 }

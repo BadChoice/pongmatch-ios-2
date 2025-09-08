@@ -20,6 +20,29 @@ struct UserView : View {
     }
 }
 
+struct CompactUserView : View {
+    let user:User
+    
+    var body: some View {
+        HStack{
+            VStack(alignment: .center, spacing:4){
+                AvatarView(user:user).frame(width: 40)
+                Text("\(user.ranking)").font(.system(size:10, weight: .bold))
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 8)
+                    .background(.black)
+                    .clipShape(.capsule)
+                Text(user.name).font(.caption2)
+            }
+        }
+    }
+}
+
 #Preview {
     UserView(user: User.me())
+}
+
+#Preview {
+    CompactUserView(user: User.me())
 }
