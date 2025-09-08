@@ -15,6 +15,10 @@ class AppleWatchScoreboardSync: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
     
+    func fetchSyncedScore() -> Score? {
+        scoreFromContext(WCSession.default.receivedApplicationContext)
+    }
+    
     // Send to watch
     func onScoreUpdated() {
         guard let data = try? JSONEncoder().encode(score) else {
@@ -24,17 +28,32 @@ class AppleWatchScoreboardSync: NSObject, ObservableObject, WCSessionDelegate {
         try? WCSession.default.updateApplicationContext(["score" : data])
     }
     
+    func clearScore(){
+        var context = WCSession.default.receivedApplicationContext
+        context.removeValue(forKey: "score") // remove the key
+        try? WCSession.default.updateApplicationContext(context)
+    }
+    
     // Receive from watch
     func session(_ session: WCSession,
                  didReceiveApplicationContext applicationContext: [String : Any]) {
 
-        guard let data = applicationContext["score"] as? Data else { return }
-        guard let score = try? JSONDecoder().decode(Score.self, from: data) else { return }
+        guard let score = scoreFromContext(applicationContext) else { return }
         
         DispatchQueue.main.async {
             self.score = score
-            print("Got score")
         }
+    }
+    
+    private func scoreFromContext(_ context: [String: Any]) -> Score? {
+        guard let data = context["score"] as? Data else {
+            return nil
+        }
+        guard let score = try? JSONDecoder().decode(Score.self, from: data) else {
+            return nil
+        }
+        
+        return score
     }
     
     // MARK: - Session delegate
