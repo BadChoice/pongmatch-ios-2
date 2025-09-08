@@ -40,8 +40,8 @@ class Score: Codable {
         (Int(history.count / 2) + firstServer.rawValue) % 2
     }
         
-    func isMatchPointFor(player:Int) -> Bool {
-        if player == 0 {
+    func isMatchPointFor(player:Player) -> Bool {
+        if player == .player1 {
             return score.player1 >= 10 && score.player1 >= score.player2 + 1
         }
         return score.player2 >= 10 && score.player2 >= score.player1 + 1
