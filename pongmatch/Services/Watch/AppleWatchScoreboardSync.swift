@@ -2,10 +2,10 @@ import Foundation
 import Combine
 import WatchConnectivity
 
-class PhoneConnectivity: NSObject, ObservableObject, WCSessionDelegate {
-    static let shared = PhoneConnectivity()
+class AppleWatchScoreboardSync: NSObject, ObservableObject, WCSessionDelegate {
+    static let shared = AppleWatchScoreboardSync()
     
-    @Published var score: (Int, Int) = (0, 0)
+    @Published var score:Score!
     
     override private init() {
         super.init()
@@ -15,24 +15,25 @@ class PhoneConnectivity: NSObject, ObservableObject, WCSessionDelegate {
         }
     }
     
-    func updateScore(_ newScore: (Int, Int)) {
-        score = newScore
-        
-        // Send to watch
-        let data: [String: Any] = [
-            "player1": newScore.0,
-            "player2": newScore.1
-        ]
-        try? WCSession.default.updateApplicationContext(data)
+    // Send to watch
+    func onScoreUpdated() {
+        guard let data = try? JSONEncoder().encode(score) else {
+            return
+        }
+
+        try? WCSession.default.updateApplicationContext(["score" : data])
     }
     
     // Receive from watch
     func session(_ session: WCSession,
                  didReceiveApplicationContext applicationContext: [String : Any]) {
+
+        guard let data = applicationContext["score"] as? Data else { return }
+        guard let score = try? JSONDecoder().decode(Score.self, from: data) else { return }
+        
         DispatchQueue.main.async {
-            let p1 = applicationContext["player1"] as? Int ?? 0
-            let p2 = applicationContext["player2"] as? Int ?? 0
-            self.score = (p1, p2)
+            self.score = score
+            print("Got score")
         }
     }
     

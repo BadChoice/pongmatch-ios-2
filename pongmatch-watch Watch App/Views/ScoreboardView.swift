@@ -2,14 +2,14 @@
 import SwiftUI
 
 struct ScoreboardView: View {
-    @State private var score:Score
+    @StateObject private var syncedScore = IPhoneScoreboardSync.shared
     @State private var showResetConfirmation = false
     @State private var showFinishConfirmation = false
     
     @Environment(\.dismiss) private var dismiss
     
     init(score:Score) {
-        self.score = score
+        syncedScore.score = score
     }
     
     var body: some View {
@@ -18,8 +18,8 @@ struct ScoreboardView: View {
                 // HEADER
                 HStack(spacing: 20) {
                     ZStack {
-                        AvatarView(user: score.player1).frame(width:40)
-                        if score.matchWinner()?.id == score.player1.id {
+                        AvatarView(user: syncedScore.score.player1).frame(width:40)
+                        if syncedScore.score.matchWinner()?.id == syncedScore.score.player1.id {
                             Image(systemName:"trophy.fill")
                                 .foregroundStyle(.black)
                                 .padding(4)
@@ -29,14 +29,14 @@ struct ScoreboardView: View {
                     }
                     
                     HStack {
-                        Text("\(score.setsResult.player1)")
+                        Text("\(syncedScore.score.setsResult.player1)")
                         Text("-")
-                        Text("\(score.setsResult.player2)")
+                        Text("\(syncedScore.score.setsResult.player2)")
                     }
                     
                     ZStack {
-                        AvatarView(user: score.player2).frame(width:40)
-                        if score.matchWinner()?.id == score.player2.id {
+                        AvatarView(user: syncedScore.score.player2).frame(width:40)
+                        if syncedScore.score.matchWinner()?.id == syncedScore.score.player2.id {
                             Image(systemName:"trophy.fill")
                                 .foregroundStyle(.black)
                                 .padding(4)
@@ -51,35 +51,47 @@ struct ScoreboardView: View {
                 // SCORE
                 HStack(spacing:20) {
                     ScoreView(
-                        score: score.score.player1,
-                        matchPoint:score.isMatchPointFor(player:.player1),
-                        serving:score.server == 0,
-                        secondServe:score.isSecondServe,
+                        score: syncedScore.score.score.player1,
+                        matchPoint:syncedScore.score.isMatchPointFor(player:.player1),
+                        serving:syncedScore.score.server == 0,
+                        secondServe:syncedScore.score.isSecondServe,
                     ).onTapGesture {
-                        withAnimation { score.addScore(player: .player1) }
+                        withAnimation {
+                            syncedScore.score.addScore(player: .player1)
+                            syncedScore.onScoreUpdated()
+                        }
                     }
                     
                     ScoreView(
-                        score: score.score.player2,
-                        matchPoint:score.isMatchPointFor(player:.player2),
-                        serving:score.server == 1,
-                        secondServe:score.isSecondServe,
+                        score: syncedScore.score.score.player2,
+                        matchPoint:syncedScore.score.isMatchPointFor(player:.player2),
+                        serving:syncedScore.score.server == 1,
+                        secondServe:syncedScore.score.isSecondServe,
                     ).onTapGesture {
-                        withAnimation { score.addScore(player: .player2) }
+                        withAnimation {
+                            syncedScore.score.addScore(player: .player2)
+                            syncedScore.onScoreUpdated()
+                        }
                     }
                 }
                 
                 // BUTTONS
                 HStack(spacing: 12) {
-                    if score.history.count > 0 {
+                    if syncedScore.score.history.count > 0 {
                         Image(systemName: "arrow.uturn.backward").onTapGesture {
-                            withAnimation { score.undo() }
+                            withAnimation {
+                                syncedScore.score.undo()
+                                syncedScore.onScoreUpdated()
+                            }
                         }
                     }
                     
-                    if score.winner() != nil {
+                    if syncedScore.score.winner() != nil {
                         Image(systemName: "play.fill").onTapGesture {
-                            withAnimation { score.startNext() }
+                            withAnimation {
+                                syncedScore.score.startNext()
+                                syncedScore.onScoreUpdated()
+                            }
                         }
                     }
                     
@@ -91,7 +103,8 @@ struct ScoreboardView: View {
                 }.alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
                     Button("Cancel", role: .cancel) {}
                     Button("Reset", role: .destructive) {
-                        score.reset()
+                        syncedScore.score.reset()
+                        syncedScore.onScoreUpdated()
                     }
                 }
                 Button("Finish"){

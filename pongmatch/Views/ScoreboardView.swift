@@ -3,7 +3,7 @@ import SwiftUI
 @available(macOS 26.0, *)
 struct ScoreboardView : View {
     
-    @State private var score:Score
+    @StateObject private var syncedScore = AppleWatchScoreboardSync.shared
     
     @Namespace private var namespace
     @State private var showResetConfirmation = false
@@ -11,7 +11,7 @@ struct ScoreboardView : View {
     @Environment(\.dismiss) private var dismiss
     
     public init(score: Score) {
-        _score = .init(initialValue: score)
+        syncedScore.score = score
     }
     
     var body: some View {
@@ -25,39 +25,41 @@ struct ScoreboardView : View {
             }*/
             
             HStack (spacing:40) {
-                UserView(user: score.player1).frame(width:200)
+                UserView(user: syncedScore.score.player1).frame(width:200)
                 HStack {
-                    Text("\(score.setsResult.player1)").bold()
+                    Text("\(syncedScore.score.setsResult.player1)").bold()
                     Text("-")
-                    Text("\(score.setsResult.player2)").bold()
+                    Text("\(syncedScore.score.setsResult.player2)").bold()
                 }
-                UserView(user: score.player2).frame(width:200)
+                UserView(user: syncedScore.score.player2).frame(width:200)
             }
             
             
             // Score
             HStack(alignment:.top, spacing: 30) {
                 ScoreboardScoreView(
-                    score:score.score.player1,
-                    isMatchPoint: score.isMatchPointFor(player:.player1),
-                    serving:score.server == 0,
-                    isSecondServe:score.isSecondServe
+                    score:syncedScore.score.score.player1,
+                    isMatchPoint: syncedScore.score.isMatchPointFor(player:.player1),
+                    serving:syncedScore.score.server == 0,
+                    isSecondServe:syncedScore.score.isSecondServe
                 ).onTapGesture {
                     withAnimation {
-                        score.addScore(player: .player1)
+                        syncedScore.score.addScore(player: .player1)
+                        syncedScore.onScoreUpdated()
                     }
                 }
                 
-                SetsScoreView(score: score)
+                SetsScoreView(score: syncedScore.score)
                 
                 ScoreboardScoreView(
-                    score:score.score.player2,
-                    isMatchPoint: score.isMatchPointFor(player:.player2),
-                    serving:score.server == 1,
-                    isSecondServe:score.isSecondServe
+                    score:syncedScore.score.score.player2,
+                    isMatchPoint: syncedScore.score.isMatchPointFor(player:.player2),
+                    serving:syncedScore.score.server == 1,
+                    isSecondServe:syncedScore.score.isSecondServe
                 ).onTapGesture {
                     withAnimation {
-                        score.addScore(player: .player2)
+                        syncedScore.score.addScore(player: .player2)
+                        syncedScore.onScoreUpdated()
                     }
                 }
             }
@@ -65,14 +67,15 @@ struct ScoreboardView : View {
             // Bottom bar
             GlassEffectContainer(spacing: 40.0) {
                 HStack {
-                    if score.history.count > 0 || score.sets.count > 0 {
+                    if syncedScore.score.history.count > 0 || syncedScore.score.sets.count > 0 {
                         Image(systemName: "trash").onTapGesture{
                             showResetConfirmation = true
                         }
                         .alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
                             Button("Cancel", role: .cancel) {}
                             Button("Reset", role: .destructive) {
-                                score.reset()
+                                syncedScore.score.reset()
+                                syncedScore.onScoreUpdated()
                             }
                         }
                         .frame(width: 40.0, height: 40.0)
@@ -82,9 +85,12 @@ struct ScoreboardView : View {
 
                     }
                     
-                    if score.history.count > 0 {
+                    if syncedScore.score.history.count > 0 {
                         Image(systemName: "arrow.uturn.backward").onTapGesture{
-                            withAnimation { score.undo() }
+                            withAnimation {
+                                syncedScore.score.undo()
+                                syncedScore.onScoreUpdated()
+                            }
                         }
                         .frame(width: 40.0, height: 40.0)
                         .glassEffect()
@@ -93,7 +99,7 @@ struct ScoreboardView : View {
 
                     }
 
-                    if score.matchWinner() != nil {
+                    if syncedScore.score.matchWinner() != nil {
                         Image(systemName: "flag.pattern.checkered").onTapGesture{
                             dismiss()
                         }
@@ -103,9 +109,12 @@ struct ScoreboardView : View {
                         .glassEffectUnion(id: "2", namespace: namespace)
                     }
                     
-                    else if score.winner() != nil {
+                    else if syncedScore.score.winner() != nil {
                         Image(systemName: "play.fill").onTapGesture{
-                            withAnimation { score.startNext() }
+                            withAnimation {
+                                syncedScore.score.startNext()
+                                syncedScore.onScoreUpdated()
+                            }
                         }
                         .frame(width: 50.0, height: 50.0)
                         .glassEffect()
@@ -166,7 +175,6 @@ struct SetsScoreView : View {
             }
         }
     }
-    
 }
 
 

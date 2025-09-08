@@ -1,10 +1,13 @@
 import Foundation
+import Combine
 import WatchConnectivity
 
-class IPhoneScoreboardSync : NSObject, WCSessionDelegate {
+class IPhoneScoreboardSync : NSObject, ObservableObject, WCSessionDelegate {
     
     static let shared = IPhoneScoreboardSync()
 
+    @Published var score:Score!
+    
     private override init() {
         super.init()
         if WCSession.isSupported() {
@@ -13,9 +16,24 @@ class IPhoneScoreboardSync : NSObject, WCSessionDelegate {
         }
     }
 
-    func sendScore(_ score: Int) {
-        if WCSession.default.isReachable {
-            WCSession.default.sendMessage(["score": score], replyHandler: nil, errorHandler: nil)
+    // Send to iphone
+    func onScoreUpdated() {
+        guard let data = try? JSONEncoder().encode(score) else {
+            return
+        }
+
+        try? WCSession.default.updateApplicationContext(["score" : data])
+    }
+        
+    // Receive from iPhone
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        
+        guard let data = applicationContext["score"] as? Data else { return }
+        guard let score = try? JSONDecoder().decode(Score.self, from: data) else { return }
+        
+        DispatchQueue.main.async {
+            self.score = score
+            print("Got score")
         }
     }
     
