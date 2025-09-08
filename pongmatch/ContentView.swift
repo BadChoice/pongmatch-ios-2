@@ -12,17 +12,20 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
     @StateObject private var auth = AuthViewModel()
+    @StateObject private var path = NavigationManager()
     
     var body: some View {
         Group {
             if auth.isAuthenticated {
-                NavigationStack {
+                NavigationStack(path: $path.path) {
                     DashboardView()                        
                 }
             } else {
                 LoginView()
             }
-        }.environmentObject(auth)
+        }
+        .environmentObject(auth)
+        .environmentObject(path)
     }
 }
 

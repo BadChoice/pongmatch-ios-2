@@ -4,7 +4,7 @@ struct DashboardView : View {
     
     @EnvironmentObject private var auth: AuthViewModel
     @State var isLoadingUser:Bool = true
-    
+        
     var body: some View {
         TabView {
             if isLoadingUser {
@@ -32,12 +32,25 @@ struct DashboardView : View {
                 
             }
         }
+        .navigationDestination(for: String.self) { target in
+            if target == "scoreboard"{
+                ScoreboardView(
+                    score: Score(
+                        player1: auth.user ?? User.unknown(),
+                        player2: User.unknown(),
+                    )
+                )
+            }
+        }
     }
 }
 
 struct HomeView : View {
     @EnvironmentObject private var auth: AuthViewModel
+    @EnvironmentObject private var nav: NavigationManager
     
+    @State private var showScoreboardSelectionModal = false
+
     var body: some View {
         VStack(spacing: 20) {
             UserView(user: auth.user ?? User.unknown())
@@ -90,31 +103,62 @@ struct HomeView : View {
                             created_at: Date(),
                             updated_at: nil
                         ))
-                        CompactGameView(game: Game(
-                            id: 1,
-                            information: "A nice game",
-                            date: Date(),
-                            status: .planned,
-                            created_at: Date(),
-                            updated_at: nil
-                        ))
-                    }
+                    }.padding(.bottom)
                 }
             }.padding()
             
             Spacer()
             
+            Button("Scoreboard"){
+                showScoreboardSelectionModal = true
+            }
+            
             NavigationLink("New Game") {
-                ScoreboardView(score:Score(player1: auth.user ?? User.unknown(), player2: User.unknown()))
+                ScoreboardView(score:Score(
+                    player1: auth.user ?? User.unknown(),
+                    player2: User.unknown())
+                )
             }
-            
-            NavigationLink("Scoreboard") {
-                ScoreboardView(score:Score(player1: auth.user ?? User.unknown(), player2: User.unknown()))
-            }
-            
             
             Spacer()
         }
+        .sheet(isPresented: $showScoreboardSelectionModal) {
+            ScoreboardSelectionView { sets in 
+                showScoreboardSelectionModal = false
+                nav.push("scoreboard")
+            }
+            .presentationDetents([.medium]) // Bottom sheet style
+            .presentationDragIndicator(.visible)    // Show the small slider on top
+        }
+    }
+}
+
+struct ScoreboardSelectionView : View {
+    
+    var onSelect: (Int) -> Void
+
+    @State private var sliderValue: Double = 3
+
+    var body: some View {
+        VStack(alignment: .center) {
+            Text("Scoreboard").font(.largeTitle)
+            Text("Game points: 11")
+            HStack{
+                Text("Win condition")
+                Slider(value: $sliderValue, in: 1...5, step: 1)
+                    .padding(.horizontal)
+            }
+            Spacer()
+            Button("START", systemImage: "circle.fill") {
+                onSelect(Int(sliderValue))
+            }
+            .padding()
+            .frame(minWidth: 0, maxWidth: .infinity)
+            .background(.black)
+            .clipShape(.capsule)
+            .foregroundStyle(.white)
+            
+        }.padding()
     }
 }
 
