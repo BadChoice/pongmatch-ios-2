@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct GameView: View {
+struct CompactGameView: View {
     let game:Game
     
     var body: some View {
@@ -37,7 +37,7 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView(game: Game(
+    CompactGameView(game: Game(
         id: 1,
         information: "A nice game",
         date: Date(),

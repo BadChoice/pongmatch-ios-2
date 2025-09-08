@@ -66,7 +66,7 @@ struct HomeView : View {
             
                 ScrollView(.horizontal){
                     HStack{
-                        GameView(game: Game(
+                        CompactGameView(game: Game(
                             id: 1,
                             information: "A nice game",
                             date: Date(),
@@ -74,7 +74,7 @@ struct HomeView : View {
                             created_at: Date(),
                             updated_at: nil
                         ))
-                        GameView(game: Game(
+                        CompactGameView(game: Game(
                             id: 1,
                             information: "A nice game",
                             date: Date(),
@@ -82,7 +82,7 @@ struct HomeView : View {
                             created_at: Date(),
                             updated_at: nil
                         ))
-                        GameView(game: Game(
+                        CompactGameView(game: Game(
                             id: 1,
                             information: "A nice game",
                             date: Date(),
@@ -90,7 +90,7 @@ struct HomeView : View {
                             created_at: Date(),
                             updated_at: nil
                         ))
-                        GameView(game: Game(
+                        CompactGameView(game: Game(
                             id: 1,
                             information: "A nice game",
                             date: Date(),
