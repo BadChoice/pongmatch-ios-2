@@ -1,47 +1,58 @@
 import SwiftUI
 
 @Observable
-class Score {
-    let started_at = Date()
+class Score: Codable {
+    
+    enum Player : Int, Codable {
+        case player1 = 0
+        case player2 = 1
+    }
+    
+    struct Result : Codable {
+        var player1:Int = 0
+        var player2:Int = 0
+    }
+    
+    var started_at = Date()
     var ended_at:Date? = nil
     
     let players:[User]
     
-    var score:(Int, Int) = (0, 0)
-    var sets:[(Int, Int)]  = []
+    var score:Result = Result()
+    var sets:[Result]  = []
     
-    let gamePoints:Int = 11
-    let setsToWin:Int = 3
+    var gamePoints:Int = 11
+    var winningCondition:WinningCondition = .bestof3
     
-    private var firstServer:Int = 0
+    private var firstServer:Player = .player1
     
     init(player1:User, player2:User) {
         self.players = [player1, player2]
-        self.firstServer = Int.random(in: 0...1)
+        self.firstServer = Player(rawValue: .random(in: 0...1))!
     }
     
-    var history:[Int] = []
+    var history:[Player] = []
     
     var player1:User { players.first! }
     var player2:User { players.last! }
     
     var server:Int {
-        (Int(history.count / 2) + firstServer) % 2
+        (Int(history.count / 2) + firstServer.rawValue) % 2
     }
         
     func isMatchPointFor(player:Int) -> Bool {
         if player == 0 {
-            return score.0 >= 10 && score.0 >= score.1 + 1
+            return score.player1 >= 10 && score.player1 >= score.player2 + 1
         }
-        return score.1 >= 10 && score.1 >= score.0 + 1
+        return score.player2 >= 10 && score.player2 >= score.player1 + 1
     }
     
     func winner() -> User? {
-        if score.0 >= 11 && score.0 >= score.1 + 2 {
+        if score.player1 >= 11 && score.player1 >= score.player2 + 2 {
             return player1
         }
         
-        if score.1 >= 11 && score.1 >= score.0 + 2 {
+        if score.player2 >= 11 && score.player2 >= score.player1 + 2 {
             return player2
         }
         return nil
@@ -50,11 +61,11 @@ class Score {
     func matchWinner() -> User?{
         guard winner() != nil else { return nil }
         
-        if setsResult.0 == setsToWin {
+        if setsResult.player1 == winningCondition.setsToWin {
             return player1
         }
         
-        if setsResult.1 == setsToWin {
+        if setsResult.player2 == winningCondition.setsToWin {
             return player2
         }
         
@@ -64,11 +75,11 @@ class Score {
     /**
      The total result in sets
      */
-    var setsResult:(Int,Int){
-        var result = (0, 0)
-        sets.forEach { a, b in
-            if a > b { result.0 += 1}
-            else     { result.1 += 1}
+    var setsResult:Result {
+        var result = Result()
+        sets.forEach { set in
+            if set.player1 > set.player2 { result.player1 += 1}
+            else                         { result.player2 += 1}
         }
         return result
     }
@@ -77,27 +88,27 @@ class Score {
         history.count % 2 == 1
     }
     
-    func addScore(player:Int){
+    func addScore(player:Player){
         guard winner() == nil else { return }
         
         history.append(player)
         
-        if player == 0 {
-            score.0 += 1
+        if player == .player1 {
+            score.player1 += 1
         } else {
-            score.1 += 1
+            score.player2 += 1
         }
     }
     
     func startNext(){
         sets.append(score)
         
-        if setsResult.0 == setsToWin || setsResult.1 == setsToWin {
+        if setsResult.player1 == winningCondition.setsToWin || setsResult.player2 == winningCondition.setsToWin {
             return gameFinished()
         }
         
-        score       = (0, 0)
-        firstServer = (firstServer + 1) % 2
+        score       = Result()
+        firstServer = Player(rawValue:(firstServer.rawValue + 1) % 2)!
         history     = []
     }
     
@@ -107,17 +118,17 @@ class Score {
         
     func undo(){
         guard history.count > 0 else { return }
-        if history.popLast() == 0 {
-            score.0 -= 1
+        if history.popLast() == .player1 {
+            score.player1 -= 1
         } else {
-            score.1 -= 1
+            score.player2 -= 1
         }
     }
     
     func reset(){
         sets = []
-        score = (0, 0)
+        score = Result()
         history = []
-        firstServer = Int.random(in: 0...1)
+        firstServer = Player(rawValue: Int.random(in: 0...1))!
     }
 }

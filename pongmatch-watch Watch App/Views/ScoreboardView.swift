@@ -29,9 +29,9 @@ struct ScoreboardView: View {
                     }
                     
                     HStack {
-                        Text("\(score.setsResult.0)")
+                        Text("\(score.setsResult.player1)")
                         Text("-")
-                        Text("\(score.setsResult.1)")
+                        Text("\(score.setsResult.player2)")
                     }
                     
                     ZStack {
@@ -51,21 +51,21 @@ struct ScoreboardView: View {
                 // SCORE
                 HStack(spacing:20) {
                     ScoreView(
-                        score: score.score.0,
+                        score: score.score.player1,
                         matchPoint:score.isMatchPointFor(player:0),
                         serving:score.server == 0,
                         secondServe:score.isSecondServe,
                     ).onTapGesture {
-                        withAnimation { score.addScore(player: 0) }
+                        withAnimation { score.addScore(player: .player1) }
                     }
                     
                     ScoreView(
-                        score: score.score.1,
+                        score: score.score.player2,
                         matchPoint:score.isMatchPointFor(player:1),
                         serving:score.server == 1,
                         secondServe:score.isSecondServe,
                     ).onTapGesture {
-                        withAnimation { score.addScore(player: 1) }
+                        withAnimation { score.addScore(player: .player2) }
                     }
                 }
                 

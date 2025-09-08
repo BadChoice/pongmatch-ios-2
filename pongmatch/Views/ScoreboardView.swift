@@ -27,9 +27,9 @@ struct ScoreboardView : View {
             HStack (spacing:40) {
                 UserView(user: score.player1).frame(width:200)
                 HStack {
-                    Text("\(score.setsResult.0)").bold()
+                    Text("\(score.setsResult.player1)").bold()
                     Text("-")
-                    Text("\(score.setsResult.1)").bold()
+                    Text("\(score.setsResult.player2)").bold()
                 }
                 UserView(user: score.player2).frame(width:200)
             }
@@ -38,26 +38,26 @@ struct ScoreboardView : View {
             // Score
             HStack(alignment:.top, spacing: 30) {
                 ScoreboardScoreView(
-                    score:score.score.0,
+                    score:score.score.player1,
                     isMatchPoint: score.isMatchPointFor(player:0),
                     serving:score.server == 0,
                     isSecondServe:score.isSecondServe
                 ).onTapGesture {
                     withAnimation {
-                        score.addScore(player: 0)
+                        score.addScore(player: .player1)
                     }
                 }
                 
                 SetsScoreView(score: score)
                 
                 ScoreboardScoreView(
-                    score:score.score.1,
+                    score:score.score.player2,
                     isMatchPoint: score.isMatchPointFor(player:1),
                     serving:score.server == 1,
                     isSecondServe:score.isSecondServe
                 ).onTapGesture {
                     withAnimation {
-                        score.addScore(player: 1)
+                        score.addScore(player: .player2)
                     }
                 }
             }
@@ -159,9 +159,9 @@ struct SetsScoreView : View {
             ForEach(score.sets.indices, id: \.self) { index in
                 let set = score.sets[index]
                 HStack {
-                    Text("\(set.0)")
+                    Text("\(set.player1)")
                     Text("-")
-                    Text("\(set.1)")
+                    Text("\(set.player2)")
                 }
             }
         }
