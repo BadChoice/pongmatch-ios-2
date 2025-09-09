@@ -2,8 +2,7 @@ import SwiftUI
 internal import RevoFoundation
 
 struct SearchFriendView : View {
-    
-    
+        
     @EnvironmentObject private var auth: AuthViewModel
     
     @State private var searchText: String = ""
@@ -28,7 +27,6 @@ struct SearchFriendView : View {
                     }
                 }
             }
-            .navigationTitle("Community") // Add a title to ensure navigation bar visibility
             .searchable(text: $searchText, prompt: "Search for friends")
             .onChange(of: searchText) { _, newValue in
                 Task {

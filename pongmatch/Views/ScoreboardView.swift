@@ -9,6 +9,7 @@ struct ScoreboardView : View {
     var newScore:Score?
     
     @State var playersSwapped:Bool = false
+    @State var showFinishGame:Bool = false
     
     var player1: Score.Player { playersSwapped ? .player2 : .player1 }
     var player2: Score.Player { playersSwapped ? .player1 : .player2 }
@@ -29,7 +30,7 @@ struct ScoreboardView : View {
                 Spacer().frame(height:20)
                 
                 HStack(spacing: 25) {
-                    /* Label("Standard", systemImage:"bird.fill") */                                                 
+                    /* Label("Standard", systemImage:"bird.fill") */
                     Label(syncedScore.score.rankingType.description, systemImage: "trophy.fill")
                     Label(syncedScore.score.winningCondition.description, systemImage: "medal.fill")
                         
@@ -77,7 +78,7 @@ struct ScoreboardView : View {
                         }
                     }
                 }.overlay(alignment:.bottom) {
-                    ScoreBoardActionsView(syncedScore: syncedScore, playersSwapped: $playersSwapped)
+                    ScoreBoardActionsView(syncedScore: syncedScore, playersSwapped: $playersSwapped, showFinishGame: $showFinishGame)
                         .offset(.init(width: 0, height: 30)
                     )
                 }
@@ -118,6 +119,11 @@ struct ScoreboardView : View {
             up:   { buttonHandler?.onButtonPressed() },
             down: { buttonHandler?.onButtonPressed() }
         )
+        .sheet(isPresented: $showFinishGame){
+            FinishGameView(score:syncedScore.score)
+                .presentationDetents([.medium, .large]) // Bottom sheet style
+                .presentationDragIndicator(.visible)    // Show the small slider on top
+        }
     }
 }
 
@@ -131,6 +137,8 @@ struct ScoreBoardActionsView:View {
     @Environment(\.dismiss) private var dismiss
     
     @Namespace private var namespace
+    
+    @Binding var showFinishGame:Bool
     
     
     var body: some View {
@@ -190,7 +198,8 @@ struct ScoreBoardActionsView:View {
                     .glassEffectID("next", in: namespace)
                     .glassEffectUnion(id: "2", namespace: namespace)
                     .onTapGesture{
-                        dismiss()
+                        showFinishGame = true
+                        //dismiss()
                     }
                 }
                 
