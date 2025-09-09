@@ -169,6 +169,7 @@ struct ScoreboardScoreView: View {
                 .foregroundStyle(.white)
                 .background(isMatchPoint ? .green : .black)
                 .cornerRadius(8)
+                .contentTransition(.numericText(value: Double(score)))
             
             if serving {
                 HStack {

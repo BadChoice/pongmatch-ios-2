@@ -161,6 +161,7 @@ private struct ScoreView : View {
                 .padding(.horizontal, 24)
                 .background(matchPoint ? .green : .gray)
                 .cornerRadius(8)
+                .contentTransition(.numericText(value: Double(score)))
             
                         
             if serving {
