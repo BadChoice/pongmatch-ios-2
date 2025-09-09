@@ -6,10 +6,20 @@ struct FinishGameView : View {
     let score:Score
     
     var body: some View {
-        VStack(spacing: 25) {
+        VStack(spacing:20) {
             
             
             Label("GAME FINISHED", systemImage: "flag.pattern.checkered").font(.largeTitle)
+            
+            HStack(spacing: 25) {
+                /* Label("Standard", systemImage:"bird.fill") */
+                Label(score.rankingType.description, systemImage: "trophy.fill")
+                Label(score.winningCondition.description, systemImage: "medal.fill")
+                    
+            }
+            .font(.footnote)
+            .foregroundColor(.secondary)
+            
             HStack {
                 UserView(user: score.player1).frame(minWidth: 0, maxWidth: .infinity)
                 HStack{
