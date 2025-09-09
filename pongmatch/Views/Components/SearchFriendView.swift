@@ -7,36 +7,38 @@ struct SearchFriendView : View {
     @EnvironmentObject private var auth: AuthViewModel
     
     @State private var searchText: String = ""
-    @State private var searchResults: [User] = [User.unknown()] // Assuming Friend is your opponent model
+    @State private var searchResults: [User] = [User.unknown()]
     
     @Binding var selectedFriend: User
     var onSelected:(_ player:User) -> Void = {_ in }
     
     var body: some View {
-        NavigationStack{
-            ScrollView{
-                VStack{
-                    ForEach(searchResults, id: \.id) { friend in
-                        Button {
-                            selectedFriend = friend
-                            onSelected(friend)
-                        } label: {
-                            HStack {
-                                UserView(user: friend)
-                                Spacer()
-                            }
+        NavigationStack {
+            VStack {
+                if searchText.isEmpty {
+                    Spacer()
+                    Text("Search your friends")
+                    Spacer()
+                } else {
+                    List {
+                        ForEach(searchResults, id: \.id) { friend in
+                            UserView(user: friend)
+                                .padding(.vertical, 4)
                         }
                     }
                 }
             }
-        }
-        .task {
-            searchResults = [selectedFriend, User.unknown()].unique(\.id)
-        }
-        .searchable(text: $searchText)
-        .onChange(of: searchText) { _, newValue in
-            Task {
-                searchResults = ((try? await auth.searchFriends(newValue)) ?? []) +  [User.unknown()]
+            .navigationTitle("Community") // Add a title to ensure navigation bar visibility
+            .searchable(text: $searchText, prompt: "Search for friends")
+            .onChange(of: searchText) { _, newValue in
+                Task {
+                    if newValue.isEmpty {
+                        searchResults = []
+                    } else {
+                        try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s delay
+                        searchResults = (try? await auth.searchFriends(newValue)) ?? []
+                    }
+                }            
             }
         }
     }

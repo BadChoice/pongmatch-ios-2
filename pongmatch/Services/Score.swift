@@ -34,7 +34,7 @@ class Score: Codable {
     var gamePoints:Int = 11
     var winningCondition:WinningCondition
     
-    private var firstServer:Player = .player1
+    private var firstServer:Player
     
     var history:[Player] = []
 

@@ -24,9 +24,14 @@ struct DashboardView : View {
                 }
             }
         }
+        
         .toolbar {
-            Button("Logout") { auth.logout() }
-            Button("New") { /* TODO */ }
+            Button{ }
+            label : {
+                Image(systemName: "ellipsis")
+            }
+            //Button("Logout") { auth.logout() }
+            //Button("New") { /* TODO */ }
         }
         .task {
             Task {
