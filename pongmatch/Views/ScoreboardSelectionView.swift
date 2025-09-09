@@ -29,9 +29,11 @@ struct ScoreboardSelectionView : View {
                 HStack{
                     Text("Play against").bold()
                     Spacer()
-                    Button(player2.name) {
+                    Button {
                         withAnimation { searchingPlayer2.toggle() }
-                    }
+                    } label: {
+                        UserView(user: player2)
+                    }.padding(.trailing)
                 }
             } else {
                 SearchFriendView(selectedFriend: $player2) { player2 in

@@ -1,6 +1,6 @@
 import Foundation
 import RevoHttp
-
+internal import RevoFoundation
 
 class Api {
     
@@ -84,7 +84,7 @@ class Api {
         
         do {
             let userResponse:FriendsResponse = try await Self.call(method: .get, url: "friends/search/\(text)", headers: headers)
-            return userResponse.data
+            return userResponse.data.unique(\.id)
         } catch {
             print(error)
             throw error
