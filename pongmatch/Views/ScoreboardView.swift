@@ -4,12 +4,7 @@ import SwiftUI
 struct ScoreboardView : View {
     
     @ObservedObject private var syncedScore = SyncedScore.shared
-    
-    @Namespace private var namespace
-    @State private var showResetConfirmation = false
-    
-    @Environment(\.dismiss) private var dismiss
-    
+            
     var newScore:Score?
     
     init(score:Score? = nil) {
@@ -76,70 +71,86 @@ struct ScoreboardView : View {
                 }
                 
                 // Bottom bar
-                GlassEffectContainer(spacing: 40.0) {
-                    HStack {
-                        if syncedScore.score.history.count > 0 || syncedScore.score.sets.count > 0 {
-                            Image(systemName: "trash").onTapGesture{
-                                showResetConfirmation = true
-                            }
-                            .alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
-                                Button("Cancel", role: .cancel) {}
-                                Button("Reset", role: .destructive) {
-                                    syncedScore.score.reset()
-                                    syncedScore.sync()
-                                }
-                            }
-                            .frame(width: 40.0, height: 40.0)
-                            .glassEffect()
-                            .glassEffectID("reset", in: namespace)
-                            .glassEffectUnion(id: "1", namespace: namespace)
-                            
-                        }
-                        
-                        if syncedScore.score.history.count > 0 {
-                            Image(systemName: "arrow.uturn.backward").onTapGesture{
-                                withAnimation {
-                                    syncedScore.score.undo()
-                                    syncedScore.sync()
-                                }
-                            }
-                            .frame(width: 40.0, height: 40.0)
-                            .glassEffect()
-                            .glassEffectID("undo", in: namespace)
-                            .glassEffectUnion(id: "1", namespace: namespace)
-                            
-                        }
-                        
-                        if syncedScore.score.matchWinner() != nil {
-                            Image(systemName: "flag.pattern.checkered").onTapGesture{
-                                dismiss()
-                            }
-                            .frame(width: 50.0, height: 50.0)
-                            .glassEffect()
-                            .glassEffectID("next", in: namespace)
-                            .glassEffectUnion(id: "2", namespace: namespace)
-                        }
-                        
-                        else if syncedScore.score.winner() != nil {
-                            Image(systemName: "play.fill").onTapGesture{
-                                withAnimation {
-                                    syncedScore.score.startNext()
-                                    syncedScore.sync()
-                                }
-                            }
-                            .frame(width: 50.0, height: 50.0)
-                            .glassEffect()
-                            .glassEffectID("next", in: namespace)
-                            .glassEffectUnion(id: "2", namespace: namespace)
-                        }
-                    }
-                }
+                ScoreBoardActionsView(syncedScore: syncedScore)
             }
         }
         .task {
             if let newScore {
                 syncedScore.replace(score: newScore)
                 syncedScore.sync()
+            }
+        }
+    }
+}
+
+
+struct ScoreBoardActionsView:View {
+    
+    @ObservedObject var syncedScore:SyncedScore
+    @State private var showResetConfirmation = false
+    
+    @Environment(\.dismiss) private var dismiss
+    
+    @Namespace private var namespace
+    
+    
+    var body: some View {
+        GlassEffectContainer(spacing: 40.0) {
+            HStack {
+                if syncedScore.score.history.count > 0 || syncedScore.score.sets.count > 0 {
+                    Image(systemName: "trash").onTapGesture{
+                        showResetConfirmation = true
+                    }
+                    .alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
+                        Button("Cancel", role: .cancel) {}
+                        Button("Reset", role: .destructive) {
+                            syncedScore.score.reset()
+                            syncedScore.sync()
+                        }
+                    }
+                    .frame(width: 50.0, height: 50.0)
+                    .glassEffect()
+                    .glassEffectID("reset", in: namespace)
+                    .glassEffectUnion(id: "1", namespace: namespace)
+                    
+                }
+                
+                if syncedScore.score.history.count > 0 {
+                    Image(systemName: "arrow.uturn.backward").onTapGesture{
+                        withAnimation {
+                            syncedScore.score.undo()
+                            syncedScore.sync()
+                        }
+                    }
+                    .frame(width: 50.0, height: 50.0)
+                    .glassEffect()
+                    .glassEffectID("undo", in: namespace)
+                    .glassEffectUnion(id: "1", namespace: namespace)
+                    
+                }
+                
+                if syncedScore.score.matchWinner() != nil {
+                    Image(systemName: "flag.pattern.checkered").onTapGesture{
+                        dismiss()
+                    }
+                    .frame(width: 70.0, height: 70.0)
+                    .glassEffect()
+                    .glassEffectID("next", in: namespace)
+                    .glassEffectUnion(id: "2", namespace: namespace)
+                }
+                
+                else if syncedScore.score.winner() != nil {
+                    Image(systemName: "play.fill").onTapGesture{
+                        withAnimation {
+                            syncedScore.score.startNext()
+                            syncedScore.sync()
+                        }
+                    }
+                    .frame(width: 50.0, height: 50.0)
+                    .glassEffect()
+                    .glassEffectID("next", in: namespace)
+                    .glassEffectUnion(id: "2", namespace: namespace)
+                }
             }
         }
     }
