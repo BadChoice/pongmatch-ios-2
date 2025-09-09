@@ -71,10 +71,8 @@ struct ScoreboardView: View {
                     // SCORE
                     HStack(spacing:20) {
                         ScoreView(
-                            score: syncedScore.score.score.player1,
-                            matchPoint:syncedScore.score.isMatchPointFor(player:.player1),
-                            serving:syncedScore.score.server == 0,
-                            secondServe:syncedScore.score.isSecondServe,
+                            score: syncedScore.score,
+                            player:.player1
                         ).onTapGesture {
                             withAnimation {
                                 syncedScore.score.addScore(player: .player1)
@@ -83,10 +81,8 @@ struct ScoreboardView: View {
                         }
                         
                         ScoreView(
-                            score: syncedScore.score.score.player2,
-                            matchPoint:syncedScore.score.isMatchPointFor(player:.player2),
-                            serving:syncedScore.score.server == 1,
-                            secondServe:syncedScore.score.isSecondServe,
+                            score: syncedScore.score,
+                            player: .player2,
                         ).onTapGesture {
                             withAnimation {
                                 syncedScore.score.addScore(player: .player2)
@@ -148,26 +144,24 @@ struct ScoreboardView: View {
 
 private struct ScoreView : View {
     
-    let score:Int
-    let matchPoint:Bool
-    let serving:Bool
-    let secondServe:Bool
+    let score:Score
+    let player:Score.Player
     
     var body: some View {
         VStack{
-            Text("\(score)")
+            Text("\(score.score.forPlayer(player))")
                 .font(.largeTitle)
                 .padding(.vertical, 12)
                 .padding(.horizontal, 24)
-                .background(matchPoint ? .green : .gray)
+                .background(score.isMatchPointFor(player: player) ? .green : .gray)
                 .cornerRadius(8)
-                .contentTransition(.numericText(value: Double(score)))
+                .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
             
                         
-            if serving {
+            if score.server == player {
                 HStack {
                     Image(systemName: "circle.fill").font(.system(size: 8))
-                    if secondServe {
+                    if score.isSecondServe {
                         Image(systemName: "circle.fill").font(.system(size: 8))
                     }
                 }

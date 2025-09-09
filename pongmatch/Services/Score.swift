@@ -46,8 +46,8 @@ class Score: Codable {
     var player1:User { players.first! }
     var player2:User { players.last! }
     
-    var server:Int {
-        (Int(history.count / 2) + firstServer.rawValue) % 2
+    var server:Player {
+        Player(rawValue:(Int(history.count / 2) + firstServer.rawValue) % 2)!
     }
         
     func isMatchPointFor(player:Player) -> Bool {

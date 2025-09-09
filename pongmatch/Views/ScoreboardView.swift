@@ -23,11 +23,6 @@ struct ScoreboardView : View {
             }
             else{
                 // Header
-                /*HStack(spacing:24) {
-                 Text("Standard")
-                 Text("Friendly")
-                 Text("Best of 3")
-                 }*/
                 
                 HStack(spacing: 30) {
                     Text("Standard")
@@ -58,10 +53,8 @@ struct ScoreboardView : View {
                 // Score
                 HStack(alignment:.top, spacing: 30) {
                     ScoreboardScoreView(
-                        score:syncedScore.score.score.player1,
-                        isMatchPoint: syncedScore.score.isMatchPointFor(player:.player1),
-                        serving:syncedScore.score.server == 0,
-                        isSecondServe:syncedScore.score.isSecondServe
+                        score:syncedScore.score,
+                        player:.player1
                     ).onTapGesture {
                         withAnimation {
                             syncedScore.score.addScore(player: .player1)
@@ -72,10 +65,8 @@ struct ScoreboardView : View {
                     SetsScoreView(score: syncedScore.score)
                     
                     ScoreboardScoreView(
-                        score:syncedScore.score.score.player2,
-                        isMatchPoint: syncedScore.score.isMatchPointFor(player:.player2),
-                        serving:syncedScore.score.server == 1,
-                        isSecondServe:syncedScore.score.isSecondServe
+                        score:syncedScore.score,
+                        player:.player2
                     ).onTapGesture {
                         withAnimation {
                             syncedScore.score.addScore(player: .player2)
@@ -156,25 +147,23 @@ struct ScoreboardView : View {
 
 struct ScoreboardScoreView: View {
     
-    let score:Int
-    let isMatchPoint:Bool
-    let serving:Bool
-    let isSecondServe:Bool
+    let score:Score
+    let player:Score.Player
     
     var body: some View {
         VStack(alignment: .center){
-            Text("\(score)")
+            Text("\(score.score.forPlayer(player))")
                 .font(.system(size: 50, weight:.bold))
                 .frame(width:200, height:180)
                 .foregroundStyle(.white)
-                .background(isMatchPoint ? .green : .black)
+                .background(score.isMatchPointFor(player: player) ? .green : .black)
                 .cornerRadius(8)
-                .contentTransition(.numericText(value: Double(score)))
+                .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
             
-            if serving {
+            if score.server == player {
                 HStack {
                     Image(systemName: "circle.fill").font(.system(size: 8))
-                    if isSecondServe{
+                    if score.isSecondServe {
                         Image(systemName: "circle.fill").font(.system(size: 8))
                     }
                 }
