@@ -138,12 +138,14 @@ struct HomeView : View {
             }
         }
         .sheet(isPresented: $showScoreboardSelectionModal) {
-            ScoreboardSelectionView { winningCondition, player2 in
+            ScoreboardSelectionView { player2, winningCondition, rankingType in
                 showScoreboardSelectionModal = false
                 onStartScoreboard(Score(
                     player1: auth.user!,
                     player2: player2,
-                    winningCondition: winningCondition)
+                    winningCondition: winningCondition,
+                    rankingType: rankingType
+                    )
                 )
             }
             .presentationDetents([.medium, .large]) // Bottom sheet style

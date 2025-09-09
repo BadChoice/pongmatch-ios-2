@@ -33,14 +33,16 @@ class Score: Codable {
     
     var gamePoints:Int = 11
     var winningCondition:WinningCondition
+    var rankingType:RankingType
     
     private var firstServer:Player
     
     var history:[Player] = []
 
-    init(player1:User, player2:User, winningCondition:WinningCondition = .bestof3) {
+    init(player1:User, player2:User, winningCondition:WinningCondition = .bestof3, rankingType:RankingType = .friendly) {
         self.players = [player1, player2]
         self.winningCondition = winningCondition
+        self.rankingType = rankingType
         self.firstServer = Player(rawValue: .random(in: 0...1))!
     }
     

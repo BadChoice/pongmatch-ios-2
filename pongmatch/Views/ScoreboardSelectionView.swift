@@ -2,9 +2,10 @@ import SwiftUI
 
 struct ScoreboardSelectionView : View {
     
-    var onSelect: (WinningCondition, User) -> Void
+    var onSelect: (User, WinningCondition, RankingType) -> Void
 
     @State private var winCondition:WinningCondition = .bestof3
+    @State private var rankingType:RankingType = .friendly
     @State private var player2:User = User.unknown()
     
     @State private var searchingPlayer2 = false
@@ -22,6 +23,15 @@ struct ScoreboardSelectionView : View {
                 Picker("Win condition", selection: $winCondition) {
                     ForEach(WinningCondition.allCases, id:\.self) { condition in
                         Text(condition.rawValue.capitalized)
+                    }
+                }
+            }
+            HStack{
+                Text("Ranking Type").bold()
+                Spacer()
+                Picker("Ranking Type", selection: $rankingType) {
+                    ForEach(RankingType.allCases, id:\.self) { rankingType in
+                        Text(rankingType.rawValue.capitalized)
                     }
                 }
             }
@@ -46,7 +56,7 @@ struct ScoreboardSelectionView : View {
             
             Spacer()
             Button {
-                onSelect(winCondition, player2)
+                onSelect(player2, winCondition, rankingType)
             } label:{
                 Label("START", systemImage: "circle.fill")
                     .padding()
@@ -64,5 +74,5 @@ struct ScoreboardSelectionView : View {
 #Preview {
     let auth = AuthViewModel()
     auth.user = User.me()
-    return ScoreboardSelectionView { winningCondition, player2 in }.environmentObject(auth)
+    return ScoreboardSelectionView { player2, winningCondition, rankingType in }.environmentObject(auth)
 }

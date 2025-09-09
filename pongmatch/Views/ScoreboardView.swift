@@ -28,19 +28,14 @@ struct ScoreboardView : View {
                 // Header
                 Spacer().frame(height:20)
                 
-                HStack(spacing: 30) {
-                    Text("Standard")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                    
-                    Text("Friendly")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                    
-                    Text(syncedScore.score.winningCondition.description)
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+                HStack(spacing: 25) {
+                    /* Label("Standard", systemImage:"bird.fill") */                                                 
+                    Label(syncedScore.score.rankingType.description, systemImage: "trophy.fill")
+                    Label(syncedScore.score.winningCondition.description, systemImage: "medal.fill")
+                        
                 }
+                .font(.footnote)
+                .foregroundColor(.secondary)
                     
                 
                 HStack (spacing:40) {

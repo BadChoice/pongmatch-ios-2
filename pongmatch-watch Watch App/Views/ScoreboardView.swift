@@ -23,18 +23,15 @@ struct ScoreboardView: View {
                 VStack {
                     // HEADER
                     HStack() {
-                        Text("Standard ·")
+                        /*Text("Standard ·")
                             .font(.footnote)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.secondary)*/
                         
-                        Text("Friendly ·")
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                        
+                        Text(syncedScore.score.rankingType.description + " ·")
                         Text(syncedScore.score.winningCondition.description)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
                     }
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
                     
                     HStack(spacing: 20) {
                         ZStack {
