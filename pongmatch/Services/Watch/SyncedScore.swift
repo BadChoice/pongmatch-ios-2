@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import WatchConnectivity
+import SwiftUI
 
 class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
     static let shared = SyncedScore()
@@ -30,7 +31,9 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
     
     func replace(score:Score){
         DispatchQueue.main.async {
-            self.score = score
+            withAnimation {
+                self.score = score
+            }
         }
     }
     
@@ -48,7 +51,9 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
         guard let score = fromContext(applicationContext) else { return }
         
         DispatchQueue.main.async {
-            self.score = score
+            withAnimation {
+                self.score = score
+            }
         }
     }
     

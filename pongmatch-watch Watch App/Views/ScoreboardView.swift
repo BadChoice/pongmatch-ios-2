@@ -119,8 +119,10 @@ struct ScoreboardView: View {
                     }.alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
                         Button("Cancel", role: .cancel) {}
                         Button("Reset", role: .destructive) {
-                            syncedScore.score.reset()
-                            syncedScore.sync()
+                            withAnimation{
+                                syncedScore.score.reset()
+                                syncedScore.sync()
+                            }
                         }
                     }
                     Button("Finish"){

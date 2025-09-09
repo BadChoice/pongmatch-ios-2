@@ -8,6 +8,11 @@ struct ScoreboardView : View {
     @State var buttonHandler:ScoreButtonHandler?
     var newScore:Score?
     
+    @State var playersSwapped:Bool = false
+    
+    var player1: Score.Player { playersSwapped ? .player2 : .player1 }
+    var player2: Score.Player { playersSwapped ? .player1 : .player2 }
+    
     init(score:Score? = nil) {
         newScore = score
     }
@@ -39,13 +44,13 @@ struct ScoreboardView : View {
                     
                 
                 HStack (spacing:40) {
-                    UserView(user: syncedScore.score.player1).frame(width:200)
+                    UserView(user: syncedScore.score.player(player1)).frame(width:200)
                     HStack {
-                        Text("\(syncedScore.score.setsResult.player1)").bold()
+                        Text("\(syncedScore.score.setsResult(for:player1))").bold()
                         Text("-")
-                        Text("\(syncedScore.score.setsResult.player2)").bold()
+                        Text("\(syncedScore.score.setsResult(for:player2))").bold()
                     }
-                    UserView(user: syncedScore.score.player2).frame(width:200)
+                    UserView(user: syncedScore.score.player(player2)).frame(width:200)
                 }
                 
                 
@@ -53,27 +58,31 @@ struct ScoreboardView : View {
                 HStack(alignment:.top, spacing: 30) {
                     ScoreboardScoreView(
                         score:syncedScore.score,
-                        player:.player1
+                        player:player1
                     ).onTapGesture {
                         withAnimation {
-                            syncedScore.score.addScore(player: .player1)
+                            syncedScore.score.addScore(player: player1)
                             syncedScore.sync()
                         }
                     }
                     
-                    SetsScoreView(score: syncedScore.score)
+                    SetsScoreView(
+                        score: syncedScore.score,
+                        player1: player1,
+                        player2: player2
+                    )
                     
                     ScoreboardScoreView(
                         score:syncedScore.score,
-                        player:.player2
+                        player:player2
                     ).onTapGesture {
                         withAnimation {
-                            syncedScore.score.addScore(player: .player2)
+                            syncedScore.score.addScore(player: player2)
                             syncedScore.sync()
                         }
                     }
                 }.overlay(alignment:.bottom) {
-                    ScoreBoardActionsView(syncedScore: syncedScore)
+                    ScoreBoardActionsView(syncedScore: syncedScore, playersSwapped: $playersSwapped)
                         .offset(.init(width: 0, height: 30)
                     )
                 }
@@ -105,13 +114,13 @@ struct ScoreboardView : View {
                     syncedScore.score.undo()
                     syncedScore.sync()
                 }
-            }            
+            }
         }
         .background {
             KeyCommandHandler { _ in buttonHandler?.onButtonPressed() }
         }
         .onVolumeButtons(
-            up: { buttonHandler?.onButtonPressed() },
+            up:   { buttonHandler?.onButtonPressed() },
             down: { buttonHandler?.onButtonPressed() }
         )
     }
@@ -122,6 +131,7 @@ struct ScoreBoardActionsView:View {
     
     @ObservedObject var syncedScore:SyncedScore
     @State private var showResetConfirmation = false
+    @Binding var playersSwapped:Bool
     
     @Environment(\.dismiss) private var dismiss
     
@@ -131,6 +141,18 @@ struct ScoreBoardActionsView:View {
     var body: some View {
         GlassEffectContainer(spacing: 40.0) {
             HStack {
+                if syncedScore.score.history.count == 0 {
+                    Image(systemName: "arrow.left.arrow.right").onTapGesture{
+                        withAnimation {
+                            playersSwapped.toggle()
+                        }
+                    }
+                    .frame(width: 50.0, height: 50.0)
+                    .glassEffect()
+                    .glassEffectID("reset", in: namespace)
+                    .glassEffectUnion(id: "1", namespace: namespace)
+                }
+                
                 if syncedScore.score.history.count > 0 || syncedScore.score.sets.count > 0 {
                     Image(systemName: "trash").onTapGesture{
                         showResetConfirmation = true
@@ -225,14 +247,17 @@ struct ScoreboardScoreView: View {
 struct SetsScoreView : View {
     let score:Score
     
+    let player1:Score.Player
+    let player2:Score.Player
+    
     var body: some View {
         VStack {
             ForEach(score.sets.indices, id: \.self) { index in
                 let set = score.sets[index]
                 HStack {
-                    Text("\(set.player1)")
+                    Text("\(set.forPlayer(player1))")
                     Text("-")
-                    Text("\(set.player2)")
+                    Text("\(set.forPlayer(player2))")
                 }.foregroundStyle(.gray)
             }
         }

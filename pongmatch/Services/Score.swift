@@ -46,6 +46,11 @@ class Score: Codable {
     var player1:User { players.first! }
     var player2:User { players.last! }
     
+    
+    func player(_ player:Player) -> User {
+        player == .player1 ? player1 : player2
+    }
+    
     var server:Player {
         Player(rawValue:(Int(history.count / 2) + firstServer.rawValue) % 2)!
     }
@@ -82,6 +87,10 @@ class Score: Codable {
         return nil
     }
     
+    
+    func setsResult(for player:Player) -> Int {
+        player == .player1 ? setsResult.player1 : setsResult.player2
+    }
     /**
      The total result in sets
      */

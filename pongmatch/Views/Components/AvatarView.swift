@@ -33,6 +33,7 @@ struct AvatarView : View {
                     .clipShape(Circle())
             }
         }
+        .id(url) // ← this forces the view to refresh when url changes
         .task {
             Task.detached {
                 if let url = await Images.avatar(url), let data = try? Data(contentsOf: url) {
