@@ -53,74 +53,76 @@ struct HomeView : View {
     @State private var showScoreboardSelectionModal = false
 
     var body: some View {
-        VStack(spacing: 20) {
-            UserView(user: auth.user ?? User.unknown())
-            VStack(spacing:8) {
-                if let lastPlayed = auth.user?.last_match_date {
-                    Text("Last played \(lastPlayed.displayForHumans)")
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
+        ScrollView{
+            VStack(spacing: 20) {
+                UserView(user: auth.user ?? User.unknown())
+                VStack(spacing:8) {
+                    if let lastPlayed = auth.user?.last_match_date {
+                        Text("Last played \(lastPlayed.displayForHumans)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
+                    
+                    HStack{
+                        Text("WON").frame(width:80)
+                        Text("ELO").frame(width:80)
+                        Text("LOST").frame(width:80)
+                    }.foregroundStyle(.gray)
+                    HStack{
+                        Text("\(auth.user?.games_won ?? 0)").frame(width:80)
+                        Text("\(auth.user?.ranking ?? 0)").frame(width:80)
+                        Text("\(auth.user?.games_lost ?? 0)").frame(width:80)
+                    }.bold()
                 }
                 
-                HStack{
-                    Text("WON").frame(width:80)
-                    Text("ELO").frame(width:80)
-                    Text("LOST").frame(width:80)
-                }.foregroundStyle(.gray)
-                HStack{
-                    Text("\(auth.user?.games_won ?? 0)").frame(width:80)
-                    Text("\(auth.user?.ranking ?? 0)").frame(width:80)
-                    Text("\(auth.user?.games_lost ?? 0)").frame(width:80)
-                }.bold()
-            }
-            
-            
-            VStack(alignment: .leading){
-                Text("Next Games").font(.headline)
-            
-                ScrollView(.horizontal){
-                    HStack{
-                        CompactGameView(game: Game(
-                            id: 1,
-                            information: "A nice game",
-                            date: Date(),
-                            status: .planned,
-                            created_at: Date(),
-                            updated_at: nil
-                        ))
-                        CompactGameView(game: Game(
-                            id: 1,
-                            information: "A nice game",
-                            date: Date(),
-                            status: .planned,
-                            created_at: Date(),
-                            updated_at: nil
-                        ))
-                        CompactGameView(game: Game(
-                            id: 1,
-                            information: "A nice game",
-                            date: Date(),
-                            status: .planned,
-                            created_at: Date(),
-                            updated_at: nil
-                        ))
-                    }.padding(.bottom)
+                
+                VStack(alignment: .leading){
+                    Text("Next Games").font(.headline)
+                    
+                    ScrollView(.horizontal){
+                        HStack{
+                            CompactGameView(game: Game(
+                                id: 1,
+                                information: "A nice game",
+                                date: Date(),
+                                status: .planned,
+                                created_at: Date(),
+                                updated_at: nil
+                            ))
+                            CompactGameView(game: Game(
+                                id: 1,
+                                information: "A nice game",
+                                date: Date(),
+                                status: .planned,
+                                created_at: Date(),
+                                updated_at: nil
+                            ))
+                            CompactGameView(game: Game(
+                                id: 1,
+                                information: "A nice game",
+                                date: Date(),
+                                status: .planned,
+                                created_at: Date(),
+                                updated_at: nil
+                            ))
+                        }.padding(.bottom)
+                    }
+                }.padding()
+                
+                Spacer()
+                
+                Button("New Scoreboard"){
+                    showScoreboardSelectionModal = true
                 }
-            }.padding()
-            
-            Spacer()
-            
-            Button("New Scoreboard"){
-                showScoreboardSelectionModal = true
+                
+                if syncedScore.score != nil {
+                    NavigationLink("Continue scoreboard") {
+                        ScoreboardView()
+                    }
+                }            
+                
+                Spacer()
             }
-            
-            if syncedScore.score != nil {
-                NavigationLink("Continue scoreboard") {
-                    ScoreboardView()
-                }
-            }            
-            
-            Spacer()
         }
         .sheet(isPresented: $showScoreboardSelectionModal) {
             ScoreboardSelectionView { sets in 
@@ -156,14 +158,17 @@ struct ScoreboardSelectionView : View {
             }
             
             Spacer()
-            Button("START", systemImage: "circle.fill") {
+            Button {
                 onSelect(winCondition)
+            } label:{
+                Label("START", systemImage: "circle.fill")
+                    .padding()
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .background(.black)
+                    .clipShape(.capsule)
+                    .foregroundStyle(.white)
             }
-            .padding()
-            .frame(minWidth: 0, maxWidth: .infinity)
-            .background(.black)
-            .clipShape(.capsule)
-            .foregroundStyle(.white)
+
             
         }.padding()
     }

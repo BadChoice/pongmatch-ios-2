@@ -49,15 +49,15 @@ struct LoginView: View {
             } label: {
                 HStack {
                     if auth.isLoading { ProgressView().tint(.white) }
-                    Text(auth.isLoading ? "Signing In..." : "Login")
+                    Text(auth.isLoading ? "" : "Login")
                 }
+                .padding()
+                .frame(minWidth: 0, maxWidth: .infinity)
+                .background(.black)
+                .clipShape(.capsule)
+                .foregroundStyle(.white)
             }
             .disabled(auth.isLoading || email.isEmpty || password.isEmpty)
-            .padding()
-            .background(.black)
-            .cornerRadius(8)
-            .foregroundColor(.white)
-            
         }
     }
 }

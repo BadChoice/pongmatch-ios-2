@@ -5,6 +5,7 @@ struct ScoreboardView : View {
     
     @ObservedObject private var syncedScore = SyncedScore.shared
             
+    @State var buttonHandler:ScoreButtonHandler?
     var newScore:Score?
     
     init(score:Score? = nil) {
@@ -14,10 +15,13 @@ struct ScoreboardView : View {
     var body: some View {
         VStack(spacing: 14){
             if syncedScore.score == nil {
+                Spacer()
                 ProgressView()
+                Spacer()
             }
             else{
                 // Header
+                Spacer().frame(height:20)
                 
                 HStack(spacing: 30) {
                     Text("Standard")
@@ -68,18 +72,48 @@ struct ScoreboardView : View {
                             syncedScore.sync()
                         }
                     }
+                }.overlay(alignment:.bottom) {
+                    ScoreBoardActionsView(syncedScore: syncedScore)
+                        .offset(.init(width: 0, height: 30)
+                    )
                 }
-                
-                // Bottom bar
-                ScoreBoardActionsView(syncedScore: syncedScore)
+
             }
         }
+        .disableSwipeBack()
+        .forceOrientation(.landscapeRight)
+        .noSleep()        
+        .ignoresSafeArea(edges: .top) // <- extend under nav bar
         .task {
             if let newScore {
                 syncedScore.replace(score: newScore)
                 syncedScore.sync()
             }
+            
+            buttonHandler = ScoreButtonHandler {
+                withAnimation {
+                    syncedScore.score.addScore(player: .player1)
+                    syncedScore.sync()
+                }
+            } onPlayer2: {
+                withAnimation {
+                    syncedScore.score.addScore(player: .player2)
+                    syncedScore.sync()
+                }
+            } onUndo: {
+                withAnimation {
+                    syncedScore.score.undo()
+                    syncedScore.sync()
+                }
+            }            
         }
+        .background {
+            KeyCommandHandler { _ in buttonHandler?.onButtonPressed() }
+        }
+        .onVolumeButtons(
+            up: { buttonHandler?.onButtonPressed() },
+            down: { buttonHandler?.onButtonPressed() }
+        )
     }
 }
 
@@ -146,7 +180,7 @@ struct ScoreBoardActionsView:View {
                             syncedScore.sync()
                         }
                     }
-                    .frame(width: 50.0, height: 50.0)
+                    .frame(width: 70.0, height: 70.0)
                     .glassEffect()
                     .glassEffectID("next", in: namespace)
                     .glassEffectUnion(id: "2", namespace: namespace)
@@ -199,7 +233,7 @@ struct SetsScoreView : View {
                     Text("\(set.player1)")
                     Text("-")
                     Text("\(set.player2)")
-                }
+                }.foregroundStyle(.gray)
             }
         }
     }

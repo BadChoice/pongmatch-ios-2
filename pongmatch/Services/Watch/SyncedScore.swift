@@ -21,6 +21,7 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
     
     // Send to watch
     func sync() {
+        guard WCSession.isSupported() else { return }
         guard let data = try? JSONEncoder().encode(score) else {
             return
         }
@@ -34,6 +35,7 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
     }
     
     func clear(){
+        guard WCSession.isSupported() else { return }
         var context = WCSession.default.receivedApplicationContext
         context.removeValue(forKey: "score") // remove the key
         try? WCSession.default.updateApplicationContext(context)
