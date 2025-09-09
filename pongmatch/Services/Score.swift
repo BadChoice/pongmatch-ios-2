@@ -11,6 +11,16 @@ class Score: Codable {
     struct Result : Codable {
         var player1:Int = 0
         var player2:Int = 0
+        
+        func forPlayer(_ player:Player) -> Int {
+            player == .player1 ? player1 : player2
+        }
+        
+        func lead() -> Player?{
+            if player1 > player2 { return .player2 }
+            if player2 > player1 { return .player1 }
+            return nil
+        }
     }
     
     var started_at = Date()
