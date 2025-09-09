@@ -142,19 +142,25 @@ struct ScoreBoardActionsView:View {
         GlassEffectContainer(spacing: 40.0) {
             HStack {
                 if syncedScore.score.history.count == 0 {
-                    Image(systemName: "arrow.left.arrow.right").onTapGesture{
-                        withAnimation {
-                            playersSwapped.toggle()
-                        }
-                    }
+                    Image(systemName: "arrow.left.arrow.right")
                     .frame(width: 50.0, height: 50.0)
                     .glassEffect()
                     .glassEffectID("reset", in: namespace)
                     .glassEffectUnion(id: "1", namespace: namespace)
+                    .onTapGesture{
+                        withAnimation {
+                            playersSwapped.toggle()
+                        }
+                    }
                 }
                 
                 if syncedScore.score.history.count > 0 || syncedScore.score.sets.count > 0 {
-                    Image(systemName: "trash").onTapGesture{
+                    Image(systemName: "trash")
+                    .frame(width: 50.0, height: 50.0)
+                    .glassEffect()
+                    .glassEffectID("reset", in: namespace)
+                    .glassEffectUnion(id: "1", namespace: namespace)
+                    .onTapGesture{
                         showResetConfirmation = true
                     }
                     .alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
@@ -164,48 +170,47 @@ struct ScoreBoardActionsView:View {
                             syncedScore.sync()
                         }
                     }
-                    .frame(width: 50.0, height: 50.0)
-                    .glassEffect()
-                    .glassEffectID("reset", in: namespace)
-                    .glassEffectUnion(id: "1", namespace: namespace)
                     
                 }
                 
                 if syncedScore.score.history.count > 0 {
-                    Image(systemName: "arrow.uturn.backward").onTapGesture{
+                    Image(systemName: "arrow.uturn.backward")
+                    .frame(width: 50.0, height: 50.0)
+                    .glassEffect()
+                    .glassEffectID("undo", in: namespace)
+                    .glassEffectUnion(id: "1", namespace: namespace)
+                    .onTapGesture{
                         withAnimation {
                             syncedScore.score.undo()
                             syncedScore.sync()
                         }
                     }
-                    .frame(width: 50.0, height: 50.0)
-                    .glassEffect()
-                    .glassEffectID("undo", in: namespace)
-                    .glassEffectUnion(id: "1", namespace: namespace)
                     
                 }
                 
                 if syncedScore.score.matchWinner() != nil {
-                    Image(systemName: "flag.pattern.checkered").onTapGesture{
-                        dismiss()
-                    }
+                    Image(systemName: "flag.pattern.checkered")
                     .frame(width: 70.0, height: 70.0)
                     .glassEffect()
                     .glassEffectID("next", in: namespace)
                     .glassEffectUnion(id: "2", namespace: namespace)
+                    .onTapGesture{
+                        dismiss()
+                    }
                 }
                 
                 else if syncedScore.score.winner() != nil {
-                    Image(systemName: "play.fill").onTapGesture{
+                    Image(systemName: "play.fill")
+                    .frame(width: 70.0, height: 70.0)
+                    .glassEffect()
+                    .glassEffectID("next", in: namespace)
+                    .glassEffectUnion(id: "2", namespace: namespace)
+                    .onTapGesture{
                         withAnimation {
                             syncedScore.score.startNext()
                             syncedScore.sync()
                         }
                     }
-                    .frame(width: 70.0, height: 70.0)
-                    .glassEffect()
-                    .glassEffectID("next", in: namespace)
-                    .glassEffectUnion(id: "2", namespace: namespace)
                 }
             }
         }

@@ -3,14 +3,20 @@ import SwiftUI
 struct DashboardView : View {
     
     @EnvironmentObject private var auth: AuthViewModel
+    @EnvironmentObject private var nav: NavigationManager
+    
     @State var isLoadingUser:Bool = true
+    @State private var selectedScore: Score? 
         
     var body: some View {
         TabView {
             if isLoadingUser {
                 ProgressView()
             } else {
-                HomeView().tabItem {
+                HomeView { score in
+                    selectedScore = score
+                    nav.push("scoreboard")
+                }.tabItem {
                     Image(systemName: "house")      //.renderingMode(.template)
                 }
                 Community().tabItem {
@@ -35,7 +41,7 @@ struct DashboardView : View {
         .navigationDestination(for: String.self) { target in
             if target == "scoreboard"{
                 ScoreboardView(
-                    score: Score(
+                    score: selectedScore ??  Score(
                         player1: auth.user ?? User.unknown(),
                         player2: User.unknown(),
                     )
@@ -52,6 +58,8 @@ struct HomeView : View {
     @ObservedObject private var syncedScore = SyncedScore.shared
     @State private var showScoreboardSelectionModal = false
 
+    var onStartScoreboard: (Score) -> Void
+    
     var body: some View {
         ScrollView{
             VStack(spacing: 20) {
@@ -119,63 +127,30 @@ struct HomeView : View {
                     NavigationLink("Continue scoreboard") {
                         ScoreboardView()
                     }
-                }            
+                }
                 
                 Spacer()
             }
         }
         .sheet(isPresented: $showScoreboardSelectionModal) {
-            ScoreboardSelectionView { sets in 
+            ScoreboardSelectionView { winningCondition, player2 in
                 showScoreboardSelectionModal = false
-                nav.push("scoreboard")
+                onStartScoreboard(Score(
+                    player1: auth.user!,
+                    player2: player2,
+                    winningCondition: winningCondition)
+                )
             }
-            .presentationDetents([.fraction(0.33), .medium]) // Bottom sheet style
+            .presentationDetents([.medium, .large]) // Bottom sheet style
             .presentationDragIndicator(.visible)    // Show the small slider on top
         }
     }
 }
 
-struct ScoreboardSelectionView : View {
-    
-    var onSelect: (WinningCondition) -> Void
-
-    @State private var winCondition:WinningCondition = .bestof3
-
-    var body: some View {
-        VStack(alignment: .leading) {
-            Text("Scoreboard")
-                .padding(.top)
-                .font(.largeTitle)
-            
-            HStack{
-                Text("Win condition").bold()
-                Spacer()
-                Picker("Win condition", selection: $winCondition) {
-                    ForEach(WinningCondition.allCases, id:\.self) { condition in
-                        Text(condition.rawValue.capitalized)
-                    }
-                }
-            }
-            
-            Spacer()
-            Button {
-                onSelect(winCondition)
-            } label:{
-                Label("START", systemImage: "circle.fill")
-                    .padding()
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .background(.black)
-                    .clipShape(.capsule)
-                    .foregroundStyle(.white)
-            }
-
-            
-        }.padding()
-    }
-}
 
 #Preview {
     let auth = AuthViewModel()
     auth.user = User.me()
     return DashboardView().environmentObject(auth)
 }
+

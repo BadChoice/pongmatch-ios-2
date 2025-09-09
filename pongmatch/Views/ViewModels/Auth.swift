@@ -46,4 +46,8 @@ class AuthViewModel : ObservableObject {
     func fetchMe() async throws {
         user = try await api.me()
     }
+    
+    func searchFriends(_ text:String?) async throws -> [User] {
+        try await api.searchFriends(text)
+    }
 }

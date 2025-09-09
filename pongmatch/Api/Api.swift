@@ -50,22 +50,57 @@ class Api {
     }
     
     func me() async throws -> User {
+        struct UserResponse : Codable {
+            let data:User
+        }
         do{
-            return try await Self.call(method: .get, url: "me", headers: headers)
+            let userResponse:UserResponse = try await Self.call(method: .get, url: "me", headers: headers)
+            return userResponse.data
         } catch {
             print(error)
             throw error
         }
     }
     
-    var headers:[String:String] {
+    func friend(_ id:Int) async throws -> User {
+        struct UserResponse : Codable {
+            let data:User
+        }
+        do{
+            let userResponse:UserResponse = try await Self.call(method: .get, url: "friend/\(id)", headers: headers)
+            return userResponse.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func searchFriends(_ text:String?) async throws -> [User] {
+        guard let text, !text.isEmpty else { return[] }
+        
+        struct FriendsResponse : Codable {
+            let data:[User]
+        }
+        
+        do {
+            let userResponse:FriendsResponse = try await Self.call(method: .get, url: "friends/search/\(text)", headers: headers)
+            return userResponse.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    
+    // MARK: ------- API Helpers Itself
+    private var headers:[String:String] {
         [
             "Authorization" : "Bearer \(token)",
             "Accept": "application/json",
         ]
     }
     
-    static func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
+    private static func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
                 
         try await withCheckedThrowingContinuation { continuation in
             print("Calling API: \(method) \(url)")
@@ -85,7 +120,8 @@ class Api {
                     let response = try jsonDecoder().decode(T.self, from: data)
                     continuation.resume(returning: response)
                 } catch {
-                    do{
+                    print("API Error: \(error)")
+                    do {
                         let errorResponse = try jsonDecoder().decode(ErrorResponse.self, from: data)
                         continuation.resume(throwing: Errors.errorResponse(errorResponse))
                     } catch {

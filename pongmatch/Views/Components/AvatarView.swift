@@ -34,7 +34,7 @@ struct AvatarView : View {
             }
         }
         .id(url) // ← this forces the view to refresh when url changes
-        .task {
+        .task(id: url) { // ← also refetch if url changes
             Task.detached {
                 if let url = await Images.avatar(url), let data = try? Data(contentsOf: url) {
                     await MainActor.run {
