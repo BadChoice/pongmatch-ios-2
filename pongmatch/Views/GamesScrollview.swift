@@ -16,7 +16,7 @@ struct GamesScrollview : View {
                     ProgressView()
                 } else {
                     if games.isEmpty {
-                        ContentUnavailableView("No games", systemImage: "throphyfill")
+                        ContentUnavailableView("No games", systemImage: "throphy.fill")
                     }else{
                         HStack{
                             ForEach(games, id:\.id) { game in
