@@ -16,6 +16,7 @@ struct FinishGameView : View {
                 Label(score.rankingType.description, systemImage: "trophy.fill")
                 Label(score.winningCondition.description, systemImage: "medal.fill")
                     
+                
             }
             .font(.footnote)
             .foregroundColor(.secondary)

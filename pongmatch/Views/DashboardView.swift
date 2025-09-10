@@ -90,36 +90,8 @@ struct HomeView : View {
                 
                 
                 VStack(alignment: .leading){
-                    Text("Next Games").font(.headline)
-                    
-                    ScrollView(.horizontal){
-                        HStack{
-                            CompactGameView(game: Game(
-                                id: 1,
-                                information: "A nice game",
-                                date: Date(),
-                                status: .planned,
-                                created_at: Date(),
-                                updated_at: nil
-                            ))
-                            CompactGameView(game: Game(
-                                id: 1,
-                                information: "A nice game",
-                                date: Date(),
-                                status: .planned,
-                                created_at: Date(),
-                                updated_at: nil
-                            ))
-                            CompactGameView(game: Game(
-                                id: 1,
-                                information: "A nice game",
-                                date: Date(),
-                                status: .planned,
-                                created_at: Date(),
-                                updated_at: nil
-                            ))
-                        }.padding(.bottom)
-                    }
+                    Text("Next Games").font(.headline)                    
+                    GamesScrollview()
                 }.padding()
                 
                 Spacer()

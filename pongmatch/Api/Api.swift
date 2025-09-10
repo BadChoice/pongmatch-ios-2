@@ -91,6 +91,20 @@ class Api {
         }
     }
     
+    func games() async throws -> [Game] {
+        struct GamesResponse : Codable {
+            let data:[Game]
+        }
+        
+        do {
+            let gamesResponse:GamesResponse = try await Self.call(method: .get, url: "games/finished", headers: headers)
+            return gamesResponse.data.unique(\.id)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     
     // MARK: ------- API Helpers Itself
     private var headers:[String:String] {

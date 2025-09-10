@@ -9,12 +9,13 @@ struct CompactGameView: View {
                 HStack{
                     Image(systemName: "calendar")
                     Text(game.date.displayForHumans)
-                }.font(.caption2)
-                
-                if let info = game.information{
-                    Text(info).font(.subheadline)
-                }
+                }                
+                Text(game.information ?? "")
+
+                    .lineLimit(2, reservesSpace: true)
             }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
             
             HStack(alignment: .center) {
                 CompactUserView(user: User.me())
@@ -39,10 +40,10 @@ struct CompactGameView: View {
 #Preview {
     CompactGameView(game: Game(
         id: 1,
+        ranking_type: .competitive,
+        winning_condition: .bestof3,
         information: "A nice game",
         date: Date(),
         status: .planned,
-        created_at: Date(),
-        updated_at: nil
     ))
 }
