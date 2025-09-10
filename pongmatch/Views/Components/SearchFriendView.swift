@@ -15,14 +15,17 @@ struct SearchFriendView : View {
         NavigationStack {
             VStack {
                 if searchText.isEmpty {
-                    Spacer()
-                    Text("Search your friends")
-                    Spacer()
+                    ContentUnavailableView.search
                 } else {
-                    List {
+                    VStack(spacing: 10) {
                         ForEach(searchResults, id: \.id) { friend in
-                            UserView(user: friend)
-                                .padding(.vertical, 4)
+                            HStack{
+                                UserView(user: friend)
+                                Spacer()
+                            }
+                            .onTapGesture() {
+                                onSelected(friend)
+                            }
                         }
                     }
                 }
