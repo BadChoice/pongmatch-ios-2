@@ -14,4 +14,12 @@ struct Game : Codable {
     let finalResult:[Int]?
     //let created_at:Date
     //let updated_at:Date?
+    
+    func isFinished() -> Bool {
+        status == .finished
+    }
+    
+    func isUpcoming() -> Bool {
+        [GameStatus.planned, GameStatus.waitingOpponent].contains(status)
+    }
 }

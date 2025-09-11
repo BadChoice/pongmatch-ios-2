@@ -5,34 +5,22 @@ struct GamesScrollview : View {
     @EnvironmentObject private var auth: AuthViewModel
     @EnvironmentObject private var nav: NavigationManager
     
-    @State var games:[Game] = []
-    
-    @State var loading:Bool = false
+    let games:[Game]
     
     var body: some View {
         ScrollView(.horizontal){
-            Group {
-                if loading {
-                    ProgressView()
-                } else {
-                    if games.isEmpty {
-                        ContentUnavailableView("No games", systemImage: "trophy.fill")
-                    }else{
-                        HStack{
-                            ForEach(games, id:\.id) { game in
-                                CompactGameView(game: game)
-                            }
-                        }
+            if games.isEmpty {
+                Text("No games")
+                    .foregroundStyle(.secondary)
+                //ContentUnavailableView("No games", systemImage: "trophy.fill")
+            } else {
+                HStack{
+                    ForEach(games, id:\.id) { game in
+                        CompactGameView(game: game)
                     }
                 }
-            }.padding(.bottom)
-        }
-        .task {
-            loading = true
-            Task {
-                games = (try? await auth.api.games()) ?? []
-                loading = false
             }
         }
+        .padding(.bottom)
     }
 }

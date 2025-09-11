@@ -1,4 +1,5 @@
 import SwiftUI
+internal import RevoFoundation
 
 struct DashboardView : View {
     
@@ -6,7 +7,7 @@ struct DashboardView : View {
     @EnvironmentObject private var nav: NavigationManager
     
     @State var isLoadingUser:Bool = true
-    @State private var selectedScore: Score? 
+    @State private var selectedScore: Score?
         
     var body: some View {
         TabView {
@@ -62,7 +63,7 @@ struct HomeView : View {
     
     @ObservedObject private var syncedScore = SyncedScore.shared
     @State private var showScoreboardSelectionModal = false
-
+    
     var onStartScoreboard: (Score) -> Void
     
     var body: some View {
@@ -87,25 +88,28 @@ struct HomeView : View {
                         Text("\(auth.user?.games_lost ?? 0)").frame(width:80)
                     }.bold()
                 }
-                
-                
-                VStack(alignment: .leading){
-                    Text("Next Games").font(.headline)                    
-                    GamesScrollview()
-                }.padding()
-                
+
+                Divider()
                 Spacer()
                 
-                Button("New Scoreboard"){
-                    showScoreboardSelectionModal = true
-                }
-                
-                if syncedScore.score != nil {
-                    NavigationLink("Continue scoreboard") {
-                        ScoreboardView()
+                HStack {
+                    Button("Scoreboard", systemImage: "square.split.2x1"){
+                        showScoreboardSelectionModal = true
+                    }
+                    .padding()
+                    .foregroundStyle(.white)
+                    .bold()
+                    .glassEffect(.regular.tint(.black).interactive())
+                    
+                    if syncedScore.score != nil {
+                        NavigationLink("Continue scoreboard") {
+                            ScoreboardView()
+                        }
                     }
                 }
                 
+                GamesHomeView()
+
                 Spacer()
             }
         }
@@ -126,6 +130,43 @@ struct HomeView : View {
     }
 }
 
+struct GamesHomeView : View {
+    @EnvironmentObject private var auth: AuthViewModel
+    
+    @State var games: [Game] = []
+    @State var isLoadingGames = false
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            VStack(alignment: .leading){
+                Text("Current Games").font(.headline)
+                GamesScrollview(games:games.filter { $0.status == .ongoing
+                })
+            }.padding()
+            
+            VStack(alignment: .leading){
+                Text("Finished Games").font(.headline)
+                GamesScrollview(games:games.filter { $0.isFinished()
+                })
+            }.padding()
+            
+            VStack(alignment: .leading){
+                Text("Next Games").font(.headline)
+                GamesScrollview(games:games.filter { $0.isUpcoming()
+                })
+            }.padding()
+        }
+        .task {
+            isLoadingGames = true
+            Task {
+                games = ((try? await auth.api.games()) ?? [])
+                    .sort(by: \.date)
+                    .reversed()
+                isLoadingGames = false
+            }
+        }
+    }
+}
 
 #Preview {
     let auth = AuthViewModel()
