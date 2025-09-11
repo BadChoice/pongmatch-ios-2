@@ -132,7 +132,7 @@ struct HomeView : View {
             }
             .presentationDetents([.medium, .large]) // Bottom sheet style
             .presentationDragIndicator(.visible)    // Show the small slider on top
-        }
+        }     
     }
 }
 
@@ -166,7 +166,7 @@ struct GamesHomeView : View {
         .task {
             await loadGames()
         }
-        .onChange(of: refreshID) { _ in
+        .onChange(of: refreshID) {
             Task { await loadGames() }
         }
     }
