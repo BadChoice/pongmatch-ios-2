@@ -12,7 +12,7 @@ struct Community : View {
     
     var body: some View {
         NavigationStack{
-            if searchText.isEmpty {                
+            if friends.isEmpty {
                 Spacer()
                 ContentUnavailableView.search
                 Spacer()

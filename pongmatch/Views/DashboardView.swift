@@ -102,11 +102,12 @@ struct HomeView : View {
                     .glassEffect(.regular.tint(.black).interactive())
                     
                     if syncedScore.score != nil {
+                        Spacer().frame(width:20)
                         NavigationLink("Continue scoreboard") {
                             ScoreboardView()
                         }
                     }
-                }
+                }.padding(.horizontal)
                 
                 GamesHomeView()
 
@@ -171,6 +172,7 @@ struct GamesHomeView : View {
 #Preview {
     let auth = AuthViewModel()
     auth.user = User.me()
+    auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
     return DashboardView().environmentObject(auth)
 }
 
