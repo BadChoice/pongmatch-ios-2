@@ -1,4 +1,5 @@
 import SwiftUI
+import ConfettiSwiftUI
 
 @available(macOS 26.0, *)
 struct ScoreboardView : View {
@@ -10,6 +11,9 @@ struct ScoreboardView : View {
     
     @State var playersSwapped:Bool = false
     @State var showFinishGame:Bool = false
+    
+    @State private var confetti: Int = 0
+
     
     var player1: Score.Player { playersSwapped ? .player2 : .player1 }
     var player2: Score.Player { playersSwapped ? .player1 : .player2 }
@@ -59,6 +63,9 @@ struct ScoreboardView : View {
                         withAnimation {
                             syncedScore.score.addScore(player: player1)
                             syncedScore.sync()
+                            if syncedScore.score.winner() != nil {
+                                confetti += 1
+                            }
                         }
                     }
                     
@@ -75,6 +82,9 @@ struct ScoreboardView : View {
                         withAnimation {
                             syncedScore.score.addScore(player: player2)
                             syncedScore.sync()
+                            if syncedScore.score.winner() != nil {
+                                confetti += 1
+                            }
                         }
                     }
                 }.overlay(alignment:.bottom) {
@@ -85,10 +95,16 @@ struct ScoreboardView : View {
 
             }
         }
+        .confettiCannon(
+            trigger: $confetti,
+            num: 100,
+            openingAngle: Angle.degrees(30),
+            closingAngle: Angle.degrees(150)
+        )
         .disableSwipeBack()
         .forceOrientation(.landscapeRight)
         .noSleep()        
-        .ignoresSafeArea(edges: .top) // <- extend under nav bar
+        .ignoresSafeArea(edges: .top) // Extend under nav bar
         .task {
             if let newScore {
                 syncedScore.replace(score: newScore)
@@ -99,11 +115,17 @@ struct ScoreboardView : View {
                 withAnimation {
                     syncedScore.score.addScore(player: .player1)
                     syncedScore.sync()
+                    if syncedScore.score.winner() != nil {
+                        confetti += 1
+                    }
                 }
             } onPlayer2: {
                 withAnimation {
                     syncedScore.score.addScore(player: .player2)
                     syncedScore.sync()
+                    if syncedScore.score.winner() != nil {
+                        confetti += 1
+                    }
                 }
             } onUndo: {
                 withAnimation {
