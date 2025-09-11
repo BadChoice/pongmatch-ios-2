@@ -10,6 +10,8 @@ struct User : Codable {
     let games_lost:Int?
     let last_match_date:Date?
     
+    var global_ranking:Int?
+    
     var initials:String {
         name.components(separatedBy: .whitespacesAndNewlines) // split by spaces
                     .filter { !$0.isEmpty }                   // remove empty parts

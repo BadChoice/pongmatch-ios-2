@@ -60,11 +60,27 @@ class Api {
     
     func me() async throws -> User {
         struct UserResponse : Codable {
-            let data:User
+            var data:User
         }
         do{
-            let userResponse:UserResponse = try await Self.call(method: .get, url: "me", headers: headers)
+            var userResponse:UserResponse = try await Self.call(method: .get, url: "me", headers: headers)
+            if let ranking = try? await globalRankingPosition(userResponse.data) {
+                userResponse.data.global_ranking = ranking
+            }
             return userResponse.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func globalRankingPosition(_ user:User) async throws -> Int {
+        struct Response : Codable {
+            let global_ranking:Int
+        }
+        do{
+            let userResponse:Response = try await Self.call(method: .get, url: "users/\(user.id)/globalRankingPosition", headers: headers)
+            return userResponse.global_ranking
         } catch {
             print(error)
             throw error
