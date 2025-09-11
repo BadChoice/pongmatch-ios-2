@@ -8,6 +8,7 @@ struct DashboardView : View {
     
     @State var isLoadingUser:Bool = true
     @State private var selectedScore: Score?
+
         
     var body: some View {
         TabView {
@@ -63,6 +64,7 @@ struct HomeView : View {
     
     @ObservedObject private var syncedScore = SyncedScore.shared
     @State private var showScoreboardSelectionModal = false
+    @State private var refreshId = UUID()
     
     var onStartScoreboard: (Score) -> Void
     
@@ -109,13 +111,13 @@ struct HomeView : View {
                     }
                 }.padding(.horizontal)
                 
-                GamesHomeView()
+                GamesHomeView(refreshID: $refreshId)
 
                 Spacer()
             }
         }
         .refreshable {
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            refreshId = UUID()
         }
         .sheet(isPresented: $showScoreboardSelectionModal) {
             ScoreboardSelectionView { player2, winningCondition, rankingType in
@@ -136,7 +138,8 @@ struct HomeView : View {
 
 struct GamesHomeView : View {
     @EnvironmentObject private var auth: AuthViewModel
-    
+    @Binding var refreshID: UUID
+
     @State var games: [Game] = []
     @State var isLoadingGames = false
     
@@ -161,13 +164,20 @@ struct GamesHomeView : View {
             }.padding()
         }
         .task {
-            isLoadingGames = true
-            Task {
-                games = ((try? await auth.api.games()) ?? [])
-                    .sort(by: \.date)
-                    .reversed()
-                isLoadingGames = false
-            }
+            await loadGames()
+        }
+        .onChange(of: refreshID) { _ in
+            Task { await loadGames() }
+        }
+    }
+    
+    private func loadGames() async {
+        isLoadingGames = true
+        Task {
+            games = ((try? await auth.api.games()) ?? [])
+                .sort(by: \.date)
+                .reversed()
+            isLoadingGames = false
         }
     }
 }
