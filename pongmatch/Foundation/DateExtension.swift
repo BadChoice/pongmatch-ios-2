@@ -26,4 +26,10 @@ extension Date {
         
         return display
     }
+    
+    var toISOString: String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime] // Gives 2025-09-11T13:23:15Z or +00:00
+        return formatter.string(from: Date())
+    }
 }

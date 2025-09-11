@@ -52,6 +52,7 @@ struct FinishGameView : View {
             } label:{
                 Text("Continue")
             }
+            .disabled(uploadingGame)
             
             if score.player2.id != User.unknown().id {
                 Button {

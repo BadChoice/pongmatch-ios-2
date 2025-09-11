@@ -114,6 +114,9 @@ struct HomeView : View {
                 Spacer()
             }
         }
+        .refreshable {
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+        }
         .sheet(isPresented: $showScoreboardSelectionModal) {
             ScoreboardSelectionView { player2, winningCondition, rankingType in
                 showScoreboardSelectionModal = false

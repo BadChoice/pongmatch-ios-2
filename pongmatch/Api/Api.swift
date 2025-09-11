@@ -6,16 +6,25 @@ class Api {
     
     enum Errors : Error, CustomStringConvertible {
         case not200(_ status:Int)
+        case notAuthorized
+        case forbidden
+        case notFound
+        
         case cantDecodeResponse
         case emptyResponse
         case errorResponse(_ error:ErrorResponse)
+        case other(_ error:String)
         
         var description: String {
             switch self {
-            case .not200(let status): return "Invalid credentials or server error. \(status)"
-            case .cantDecodeResponse: return "Unexpected server response."
-            case .emptyResponse: return "No data received from server."
-            case .errorResponse(let error): return "Error response \(error.message)"
+            case .not200(let status): "Invalid credentials or server error. \(status)"
+            case .notAuthorized: "Not authorized."
+            case .forbidden: "Forbidden."
+            case .notFound: "Not found."
+            case .cantDecodeResponse: "Unexpected server response."
+            case .emptyResponse: "No data received from server."
+            case .errorResponse(let error): "Error response \(error.message)"
+            case .other(let error): "Other response \(error)"
             }
         }
     }
@@ -124,20 +133,31 @@ class Api {
         struct GameResponse : Codable {
             let data:Game
         }
+        
+        struct GameRequest : Codable {
+            let date:String
+            let information:String?
+            let status:String
+            let winning_condition:String
+            let ranking_type:String
+            let initial_score:String
+            let results:[[Int]]?
+            let player1_id:Int
+            let player2_id:Int
+        }
             
         do {
-            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", params:[
-                "date" : "\(game.date)",
-                "information" : game.information,
-                "status" : game.status.rawValue,
-                "winning_condition" : game.winning_condition.rawValue,
-                "ranking_type" : game.ranking_type.rawValue,
-                "initial_score" : InitialScore.standard.rawValue, //TODO
-                //"results" : nil, //game.results,
-                "player1_id" : game.player1.id,
-                "player2_id" : game.player2.id,
-            ], headers: headers)
-            
+            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", json:GameRequest(
+                date : game.date.toISOString,
+                information : game.information,
+                status : game.status.rawValue,
+                winning_condition : game.winning_condition.rawValue,
+                ranking_type : game.ranking_type.rawValue,
+                initial_score : InitialScore.standard.rawValue, //TODO
+                results : game.results,
+                player1_id : game.player1.id,
+                player2_id : game.player2.id,
+            ), headers: headers)            
             return gameResponse.data
             
         } catch {
@@ -160,30 +180,55 @@ class Api {
                 
         try await withCheckedThrowingContinuation { continuation in
             print("Calling API: \(method) \(url) \(params)")
+                        
             Http.call(method, url:Pongmatch.url + "api/" + url, params: params, headers:headers) { response in
-                
-                print("API Response: " + response.toString)
-                
-                guard response.statusCode >= 200 && response.statusCode < 300 else {
-                    return continuation.resume(throwing: Errors.not200(response.statusCode))
-                }
-                
-                guard let data = response.data else {
-                    return continuation.resume(throwing: Errors.emptyResponse)
-                }                
-                
                 do {
-                    let response = try jsonDecoder().decode(T.self, from: data)
-                    continuation.resume(returning: response)
+                    continuation.resume(returning: try parseResponse(response))
                 } catch {
-                    print("API Error: \(error)")
-                    do {
-                        let errorResponse = try jsonDecoder().decode(ErrorResponse.self, from: data)
-                        continuation.resume(throwing: Errors.errorResponse(errorResponse))
-                    } catch {
-                        return continuation.resume(throwing: error)
-                    }
+                    continuation.resume(throwing: error)
                 }
+            }
+        }
+    }
+    
+    private static func call<T:Codable,Z:Encodable>(method:HttpRequest.Method, url:String, json:Z, headers:[String:String] = [:]) async throws -> T {
+        try print("Calling API: \(method) \(url) \(json.jsonString())")
+        
+        let finalHeaders = headers.merging(["Content-Type": "application/json"]) { _, new in new }
+        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<T, Error>) -> Void in
+            Http.call(method, Pongmatch.url + "api/" + url, json: json, headers:finalHeaders) { (_ response:T?, _ error:String?)  in
+                guard let response else {
+                    return continuation.resume(throwing: Errors.other(error ?? "Unknown error"))
+                }
+                return continuation.resume(returning: response)
+            }
+        }
+    }
+    
+    private static func parseResponse<T:Decodable>(_ response:HttpResponse) throws -> T {
+        print("API Response: " + response.toString)
+        
+        guard response.statusCode >= 200 && response.statusCode < 300 else {
+            if response.statusCode == 401 { throw Errors.notAuthorized }
+            if response.statusCode == 403 { throw Errors.forbidden }
+            if response.statusCode == 404 { throw Errors.notFound }
+            throw Errors.not200(response.statusCode)
+        }
+        
+        guard let data = response.data else {
+            throw Errors.emptyResponse
+        }
+        
+        do {
+            let response = try jsonDecoder().decode(T.self, from: data)
+            return response
+        } catch {
+            print("API Error: \(error)")
+            do {
+                let errorResponse = try jsonDecoder().decode(ErrorResponse.self, from: data)
+                throw Errors.errorResponse(errorResponse)
+            } catch {
+                throw error
             }
         }
     }
