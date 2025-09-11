@@ -212,7 +212,21 @@ struct ScoreBoardActionsView:View {
                             syncedScore.sync()
                         }
                     }
-                    
+                }
+                
+                if syncedScore.score.redoHistory.count > 0 {
+                    Image(systemName: "arrow.uturn.forward")
+                    .frame(width: 50.0, height: 50.0)
+                    .contentShape(Rectangle())
+                    .glassEffect()
+                    .glassEffectID("redo", in: namespace)
+                    .glassEffectUnion(id: "1", namespace: namespace)
+                    .onTapGesture{
+                        withAnimation {
+                            syncedScore.score.redo()
+                            syncedScore.sync()
+                        }
+                    }
                 }
                 
                 if syncedScore.score.matchWinner() != nil {

@@ -99,6 +99,15 @@ struct ScoreboardView: View {
                             }
                         }
                         
+                        if syncedScore.score.redoHistory.count > 0 {
+                            Image(systemName: "arrow.uturn.forward").onTapGesture{
+                                withAnimation {
+                                    syncedScore.score.redo()
+                                    syncedScore.sync()
+                                }
+                            }
+                        }
+                        
                         if syncedScore.score.winner() != nil {
                             Image(systemName: "play.fill").onTapGesture {
                                 withAnimation {

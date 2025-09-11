@@ -38,6 +38,7 @@ class Score: Codable {
     private var firstServer:Player
     
     var history:[Player] = []
+    var redoHistory:[Player] = []
 
     init(player1:User, player2:User, winningCondition:WinningCondition = .bestof3, rankingType:RankingType = .friendly) {
         self.players = [player1, player2]
@@ -110,10 +111,13 @@ class Score: Codable {
         history.count % 2 == 1
     }
     
-    func addScore(player:Player){
+    func addScore(player:Player, clearRedo:Bool = false){
         guard winner() == nil else { return }
         
         history.append(player)
+        if clearRedo {
+            redoHistory = []
+        }
         
         if player == .player1 {
             score.player1 += 1
@@ -140,17 +144,25 @@ class Score: Codable {
         
     func undo(){
         guard history.count > 0 else { return }
-        if history.popLast() == .player1 {
+        redoHistory.append(history.popLast()!)
+        if redoHistory.last == .player1 {
             score.player1 -= 1
         } else {
             score.player2 -= 1
         }
     }
     
+    func redo(){
+        guard redoHistory.count > 0 else { return }
+        let player = redoHistory.popLast()!
+        addScore(player: player, clearRedo: false)
+    }
+    
     func reset(){
         sets = []
         score = Result()
         history = []
+        redoHistory = []
         firstServer = Player(rawValue: Int.random(in: 0...1))!
     }
 }
