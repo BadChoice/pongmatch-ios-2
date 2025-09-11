@@ -147,6 +147,7 @@ struct ScoreBoardActionsView:View {
                 if syncedScore.score.history.count == 0 {
                     Image(systemName: "arrow.left.arrow.right")
                     .frame(width: 50.0, height: 50.0)
+                    .contentShape(Rectangle())
                     .glassEffect()
                     .glassEffectID("reset", in: namespace)
                     .glassEffectUnion(id: "1", namespace: namespace)
@@ -160,6 +161,7 @@ struct ScoreBoardActionsView:View {
                 if syncedScore.score.history.count > 0 || syncedScore.score.sets.count > 0 {
                     Image(systemName: "trash")
                     .frame(width: 50.0, height: 50.0)
+                    .contentShape(Rectangle())
                     .glassEffect()
                     .glassEffectID("reset", in: namespace)
                     .glassEffectUnion(id: "1", namespace: namespace)
@@ -179,6 +181,7 @@ struct ScoreBoardActionsView:View {
                 if syncedScore.score.history.count > 0 {
                     Image(systemName: "arrow.uturn.backward")
                     .frame(width: 50.0, height: 50.0)
+                    .contentShape(Rectangle())
                     .glassEffect()
                     .glassEffectID("undo", in: namespace)
                     .glassEffectUnion(id: "1", namespace: namespace)
@@ -194,6 +197,7 @@ struct ScoreBoardActionsView:View {
                 if syncedScore.score.matchWinner() != nil {
                     Image(systemName: "flag.pattern.checkered")
                     .frame(width: 70.0, height: 70.0)
+                    .contentShape(Rectangle())
                     .glassEffect()
                     .glassEffectID("next", in: namespace)
                     .glassEffectUnion(id: "2", namespace: namespace)
@@ -206,6 +210,7 @@ struct ScoreBoardActionsView:View {
                 else if syncedScore.score.winner() != nil {
                     Image(systemName: "play.fill")
                     .frame(width: 70.0, height: 70.0)
+                    .contentShape(Rectangle())
                     .glassEffect()
                     .glassEffectID("next", in: namespace)
                     .glassEffectUnion(id: "2", namespace: namespace)
