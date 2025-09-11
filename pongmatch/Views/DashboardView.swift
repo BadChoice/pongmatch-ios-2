@@ -98,7 +98,6 @@ struct HomeView : View {
                 }
 
                 Divider()
-                Spacer()
                 
                 HStack {
                     Button("Scoreboard", systemImage: "square.split.2x1"){
@@ -115,7 +114,9 @@ struct HomeView : View {
                             ScoreboardView()
                         }
                     }
-                }.padding(.horizontal)
+                }.padding()
+                
+                Divider()
                 
                 GamesHomeView(refreshID: $refreshId)
 

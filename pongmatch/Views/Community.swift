@@ -12,22 +12,22 @@ struct Community : View {
     
     var body: some View {
         NavigationStack{
-            if friends.isEmpty {
-                Spacer()
-                ContentUnavailableView.search
-                Spacer()
-            }
-            List{
-                ForEach(friends.sort(by: \.ranking).reversed(), id: \.id) { friend in
-                    UserView(user: friend)
+            let users = searchText.isEmpty ? friends : searchResults
+            List {
+                if users.isEmpty {
+                    ContentUnavailableView.search
+                } else {
+                    ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
+                        UserView(user: friend)
+                    }
                 }
             }
+        
         }
         .searchable(text: $searchText)
         .task {
             Task {
                 friends = ((try? await auth.friends()) ?? [])
-                        
             }
         }
         .onChange(of: searchText) { _, newValue in
