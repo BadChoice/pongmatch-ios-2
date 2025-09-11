@@ -9,6 +9,8 @@ struct CompactGameView: View {
                 HStack{
                     Image(systemName: "calendar")
                     Text(game.date.displayForHumans)
+                    Spacer()
+                    Label(game.status.description, systemImage: game.status.icon)
                 }
             }
             .font(.footnote)
@@ -30,8 +32,14 @@ struct CompactGameView: View {
                 CompactUserView(user: User.me())
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
-                Text("VS")
-                    .font(.largeTitle)
+                Group {
+                    if let finalResult = game.finalResult {
+                        Text("\(finalResult[0]) - \(finalResult[0])")
+                    } else {
+                        Text("VS")
+                        
+                    }
+                }.font(.largeTitle)
                     .bold()
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
@@ -52,7 +60,7 @@ struct CompactGameView: View {
         .padding()
         .background(.gray.opacity(0.1))
         .cornerRadius(8)
-        .frame(width:250)
+        .frame(width:280)
     }
 }
 
@@ -64,6 +72,7 @@ struct CompactGameView: View {
         information: "A nice game",
         date: Date(),
         status: .planned,
-        results:[["11","8"], ["7","11"], ["11","5"]]
+        results:[[11,8], [7,11], [11,5]],
+        finalResult: [1, 2]
     ))
 }

@@ -10,7 +10,8 @@ struct Game : Codable {
     let information:String?
     let date:Date
     let status:GameStatus
-    let results:[[String]]?
+    let results:[[Int]]?
+    let finalResult:[Int]?
     //let created_at:Date
     //let updated_at:Date?
 }
