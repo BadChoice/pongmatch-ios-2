@@ -92,7 +92,6 @@ struct ScoreboardView : View {
                         .offset(.init(width: 0, height: 30)
                     )
                 }
-
             }
         }
         .confettiCannon(

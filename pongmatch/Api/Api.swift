@@ -75,7 +75,22 @@ class Api {
         }
     }
     
-    func searchFriends(_ text:String?) async throws -> [User] {
+    func friends() async throws -> [User] {
+        
+        struct FriendsResponse : Codable {
+            let data:[User]
+        }
+        
+        do {
+            let userResponse:FriendsResponse = try await Self.call(method: .get, url: "friends", headers: headers)
+            return userResponse.data.unique(\.id)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func friends(search text:String?) async throws -> [User] {
         guard let text, !text.isEmpty else { return[] }
         
         struct FriendsResponse : Codable {

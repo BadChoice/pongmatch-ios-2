@@ -1,40 +1,47 @@
 import SwiftUI
 
-struct AvatarView : View {
+struct AvatarView: View {
     
-    @State var image:UIImage?
-    let url:String?
-    let name:String?
+    @State private var image: UIImage?
+    let url: String?
+    let name: String?
     
-    init(user:User){
+    init(user: User) {
         self.url = user.avatar
         self.name = user.initials
     }
     
-    init(url:String?, name:String?){
+    init(url: String?, name: String?) {
         self.url = url
         self.name = name
     }
     
     var body: some View {
-        VStack {
+        GeometryReader { geo in
             if let image {
                 Image(uiImage: image)
                     .resizable()
-                    .scaledToFit()
-                    //.frame(width: 100, height: 100)
+                    .scaledToFill()
+                    .frame(width: geo.size.width, height: geo.size.height)
                     .clipShape(Circle())
             } else {
-                Text(name ?? "")
-                    .scaledToFit()
-                    .font(.largeTitle)
-                    //.frame(width: 100, height: 100)
-                    .background(.gray)
-                    .clipShape(Circle())
+                ZStack {
+                    Circle()
+                        .fill(.gray)
+                    if let name {
+                        Text(name.prefix(2).uppercased())
+                            .font(.system(size: geo.size.width * 0.4, weight: .bold)) // 👈 scales font to fit
+                            .minimumScaleFactor(0.5)
+                            .foregroundColor(.white)
+                            .lineLimit(1)
+                    }
+                }
+                .frame(width: geo.size.width, height: geo.size.height)
             }
         }
-        .id(url) // ← this forces the view to refresh when url changes
-        .task(id: url) { // ← also refetch if url changes
+        .aspectRatio(1, contentMode: .fit) // Ensures it stays square
+        .id(url)
+        .task(id: url) {
             Task.detached {
                 if let url = await Images.avatar(url), let downloadedImage = await Images.download(url) {
                     await MainActor.run {

@@ -1,4 +1,5 @@
 import SwiftUI
+internal import RevoFoundation
 
 struct Community : View {
     
@@ -7,25 +8,32 @@ struct Community : View {
     @State private var searchText: String = ""
     @State private var searchResults: [User] = []
     
+    @State var friends:[User] = []
+    
     var body: some View {
         NavigationStack{
-            if searchText.isEmpty {
+            if searchText.isEmpty {                
                 Spacer()
-                Text("Search your friends")
+                ContentUnavailableView.search
                 Spacer()
             }
             List{
-                ForEach(searchResults, id: \.id) { friend in
+                ForEach(friends.sort(by: \.ranking).reversed(), id: \.id) { friend in
                     UserView(user: friend)
-                    Spacer()
                 }
             }
         }
         .searchable(text: $searchText)
+        .task {
+            Task {
+                friends = ((try? await auth.friends()) ?? [])
+                        
+            }
+        }
         .onChange(of: searchText) { _, newValue in
             Task {
                 try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s delay
-                searchResults = ((try? await auth.searchFriends(newValue)) ?? []) +  []
+                searchResults = ((try? await auth.searchFriends(newValue)) ?? [])
             }
         }
     }
