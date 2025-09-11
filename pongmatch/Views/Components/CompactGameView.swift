@@ -29,7 +29,7 @@ struct CompactGameView: View {
             Divider()
             
             HStack(alignment: .center) {
-                CompactUserView(user: User.me())
+                CompactUserView(user: game.player1)
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
                 Group {
@@ -43,7 +43,7 @@ struct CompactGameView: View {
                     .bold()
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
-                CompactUserView(user: User.unknown())
+                CompactUserView(user: game.player2)
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
             
@@ -65,14 +65,5 @@ struct CompactGameView: View {
 }
 
 #Preview {
-    CompactGameView(game: Game(
-        id: 1,
-        ranking_type: .competitive,
-        winning_condition: .bestof3,
-        information: "A nice game",
-        date: Date(),
-        status: .planned,
-        results:[[11,8], [7,11], [11,5]],
-        finalResult: [1, 2]
-    ))
+    CompactGameView(game: Game.fake())
 }

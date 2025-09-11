@@ -120,6 +120,33 @@ class Api {
         }
     }
     
+    func store(game:Game) async throws -> Game {
+        struct GameResponse : Codable {
+            let data:Game
+        }
+            
+        do {
+            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", params:[
+                "date" : "\(game.date)",
+                "information" : game.information,
+                "status" : game.status.rawValue,
+                "winning_condition" : game.winning_condition.rawValue,
+                "ranking_type" : game.ranking_type.rawValue,
+                "initial_score" : InitialScore.standard.rawValue, //TODO
+                //"results" : nil, //game.results,
+                "player1_id" : game.player1.id,
+                "player2_id" : game.player2.id,
+            ], headers: headers)
+            
+            return gameResponse.data
+            
+        } catch {
+            print(error)
+            throw error
+        }
+
+    }
+    
     
     // MARK: ------- API Helpers Itself
     private var headers:[String:String] {
@@ -132,7 +159,7 @@ class Api {
     private static func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
                 
         try await withCheckedThrowingContinuation { continuation in
-            print("Calling API: \(method) \(url)")
+            print("Calling API: \(method) \(url) \(params)")
             Http.call(method, url:Pongmatch.url + "api/" + url, params: params, headers:headers) { response in
                 
                 print("API Response: " + response.toString)

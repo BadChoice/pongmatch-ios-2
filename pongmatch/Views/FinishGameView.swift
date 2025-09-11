@@ -2,9 +2,12 @@ import SwiftUI
 
 struct FinishGameView : View {
 
+    @EnvironmentObject private var auth: AuthViewModel
     @Environment(\.dismiss) private var dismiss
-    let score:Score
+    @State var uploadingGame = false
     
+    let score:Score
+        
     var body: some View {
         VStack(spacing:20) {
             
@@ -48,29 +51,38 @@ struct FinishGameView : View {
                 dismiss()
             } label:{
                 Text("Continue")
-                    //.frame(minWidth: 0, maxWidth: .infinity)
-                    //.padding()
-                    //.background(.black)
-                    //.foregroundStyle(.white)
-                    //.clipShape(.capsule)
-                    //.bold()
             }
             
-            Button{
-                dismiss()
-            } label:{
-                Label("Upload game", systemImage: "square.and.arrow.up")
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding()
-                    .background(.black)
-                    .foregroundStyle(.white)
-                    .clipShape(.capsule)
-                    .bold()
+            if score.player2.id != User.unknown().id {
+                Button {
+                    uploadingGame = true
+                    Task {
+                        do {
+                            let _ = try await auth.api.store(game: Game.fromScore(score))
+                            await MainActor.run {
+                                dismiss()
+                            }
+                        } catch {
+                            await MainActor.run { uploadingGame = false }
+                        }
+                    }
+                    
+                } label:{
+                    if uploadingGame {
+                        ProgressView()
+                    }else{
+                        Label("Upload game", systemImage: "square.and.arrow.up")
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .padding()
+                            .background(.black)
+                            .foregroundStyle(.white)
+                            .clipShape(.capsule)
+                            .bold()
+                    }
+                }.disabled(uploadingGame)
             }
         }.padding()
     }
-    
-    
 }
 
 #Preview {
