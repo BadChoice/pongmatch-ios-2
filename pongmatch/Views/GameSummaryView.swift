@@ -3,6 +3,8 @@ import SwiftUI
 struct GameSummaryView : View {
     let game:Game
     
+    @Namespace private var namespace
+    
     var body: some View {
         VStack {
                  
@@ -36,9 +38,11 @@ struct GameSummaryView : View {
             HStack {
                 NavigationLink {
                     FriendView(user: game.player1)
+                        .navigationTransition(.zoom(sourceID: "zoom_user_\(game.player1.id)", in: namespace))
                 } label: {
                     CompactUserView(user: game.player1, winner:game.winner()?.id == game.player1.id)
                         .frame(minWidth: 0, maxWidth: .infinity)
+                        .matchedTransitionSource(id: "zoom_user_\(game.player1.id)", in: namespace)
                 }
                 if let finalResult = game.finalResult{
                     HStack {
@@ -48,9 +52,11 @@ struct GameSummaryView : View {
                 }
                 NavigationLink {
                     FriendView(user: game.player2)
+                        .navigationTransition(.zoom(sourceID: "zoom_user_\(game.player2.id)", in: namespace))
                 } label: {
                     CompactUserView(user: game.player2, winner:game.winner()?.id == game.player2.id)
                         .frame(minWidth: 0, maxWidth: .infinity)
+                        .matchedTransitionSource(id: "zoom_user_\(game.player2.id)", in: namespace)
                 }
             }
             .foregroundStyle(.black)

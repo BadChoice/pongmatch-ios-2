@@ -19,20 +19,28 @@ struct DashboardView : View {
                     selectedScore = score
                     nav.push("scoreboard")
                 }.tabItem {
-                    Image(systemName: "house")      //.renderingMode(.template)
+                    Image(systemName: "house")
                 }
                 Community().tabItem {
-                    Image(systemName: "person.3")   //.renderingMode(.template)
+                    Image(systemName: "person.3")
                 }
             }
         }
         .toolbar {
             Menu {
-                Button("Account", systemImage: "person.fill") { }
-                Button("Add Friend", systemImage: "person.badge.plus") { }
-                Button("Feedback", systemImage: "bubble") { }
+                Button("Account", systemImage: "person.fill") {
+                    
+                }
+                Button("Add Friend", systemImage: "person.badge.plus") {
+                    
+                }
+                Button("Feedback", systemImage: "bubble") {
+                    
+                }
                 Divider()
-                Button("Logout", systemImage: "arrow.right.square") { }
+                Button("Logout", systemImage: "arrow.right.square") {
+                    auth.logout()
+                }
             }
             label : {
                 Image(systemName: "ellipsis")

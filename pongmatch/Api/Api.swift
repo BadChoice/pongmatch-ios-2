@@ -78,9 +78,23 @@ class Api {
         struct Response : Codable {
             let global_ranking:Int
         }
-        do{
+        do {
             let userResponse:Response = try await Self.call(method: .get, url: "users/\(user.id)/globalRankingPosition", headers: headers)
             return userResponse.global_ranking
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func eloHistory(_ user:User) async throws -> [Elo] {
+        
+        struct Response : Codable {
+            let elo_history:[Elo]
+        }
+        do{
+            let userResponse:Response = try await Self.call(method: .get, url: "users/\(user.id)/eloHistory", headers: headers)
+            return userResponse.elo_history
         } catch {
             print(error)
             throw error

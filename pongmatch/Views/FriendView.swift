@@ -25,7 +25,7 @@ struct FriendView : View {
                     .bold()
                     .padding(.horizontal)
                 
-                EloHistory()
+                EloHistory(user:user)
                     .frame(height: 120)
                     .padding()
             }
@@ -58,6 +58,12 @@ struct FriendView : View {
 }
 
 struct EloHistory : View {
+    @EnvironmentObject private var auth: AuthViewModel
+    @State private var selectedEntry: EloEntry?
+
+    
+    let user:User
+    
     struct EloEntry: Identifiable {
         let id = UUID()
         let date: Date
@@ -65,7 +71,7 @@ struct EloHistory : View {
     }
     
     // Placeholder ELO history
-    let eloHistory: [EloEntry] = [
+    @State var eloHistory: [EloEntry]? = [
         EloEntry(date: .now.addingTimeInterval(-86400 * 5), elo: 1500),
         EloEntry(date: .now.addingTimeInterval(-86400 * 4), elo: 1430),
         EloEntry(date: .now.addingTimeInterval(-86400 * 3), elo: 1480),
@@ -75,29 +81,46 @@ struct EloHistory : View {
     ]
     
     var body: some View {
-        Chart {
-            ForEach(eloHistory) { entry in
-                LineMark(
-                    x: .value("Date", entry.date),
-                    y: .value("ELO", entry.elo)
-                )
-                .interpolationMethod(.catmullRom)
-                .foregroundStyle(Color.blue)
-                PointMark(
-                    x: .value("Date", entry.date),
-                    y: .value("ELO", entry.elo)
-                )
-                .foregroundStyle(Color.blue.opacity(0.7))
-
+        Group{
+            if let eloHistory = eloHistory, !eloHistory.isEmpty {
+                Chart {
+                    ForEach(eloHistory) { entry in
+                        LineMark(
+                            x: .value("Date", entry.date),
+                            y: .value("ELO", entry.elo)
+                        )
+                        .interpolationMethod(.catmullRom)
+                        .foregroundStyle(Color.blue)
+                        PointMark(
+                            x: .value("Date", entry.date),
+                            y: .value("ELO", entry.elo)
+                        )
+                        .foregroundStyle(Color.blue.opacity(0.7))
+                        .accessibilityLabel("\(entry.elo)")
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks(position: .leading)
+                }
+                .chartXAxis(.hidden)
+            } else {
+                Text("No ELO history available")
             }
         }
-        .chartYAxis {
-            AxisMarks(position: .leading)
+        .task {
+            Task {
+                eloHistory = (try await auth.api.eloHistory(user).map {
+                    EloEntry(date: $0.date, elo: $0.elo)
+                })
+            }
         }
-        .chartXAxis(.hidden)
     }
 }
 
 #Preview {
-    FriendView(user: User.me())
+    let auth = AuthViewModel()
+    auth.user = User.me()
+    auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
+    return FriendView(user: User.me())
+        .environmentObject(auth)
 }
