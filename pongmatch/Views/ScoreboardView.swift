@@ -141,7 +141,7 @@ struct ScoreboardView : View {
             down: { buttonHandler?.onButtonPressed() }
         )
         .sheet(isPresented: $showFinishGame){
-            FinishGameView(score:syncedScore.score)
+            FinishGameView(game:Game.fromScore(syncedScore.score))
                 .presentationDetents([.medium, .large]) // Bottom sheet style
                 .presentationDragIndicator(.visible)    // Show the small slider on top
         }

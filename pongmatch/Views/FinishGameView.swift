@@ -6,44 +6,39 @@ struct FinishGameView : View {
     @Environment(\.dismiss) private var dismiss
     @State var uploadingGame = false
     
-    let score:Score
-        
+    let game:Game
+            
     var body: some View {
         VStack(spacing:20) {
-            
-            
+                        
             Label("GAME FINISHED", systemImage: "flag.pattern.checkered").font(.largeTitle)
             
             HStack(spacing: 25) {
                 /* Label("Standard", systemImage:"bird.fill") */
-                Label(score.rankingType.description, systemImage: "trophy.fill")
-                Label(score.winningCondition.description, systemImage: "medal.fill")
+                Label(game.ranking_type.description, systemImage: "trophy.fill")
+                Label(game.winning_condition.description, systemImage: "medal.fill")
             }
             .font(.footnote)
             .foregroundColor(.secondary)
             
             HStack {
-                CompactUserView(user: score.player1, winner:score.winner()?.id == score.player1.id)
+                CompactUserView(user: game.player1, winner:game.winner()?.id == game.player1.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
                 HStack{
-                    Text("\(score.setsResult(for: .player1))")
+                    Text("\(game.finalResult?[0] ?? 0)")
                     Text("-")
-                    Text("\(score.setsResult(for: .player2))")
+                    Text("\(game.finalResult?[1] ?? 0)")
                 }.frame(minWidth: 0, maxWidth: .infinity)
                     .font(.largeTitle.bold())
                 
                 
-                CompactUserView(user: score.player2, winner:score.winner()?.id == score.player2.id)
+                CompactUserView(user: game.player2, winner:game.winner()?.id == game.player2.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
             
             Spacer()
             
-            SetsScoreView (
-                score: score,
-                player1: .player1,
-                player2: .player2
-            )
+            SetsScoreView2 (game:game)
             
             Spacer()
             
@@ -54,12 +49,12 @@ struct FinishGameView : View {
             }
             .disabled(uploadingGame)
             
-            if score.player2.id != User.unknown().id {
+            if game.player2.id != User.unknown().id {
                 Button {
                     uploadingGame = true
                     Task {
                         do {
-                            let _ = try await auth.api.store(game: Game.fromScore(score))
+                            let _ = try await auth.api.store(game: game)
                             await MainActor.run {
                                 dismiss()
                             }
@@ -87,10 +82,8 @@ struct FinishGameView : View {
 }
 
 #Preview {
-    FinishGameView(score: Score(
+    FinishGameView(game: Game.fromScore(Score(
         player1: User.me(),
         player2: User.unknown()
-    ))
+    )))
 }
-
-

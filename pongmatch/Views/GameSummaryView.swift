@@ -67,7 +67,7 @@ struct GameSummaryView : View {
             if game.isFinished() {
                 VStack(alignment: .leading) {
                     Text("Sets").font(.title2)
-                    ResultsTableView(game:game)
+                    SetsScoreView2(game:game)
                 }
                 .padding()
             }
@@ -93,10 +93,12 @@ struct GameSummaryView : View {
     }
 }
 
-struct ResultsTableView: View {
+struct SetsScoreView2: View {
     let game:Game
     
-    let results = [[11, 3, 11], [2, 11, 4], [11, 8, 11]]
+    var results:[[Int]] {
+        game.results ?? []
+    }
     
     var body: some View {
         VStack(alignment: .leading) {
