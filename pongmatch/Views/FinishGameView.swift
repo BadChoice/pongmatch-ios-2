@@ -11,7 +11,9 @@ struct FinishGameView : View {
     var body: some View {
         VStack(spacing:20) {
                         
-            Label("GAME FINISHED", systemImage: "flag.pattern.checkered").font(.largeTitle)
+            Label("GAME FINISHED", systemImage: "flag.pattern.checkered")
+                .font(.largeTitle)
+                .padding(.top, 4)
             
             HStack(spacing: 25) {
                 /* Label("Standard", systemImage:"bird.fill") */
