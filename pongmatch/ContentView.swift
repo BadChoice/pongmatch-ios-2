@@ -8,6 +8,13 @@
 import SwiftUI
 import SwiftData
 
+
+/**
+ [ ] Push notifications
+ [ ] Scoreboard without login in
+ [ ] Follow / Unfollow users
+ */
+
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     

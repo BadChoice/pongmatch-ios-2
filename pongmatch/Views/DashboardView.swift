@@ -124,8 +124,8 @@ struct HomeView : View {
                     )
                 )
             }
-            .presentationDetents([.medium, .large]) // Bottom sheet style
-            .presentationDragIndicator(.visible)    // Show the small slider on top
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }     
     }
 }

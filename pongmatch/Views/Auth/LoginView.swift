@@ -12,11 +12,19 @@ struct LoginView: View {
 
     @State private var email:String = ""
     @State private var password:String = ""
+    @State private var registering: Bool = false
     
     var body: some View {
         VStack {
+            Spacer().frame(height: 80)
             
             Image("logo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 60)
+            
+            
+            Spacer().frame(height: 60)
             
             TextField("Email", text: $email)
                 .textInputAutocapitalization(.never)
@@ -35,7 +43,6 @@ struct LoginView: View {
                 .cornerRadius(8)
                 .padding(.horizontal)
                 .textContentType(.password)
-                
                 .submitLabel(.done)
                 
             Button {
@@ -56,8 +63,21 @@ struct LoginView: View {
                 .background(.black)
                 .clipShape(.capsule)
                 .foregroundStyle(.white)
+                .bold()
+                .padding()
             }
             .disabled(auth.isLoading || email.isEmpty || password.isEmpty)
+            
+            
+            Button("Sign Up") {
+                registering = true
+            }
+            
+            Spacer()
+        }.sheet(isPresented: $registering) {
+            RegisterView()
+                //.presentationDetents([.medium, .large]) // Bottom sheet style
+                .presentationDragIndicator(.visible)
         }
     }
 }

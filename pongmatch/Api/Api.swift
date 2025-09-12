@@ -5,25 +5,27 @@ internal import RevoFoundation
 class Api {
     
     enum Errors : Error, CustomStringConvertible {
-        case not200(_ status:Int)
+        case not200(_ status:Int, _ error:ErrorResponse? = nil)
         case notAuthorized
         case forbidden
         case notFound
+        case unprocessableContent(_ error:ErrorResponse?)
         
         case cantDecodeResponse
         case emptyResponse
-        case errorResponse(_ error:ErrorResponse)
+        case errorResponse(_ error:ErrorResponse?)
         case other(_ error:String)
         
         var description: String {
             switch self {
-            case .not200(let status): "Invalid credentials or server error. \(status)"
+            case .not200(let status, let error): error?.message ?? "Can't process the request. \(status)"
             case .notAuthorized: "Not authorized."
             case .forbidden: "Forbidden."
             case .notFound: "Not found."
+            case .unprocessableContent(let error): error?.message ?? "Unprocessable content."
             case .cantDecodeResponse: "Unexpected server response."
             case .emptyResponse: "No data received from server."
-            case .errorResponse(let error): "Error response \(error.message)"
+            case .errorResponse(let error): error?.message  ?? "Can't process the request."
             case .other(let error): "Other response \(error)"
             }
         }
@@ -50,6 +52,29 @@ class Api {
         let response:TokenResponse = try await Self.call(method: .post, url: "login", params:[
             "email": email,
             "password": password,
+            "device_name" : deviceName
+        ], headers:[
+            "Accept": "application/json"
+        ])
+        
+        return response.token
+    }
+    
+    static func register(name:String, username:String, email:String, password:String, passwordConfirm:String, deviceName:String) async throws -> String {
+        
+        struct TokenResponse : Codable {
+            let token:String
+        }
+        
+        let response:TokenResponse = try await Self.call(method: .post, url: "register", params:[
+            "name" : name,
+            "username" : username,
+            "email": email,
+            "password": password,
+            "password_confirmation" : passwordConfirm,
+            "timezone" : TimeZone.current.identifier,
+            //"language" : Locale.current.language.languageCode?.identifier ?? "en",
+            "language" : "en",
             "device_name" : deviceName
         ], headers:[
             "Accept": "application/json"
@@ -238,11 +263,17 @@ class Api {
     private static func parseResponse<T:Decodable>(_ response:HttpResponse) throws -> T {
         print("API Response: " + response.toString)
         
+        var errorResponse: ErrorResponse? = nil
+        if let data = response.data {
+            errorResponse = try? jsonDecoder().decode(ErrorResponse.self, from: data)
+        }
+        
         guard response.statusCode >= 200 && response.statusCode < 300 else {
             if response.statusCode == 401 { throw Errors.notAuthorized }
             if response.statusCode == 403 { throw Errors.forbidden }
             if response.statusCode == 404 { throw Errors.notFound }
-            throw Errors.not200(response.statusCode)
+            if response.statusCode == 422 { throw Errors.unprocessableContent(errorResponse) }
+            throw Errors.not200(response.statusCode, errorResponse)
         }
         
         guard let data = response.data else {
@@ -254,12 +285,7 @@ class Api {
             return response
         } catch {
             print("API Error: \(error)")
-            do {
-                let errorResponse = try jsonDecoder().decode(ErrorResponse.self, from: data)
-                throw Errors.errorResponse(errorResponse)
-            } catch {
-                throw error
-            }
+            throw Errors.errorResponse(errorResponse)
         }
     }
     

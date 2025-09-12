@@ -32,11 +32,41 @@ class AuthViewModel : ObservableObject {
             withAnimation { isAuthenticated = true }
             
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = "\(error)"
         }
                 
         isLoading = false
     }
+    
+    func register(name:String, username:String, email:String, password:String, passwordConfirm:String, deviceName:String) async {
+        guard !isLoading else { return }
+        
+        errorMessage = nil
+        isLoading = true
+        
+        do {
+            let token = try await Api.register(
+                name:name,
+                username:username,
+                email:email,
+                password:password,
+                passwordConfirm:passwordConfirm,
+                deviceName:deviceName
+            )
+            api = Api(token)
+            Storage().save(.apiToken, value: token)
+            try await fetchMe()
+            
+            withAnimation { isAuthenticated = true }
+            
+        } catch {
+            errorMessage = "\(error)"
+        }
+                
+        isLoading = false
+    }
+
+
 
     func logout() {
         Storage().save(.apiToken, value: nil)
