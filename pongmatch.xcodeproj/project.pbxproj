@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		BB2F53CB2E6D780000F1BD62 /* RevoHttp in Frameworks */ = {isa = PBXBuildFile; productRef = BB2F53CA2E6D780000F1BD62 /* RevoHttp */; };
 		BBCD8F892E72E50000E4D04A /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = BBCD8F882E72E50000E4D04A /* ConfettiSwiftUI */; };
+		EACDCA512E73FC5200FACC72 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EACDCA502E73FC5200FACC72 /* WidgetKit.framework */; };
+		EACDCA532E73FC5200FACC72 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EACDCA522E73FC5200FACC72 /* SwiftUI.framework */; };
+		EACDCA642E73FC5400FACC72 /* Pongmatch-widgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = EACDCA4F2E73FC5200FACC72 /* Pongmatch-widgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		EAE787382E6C748300FB8998 /* pongmatch-watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = EAE787182E6C748000FB8998 /* pongmatch-watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -26,6 +29,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BBD09A0B2E6B5B4200110F8C;
 			remoteInfo = pongmatch;
+		};
+		EACDCA622E73FC5400FACC72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BBD09A042E6B5B4200110F8C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EACDCA4E2E73FC5200FACC72;
+			remoteInfo = "Pongmatch-widgetExtension";
 		};
 		EAE787252E6C748300FB8998 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -51,6 +61,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		EACDCA692E73FC5400FACC72 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EACDCA642E73FC5400FACC72 /* Pongmatch-widgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EAE787392E6C748300FB8998 /* Embed Watch Content */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -68,12 +89,22 @@
 		BBD09A0C2E6B5B4200110F8C /* pongmatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pongmatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBD09A1B2E6B5B4300110F8C /* pongmatchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pongmatchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BBD09A252E6B5B4300110F8C /* pongmatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pongmatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EACDCA4F2E73FC5200FACC72 /* Pongmatch-widgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Pongmatch-widgetExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EACDCA502E73FC5200FACC72 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		EACDCA522E73FC5200FACC72 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		EAE787182E6C748000FB8998 /* pongmatch-watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "pongmatch-watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAE787242E6C748300FB8998 /* pongmatch-watch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pongmatch-watch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAE7872E2E6C748300FB8998 /* pongmatch-watch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "pongmatch-watch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		EACDCA682E73FC5400FACC72 /* Exceptions for "Pongmatch-widget" folder in "Pongmatch-widgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = EACDCA4E2E73FC5200FACC72 /* Pongmatch-widgetExtension */;
+		};
 		EAE787472E6C754300FB8998 /* Exceptions for "pongmatch" folder in "pongmatch-watch Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -133,6 +164,14 @@
 			path = pongmatchUITests;
 			sourceTree = "<group>";
 		};
+		EACDCA542E73FC5200FACC72 /* Pongmatch-widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				EACDCA682E73FC5400FACC72 /* Exceptions for "Pongmatch-widget" folder in "Pongmatch-widgetExtension" target */,
+			);
+			path = "Pongmatch-widget";
+			sourceTree = "<group>";
+		};
 		EAE787192E6C748000FB8998 /* pongmatch-watch Watch App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "pongmatch-watch Watch App";
@@ -174,6 +213,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EACDCA4C2E73FC5200FACC72 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EACDCA532E73FC5200FACC72 /* SwiftUI.framework in Frameworks */,
+				EACDCA512E73FC5200FACC72 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EAE787152E6C748000FB8998 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -201,6 +249,8 @@
 		BB2F542C2E6DCC9900F1BD62 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EACDCA502E73FC5200FACC72 /* WidgetKit.framework */,
+				EACDCA522E73FC5200FACC72 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -214,6 +264,7 @@
 				BBD09A282E6B5B4300110F8C /* pongmatchUITests */,
 				EAE787272E6C748300FB8998 /* pongmatch-watch Watch AppTests */,
 				EAE787312E6C748300FB8998 /* pongmatch-watch Watch AppUITests */,
+				EACDCA542E73FC5200FACC72 /* Pongmatch-widget */,
 				BB2F542C2E6DCC9900F1BD62 /* Frameworks */,
 				BBD09A0D2E6B5B4200110F8C /* Products */,
 			);
@@ -228,6 +279,7 @@
 				EAE787182E6C748000FB8998 /* pongmatch-watch Watch App.app */,
 				EAE787242E6C748300FB8998 /* pongmatch-watch Watch AppTests.xctest */,
 				EAE7872E2E6C748300FB8998 /* pongmatch-watch Watch AppUITests.xctest */,
+				EACDCA4F2E73FC5200FACC72 /* Pongmatch-widgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -243,11 +295,13 @@
 				BBD09A092E6B5B4200110F8C /* Frameworks */,
 				BBD09A0A2E6B5B4200110F8C /* Resources */,
 				EAE787392E6C748300FB8998 /* Embed Watch Content */,
+				EACDCA692E73FC5400FACC72 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				EAE787372E6C748300FB8998 /* PBXTargetDependency */,
+				EACDCA632E73FC5400FACC72 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				BBD09A0E2E6B5B4200110F8C /* pongmatch */,
@@ -306,6 +360,28 @@
 			productName = pongmatchUITests;
 			productReference = BBD09A252E6B5B4300110F8C /* pongmatchUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		EACDCA4E2E73FC5200FACC72 /* Pongmatch-widgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EACDCA652E73FC5400FACC72 /* Build configuration list for PBXNativeTarget "Pongmatch-widgetExtension" */;
+			buildPhases = (
+				EACDCA4B2E73FC5200FACC72 /* Sources */,
+				EACDCA4C2E73FC5200FACC72 /* Frameworks */,
+				EACDCA4D2E73FC5200FACC72 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				EACDCA542E73FC5200FACC72 /* Pongmatch-widget */,
+			);
+			name = "Pongmatch-widgetExtension";
+			packageProductDependencies = (
+			);
+			productName = "Pongmatch-widgetExtension";
+			productReference = EACDCA4F2E73FC5200FACC72 /* Pongmatch-widgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		EAE787172E6C748000FB8998 /* pongmatch-watch Watch App */ = {
 			isa = PBXNativeTarget;
@@ -396,6 +472,9 @@
 						CreatedOnToolsVersion = 26.0;
 						TestTargetID = BBD09A0B2E6B5B4200110F8C;
 					};
+					EACDCA4E2E73FC5200FACC72 = {
+						CreatedOnToolsVersion = 26.0;
+					};
 					EAE787172E6C748000FB8998 = {
 						CreatedOnToolsVersion = 26.0;
 					};
@@ -433,6 +512,7 @@
 				EAE787172E6C748000FB8998 /* pongmatch-watch Watch App */,
 				EAE787232E6C748300FB8998 /* pongmatch-watch Watch AppTests */,
 				EAE7872D2E6C748300FB8998 /* pongmatch-watch Watch AppUITests */,
+				EACDCA4E2E73FC5200FACC72 /* Pongmatch-widgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -453,6 +533,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BBD09A232E6B5B4300110F8C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EACDCA4D2E73FC5200FACC72 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -504,6 +591,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EACDCA4B2E73FC5200FACC72 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EAE787142E6C748000FB8998 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -537,6 +631,11 @@
 			isa = PBXTargetDependency;
 			target = BBD09A0B2E6B5B4200110F8C /* pongmatch */;
 			targetProxy = BBD09A262E6B5B4300110F8C /* PBXContainerItemProxy */;
+		};
+		EACDCA632E73FC5400FACC72 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EACDCA4E2E73FC5200FACC72 /* Pongmatch-widgetExtension */;
+			targetProxy = EACDCA622E73FC5400FACC72 /* PBXContainerItemProxy */;
 		};
 		EAE787262E6C748300FB8998 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -880,6 +979,71 @@
 			};
 			name = Release;
 		};
+		EACDCA662E73FC5400FACC72 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SV3ZXK4PZF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Pongmatch-widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Pongmatch-widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.codepassion.pongmatch.Pongmatch-widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EACDCA672E73FC5400FACC72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SV3ZXK4PZF;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Pongmatch-widget/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Pongmatch-widget";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "io.codepassion.pongmatch.Pongmatch-widget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		EAE7873A2E6C748300FB8998 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1082,6 +1246,15 @@
 			buildConfigurations = (
 				BBD09A362E6B5B4300110F8C /* Debug */,
 				BBD09A372E6B5B4300110F8C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EACDCA652E73FC5400FACC72 /* Build configuration list for PBXNativeTarget "Pongmatch-widgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EACDCA662E73FC5400FACC72 /* Debug */,
+				EACDCA672E73FC5400FACC72 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

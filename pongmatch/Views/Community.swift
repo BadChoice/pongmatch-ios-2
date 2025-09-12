@@ -11,23 +11,31 @@ struct Community : View {
     @State var friends:[User] = []
     
     var body: some View {
-        NavigationStack{
-            let users = searchText.isEmpty ? friends : searchResults
-            List {
-                if users.isEmpty {
-                    ContentUnavailableView.search
-                } else {
-                    ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
-                        NavigationLink{
-                            UserView(user: friend)
-                        } label: {
-                            FriendView(user: friend)
-                        }
+        let users = searchText.isEmpty ? friends : searchResults
+        List {
+            if users.isEmpty {
+                ContentUnavailableView {
+                    Label(searchText.isEmpty ? "No friends" : "No results", systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass")
+                } description: {
+                    Text(searchText.isEmpty ? "Add some friends to start playing!" : "Try searching for another name.")
+                } actions:{
+                    Button("Add Friend") {
+                        //nav.push("addFriend")
                     }
                 }
-            }.searchable(text: $searchText)
-        }
-        
+            } else {
+                ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
+                    NavigationLink{
+                        FriendView(user: friend)
+                    } label: {
+                        UserView(user: friend)
+                    }
+                }
+            }
+        }.overlay(
+            CustomSearchBar(text: $searchText),
+            alignment: .bottom
+        )
         .task {
             Task {
                 friends = ((try? await auth.friends()) ?? [])
@@ -48,6 +56,11 @@ struct Community : View {
     let auth = AuthViewModel()
     auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
     
-    return Community()
-        .environmentObject(auth)
+    return NavigationStack {
+        TabView
+        {
+            Community()
+                .tabItem { Image(systemName: "person.3")}
+        }
+    }.environmentObject(auth)
 }

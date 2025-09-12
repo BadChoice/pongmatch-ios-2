@@ -26,11 +26,11 @@ struct DashboardView : View {
                 }
             }
         }
-        
         .toolbar {
             Menu {
                 Button("Account", systemImage: "person.fill") { }
                 Button("Add Friend", systemImage: "person.badge.plus") { }
+                Button("Feedback", systemImage: "bubble") { }
                 Divider()
                 Button("Logout", systemImage: "arrow.right.square") { }
             }
