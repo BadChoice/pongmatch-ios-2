@@ -5,15 +5,18 @@ struct AvatarView: View {
     @State private var image: UIImage?
     let url: String?
     let name: String?
+    let winner:Bool
     
-    init(user: User) {
+    init(user: User, winner: Bool = false) {
         self.url = user.avatar
         self.name = user.initials
+        self.winner = winner
     }
     
-    init(url: String?, name: String?) {
+    init(url: String?, name: String?, winner:Bool = false) {
         self.url = url
         self.name = name
+        self.winner = winner
     }
     
     var body: some View {
@@ -38,8 +41,18 @@ struct AvatarView: View {
                 }
                 .frame(width: geo.size.width, height: geo.size.height)
             }
+            if winner {
+               Circle()
+                   .stroke(Color.green, lineWidth: geo.size.width * 0.04)
+                   .frame(width: geo.size.width, height: geo.size.height)
+            }
         }
         .aspectRatio(1, contentMode: .fit) // Ensures it stays square
+        .overlay {
+            if winner {
+                WinnerIconView()
+            }
+        }
         .id(url)
         .task(id: url) {
             Task.detached {
@@ -49,6 +62,26 @@ struct AvatarView: View {
                     }
                 }
             }
+        }
+    }
+}
+
+struct WinnerIconView : View {
+    var body: some View {
+        GeometryReader { geo in
+            let crownSize = geo.size.width * 0.28
+            Image(systemName: "crown.fill")
+                .resizable()
+                .scaledToFit()
+                .padding(crownSize * 0.15)
+                .frame(width: crownSize, height: crownSize)
+                .foregroundStyle(.black)
+                .background(.yellow)
+                .clipShape(Circle())
+                .position(
+                    x: geo.size.width - crownSize / 2,
+                    y: crownSize / 2
+                )
         }
     }
 }
@@ -74,4 +107,10 @@ struct AvatarView: View {
     )
 }
 
+#Preview {
+    AvatarView(
+        user: User.me(),
+        winner:true
+    )
+}
 

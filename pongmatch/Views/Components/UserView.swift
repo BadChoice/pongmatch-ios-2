@@ -2,10 +2,16 @@ import SwiftUI
 
 struct UserView : View {
     let user:User
+    let winner:Bool
+    
+    init(user: User, winner: Bool = false) {
+        self.user = user
+        self.winner = winner
+    }
     
     var body: some View {
         HStack{
-            AvatarView(user:user).frame(width: 48)
+            AvatarView(user:user, winner:winner).frame(width: 48)
             
             if user.id != User.unknown().id {
                 VStack(alignment: .leading, spacing:4){
@@ -28,23 +34,29 @@ struct UserView : View {
 
 struct CompactUserView : View {
     let user:User
+    let winner:Bool
+    
+    init(user: User, winner: Bool = false) {
+        self.user = user
+        self.winner = winner
+    }
     
     var body: some View {
         HStack{
             VStack(alignment: .center, spacing:4){
-                AvatarView(user:user).frame(width: 40)
+                AvatarView(user:user, winner: winner).frame(width: 40)
                 
                 if user.id != User.unknown().id {
+                    Text(user.name)
+                        .font(.footnote)
+                    //    .lineLimit(2, reservesSpace: true)
+                    
                     Text("\(user.ranking)").font(.system(size:10, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 8)
                         .background(.black)
                         .clipShape(.capsule)
-                    
-                    Text(user.name)
-                        .font(.caption2)
-                        .lineLimit(2, reservesSpace: true)
                 }
             }
         }
@@ -52,7 +64,7 @@ struct CompactUserView : View {
 }
 
 #Preview {
-    UserView(user: User.me())
+    UserView(user: User.me(), winner: true)
 }
 
 #Preview {

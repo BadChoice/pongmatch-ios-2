@@ -16,7 +16,12 @@ struct GamesScrollview : View {
             } else {
                 HStack{
                     ForEach(games, id:\.id) { game in
-                        CompactGameView(game: game)
+                        NavigationLink {
+                            GameSummaryView(game: game)
+                        } label: {
+                            CompactGameView(game: game)
+                                .foregroundStyle(.black)
+                        }
                     }
                 }
             }

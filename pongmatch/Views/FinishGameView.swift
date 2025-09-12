@@ -18,23 +18,23 @@ struct FinishGameView : View {
                 /* Label("Standard", systemImage:"bird.fill") */
                 Label(score.rankingType.description, systemImage: "trophy.fill")
                 Label(score.winningCondition.description, systemImage: "medal.fill")
-                    
-                
             }
             .font(.footnote)
             .foregroundColor(.secondary)
             
             HStack {
-                UserView(user: score.player1).frame(minWidth: 0, maxWidth: .infinity)
+                CompactUserView(user: score.player1, winner:score.winner()?.id == score.player1.id)
+                    .frame(minWidth: 0, maxWidth: .infinity)
                 HStack{
                     Text("\(score.setsResult(for: .player1))")
                     Text("-")
                     Text("\(score.setsResult(for: .player2))")
                 }.frame(minWidth: 0, maxWidth: .infinity)
-                .font(.largeTitle)
-                .bold()
+                    .font(.largeTitle.bold())
                 
-                UserView(user: score.player2).frame(minWidth: 0, maxWidth: .infinity)
+                
+                CompactUserView(user: score.player2, winner:score.winner()?.id == score.player2.id)
+                    .frame(minWidth: 0, maxWidth: .infinity)
             }
             
             Spacer()

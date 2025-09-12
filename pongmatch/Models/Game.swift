@@ -26,6 +26,11 @@ struct Game : Codable {
         [GameStatus.planned, GameStatus.waitingOpponent].contains(status)
     }
     
+    func winner() -> User? {
+        guard let finalResult = finalResult else { return nil }
+        return finalResult[0] > finalResult[1] ? player1 : player2
+    }
+    
     
     static func fromScore(_ score:Score) -> Game {
         Game(
