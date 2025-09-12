@@ -37,97 +37,123 @@ struct RegisterView : View {
     }
     
     var body: some View {
-        VStack {            
-
-            TextField("Name", text: $name)
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-                .padding(.horizontal)
-                .focused($isNameFocused)
-
-            if !isNameValid && !name.isEmpty {
-                Text("Name must be at least 3 characters.")
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .padding(.horizontal)
-            }
-
-            TextField("Username", text: $username)
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-                .padding(.horizontal)
-
-            if !isUsernameValid && !username.isEmpty {
-                Text("Username must be >3 characters and have no spaces.")
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .padding(.horizontal)
-            }
-
-            TextField("Email", text: $email)
-                .textInputAutocapitalization(.never)
-                .keyboardType(.emailAddress)
-                .autocorrectionDisabled(true)
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-                .padding(.horizontal)
-            
-            if !isEmailValid && !email.isEmpty {
-                Text("Enter a valid email address.")
-                    .foregroundColor(.red)
-                    .font(.caption)
-                    .padding(.horizontal)
-            }
-            
-            Divider().padding(.vertical)
-            
-            SecureField("Password", text: $password)
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-                .padding(.horizontal)
-            
-            SecureField("Password Confirmation", text: $passwordConfirmation)
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-                .padding(.horizontal)
-            
-            if !isPasswordConfirmed && !passwordConfirmation.isEmpty {
-                  Text("Passwords do not match.")
-                      .foregroundColor(.red)
-                      .font(.caption)
-                      .padding(.horizontal)
-              }
-
-            Button {
-                Task {
-                    await auth.register(
-                        name:name,
-                        username:username.lowercased(),
-                        email:email.lowercased(),
-                        password:password,
-                        passwordConfirm:passwordConfirmation,
-                        deviceName:UIDevice.current.name
-                    )
+        ScrollView{
+            VStack {
+                
+                Spacer().frame(height: 60)
+                
+                VStack{
+                    Image("logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 60, height: 60)
+                    
+                    Spacer().frame(height: 20)
+                    
+                    Text("Join Pongmatch and connect with players near you!")
+                    Text("Create your account to start challenging, tracking your games, and making new friends.")
+                        .padding(.horizontal)
+                        .padding(.bottom, 16)
+                    
+                    Spacer().frame(height: 20)
+                    
                 }
-            } label:{
-                HStack {
-                    if auth.isLoading { ProgressView() }
-                    Text(auth.isLoading ? "" : "Sign Up")
-                }
-            }
-            .disabled(auth.isLoading || email.isEmpty || username.isEmpty || password.isEmpty || password != passwordConfirmation || name.isEmpty || username.isEmpty)
-            .frame(height: 45)
-            .padding(.horizontal)
-            
-            if auth.errorMessage != nil {
-                Text(auth.errorMessage!)
-                    .foregroundColor(.red)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                
+                
+                
+                TextField("Name", text: $name)
                     .padding()
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                    .focused($isNameFocused)
+                
+                if !isNameValid && !name.isEmpty {
+                    Text("Name must be at least 3 characters.")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal)
+                }
+                
+                TextField("Username", text: $username)
+                    .padding()
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                
+                if !isUsernameValid && !username.isEmpty {
+                    Text("Username must be >3 characters and have no spaces.")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal)
+                }
+                
+                TextField("Email", text: $email)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.emailAddress)
+                    .autocorrectionDisabled(true)
+                    .padding()
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                
+                if !isEmailValid && !email.isEmpty {
+                    Text("Enter a valid email address.")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal)
+                }
+                
+                Divider().padding(.vertical)
+                
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                
+                SecureField("Password Confirmation", text: $passwordConfirmation)
+                    .padding()
+                    .background(Color(UIColor.secondarySystemBackground))
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                
+                if !isPasswordConfirmed && !passwordConfirmation.isEmpty {
+                    Text("Passwords do not match.")
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal)
+                }
+                
+                Button {
+                    Task {
+                        await auth.register(
+                            name:name,
+                            username:username.lowercased(),
+                            email:email.lowercased(),
+                            password:password,
+                            passwordConfirm:passwordConfirmation,
+                            deviceName:UIDevice.current.name
+                        )
+                    }
+                } label:{
+                    HStack {
+                        if auth.isLoading { ProgressView() }
+                        Text(auth.isLoading ? "" : "Sign Up")
+                    }
+                }
+                .disabled(auth.isLoading || email.isEmpty || username.isEmpty || password.isEmpty || password != passwordConfirmation || name.isEmpty || username.isEmpty)
+                .frame(height: 45)
+                .padding(.horizontal)
+                
+                if auth.errorMessage != nil {
+                    Text(auth.errorMessage!)
+                        .foregroundColor(.red)
+                        .padding()
+                }
             }
         }
         .onAppear {

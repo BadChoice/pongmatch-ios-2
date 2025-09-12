@@ -68,9 +68,25 @@ struct LoginView: View {
             }
             .disabled(auth.isLoading || email.isEmpty || password.isEmpty)
             
+            if auth.errorMessage != nil {
+                Text(auth.errorMessage!)
+                    .foregroundColor(.red)
+                    .font(.caption)
+                    .padding(.horizontal)
+            }
+            
             
             Button("Sign Up") {
                 registering = true
+            }
+
+            Spacer().frame(height: 40)
+            NavigationLink("Scoreboard"){
+                ScoreboardView(score: Score(
+                    player1: User.unknown(),
+                    player2: User.unknown(),
+                    winningCondition: .bestof3, rankingType: .friendly                    
+                ))
             }
             
             Spacer()

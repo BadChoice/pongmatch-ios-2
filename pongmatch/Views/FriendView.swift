@@ -5,11 +5,11 @@ import Charts
 struct FriendView : View {
     let user:User
     @State private var selectedSegment = 0
-
+    @State private var globalRanking:Int? = nil
     
     var body: some View {
         VStack(spacing:24){
-            UserHeaderView(user: user)
+            UserHeaderView(user: user, globalRanking: globalRanking)
             
             Divider()
             HStack(spacing:40) {
@@ -53,6 +53,10 @@ struct FriendView : View {
             .padding()
             
             Spacer()
+        }.task {
+            Task {
+                globalRanking = try? await AuthViewModel().api.globalRankingPosition(user)
+            }
         }
     }
 }

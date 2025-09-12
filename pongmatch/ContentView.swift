@@ -11,7 +11,6 @@ import SwiftData
 
 /**
  [ ] Push notifications
- [ ] Scoreboard without login in
  [ ] Follow / Unfollow users
  */
 
@@ -28,7 +27,9 @@ struct ContentView: View {
                     DashboardView()                        
                 }
             } else {
-                LoginView()
+                NavigationStack(path: $path.path) {
+                    LoginView()
+                }
             }
         }
         .environmentObject(auth)

@@ -29,12 +29,12 @@ struct CompactGameView: View {
             Divider()
             
             HStack(alignment: .center) {
-                CompactUserView(user: game.player1)
+                CompactUserView(user: game.player1, winner: game.winner()?.id == game.player1.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
                 Group {
                     if let finalResult = game.finalResult {
-                        Text("\(finalResult[0]) - \(finalResult[0])")
+                        Text("\(finalResult[0]) - \(finalResult[1])")
                     } else {
                         Text("VS")
                         
@@ -43,7 +43,7 @@ struct CompactGameView: View {
                     .bold()
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
-                CompactUserView(user: game.player2)
+                CompactUserView(user: game.player2, winner: game.winner()?.id == game.player2.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
             

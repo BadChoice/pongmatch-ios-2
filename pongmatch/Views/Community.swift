@@ -9,27 +9,33 @@ struct Community : View {
     @State private var searchResults: [User] = []
     
     @State var friends:[User] = []
+    @State var loading:Bool = false
     
     var body: some View {
         let users = searchText.isEmpty ? friends : searchResults
         List {
-            if users.isEmpty {
-                ContentUnavailableView {
-                    Label(searchText.isEmpty ? "No friends" : "No results", systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass")
-                } description: {
-                    Text(searchText.isEmpty ? "Add some friends to start playing!" : "Try searching for another name.")
-                } actions:{
-                    Button("Add Friend") {
-                        //nav.push("addFriend")
-                    }
-                }
+            if loading {
+                ProgressView()
             } else {
-                ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
-                    NavigationLink{
-                        FriendView(user: friend)
-                    } label: {
-                        UserView(user: friend)
+                if users.isEmpty {
+                    ContentUnavailableView {
+                        Label(searchText.isEmpty ? "No friends" : "No results", systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass")
+                    } description: {
+                        Text(searchText.isEmpty ? "Add some friends to start playing!" : "Try searching for another name.")
+                    } actions:{
+                        Button("Add Friend") {
+                            //nav.push("addFriend")
+                        }
                     }
+                } else {
+                    ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
+                        NavigationLink{
+                            FriendView(user: friend)
+                        } label: {
+                            UserView(user: friend)
+                        }
+                    }
+                    Spacer().frame(height: 80)
                 }
             }
         }.overlay(
@@ -42,9 +48,11 @@ struct Community : View {
             }
         }
         .onChange(of: searchText) { _, newValue in
+            loading = true
             Task {
-                try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s delay
+                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2s delay
                 searchResults = ((try? await auth.searchFriends(newValue)) ?? [])
+                loading = false
             }
         }
     }

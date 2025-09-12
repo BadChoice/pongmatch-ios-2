@@ -11,12 +11,21 @@ struct Game : Codable {
     let date:Date
     let status:GameStatus
     let results:[[Int]]?
-    let finalResult:[Int]?
-    //let created_at:Date
-    //let updated_at:Date?
     
     let player1:User
     let player2:User
+    
+    var finalResult:[Int]? {
+        guard let results else { return nil }
+        
+        let player1 = results.reduce(0) { partialResult, set in
+            partialResult + (set[0] > set[1] ? 1 : 0)
+        }
+        let player2 = results.reduce(0) { partialResult, set in
+            partialResult + (set[1] > set[0] ? 1 : 0)
+        }
+        return [player1, player2]
+    }
     
     func isFinished() -> Bool {
         status == .finished
@@ -41,7 +50,6 @@ struct Game : Codable {
             date: score.started_at,
             status: .finished,
             results: score.sets.map { [$0.player1, $0.player2] },
-            finalResult: [score.setsResult.player1, score.setsResult.player2],
             player1: score.player1,
             player2: score.player2
         )
@@ -55,8 +63,7 @@ struct Game : Codable {
             information: "A fake game",
             date: Date(),
             status: .planned,
-            results: nil,
-            finalResult: [2, 1],
+            results: [[11, 7], [5, 11], [11, 9]],
             player1: User.me(),
             player2: User.unknown()
         )
