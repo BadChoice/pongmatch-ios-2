@@ -12,6 +12,7 @@ import SwiftData
 /**
  [ ] Push notifications
  [ ] Follow / Unfollow users
+ [ ] Finish and upload game from watch.
  */
 
 struct ContentView: View {
