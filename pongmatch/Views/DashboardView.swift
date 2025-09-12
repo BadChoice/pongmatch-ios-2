@@ -28,12 +28,13 @@ struct DashboardView : View {
         }
         
         .toolbar {
-            Button{ }
+            Menu {
+                Button("Add Friend", systemImage: "person.badge.plus") { }
+                Button("Logout", systemImage: "arrow.right.square") { }
+            }
             label : {
                 Image(systemName: "ellipsis")
             }
-            //Button("Logout") { auth.logout() }
-            //Button("New") { /* TODO */ }
         }
         .task {
             Task {

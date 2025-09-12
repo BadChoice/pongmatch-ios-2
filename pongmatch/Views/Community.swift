@@ -18,13 +18,16 @@ struct Community : View {
                     ContentUnavailableView.search
                 } else {
                     ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
-                        UserView(user: friend)
+                        NavigationLink{
+                            UserView(user: friend)
+                        } label: {
+                            UserView(user: friend)
+                        }
                     }
                 }
-            }
-        
+            }.searchable(text: $searchText)
         }
-        .searchable(text: $searchText)
+        
         .task {
             Task {
                 friends = ((try? await auth.friends()) ?? [])
