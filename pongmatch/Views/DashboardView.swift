@@ -29,7 +29,9 @@ struct DashboardView : View {
         
         .toolbar {
             Menu {
+                Button("Account", systemImage: "person.fill") { }
                 Button("Add Friend", systemImage: "person.badge.plus") { }
+                Divider()
                 Button("Logout", systemImage: "arrow.right.square") { }
             }
             label : {
@@ -72,31 +74,7 @@ struct HomeView : View {
     var body: some View {
         ScrollView{
             VStack(spacing: 20) {
-                UserView(user: auth.user ?? User.unknown())
-                VStack(spacing:8) {
-                    if let lastPlayed = auth.user?.last_match_date {
-                        Text("Last played \(lastPlayed.displayForHumans)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    HStack{
-                        Text("WON").frame(width:80)
-                        Text("ELO").frame(width:80)
-                        Text("RANK").frame(width:80)
-                        Text("LOST").frame(width:80)
-                    }.foregroundStyle(.gray)
-                    HStack{
-                        Text("\(auth.user?.games_won ?? 0)").frame(width:80)
-                        Text("\(auth.user?.ranking ?? 0)").frame(width:80)
-                        if let globalRanking = auth.user?.global_ranking {
-                            Text("\(globalRanking)").frame(width:80)
-                        } else {
-                            Text("-").frame(width:80)
-                        }
-                        Text("\(auth.user?.games_lost ?? 0)").frame(width:80)
-                    }.bold()
-                }
+                UserHeaderView(user: auth.user ?? User.unknown())               
 
                 Divider()
                 

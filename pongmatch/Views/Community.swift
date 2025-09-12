@@ -21,7 +21,7 @@ struct Community : View {
                         NavigationLink{
                             UserView(user: friend)
                         } label: {
-                            UserView(user: friend)
+                            FriendView(user: friend)
                         }
                     }
                 }
