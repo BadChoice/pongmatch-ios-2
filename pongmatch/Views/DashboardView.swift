@@ -7,7 +7,7 @@ struct DashboardView : View {
     @EnvironmentObject private var nav: NavigationManager
     
     @State var isLoadingUser:Bool = true
-    @State private var selectedScore: Score?
+    @State private var selectedGame: Game?
 
         
     var body: some View {
@@ -15,8 +15,8 @@ struct DashboardView : View {
             if isLoadingUser {
                 ProgressView()
             } else {
-                HomeView { score in
-                    selectedScore = score
+                HomeView { game in
+                    selectedGame = game
                     nav.push("scoreboard")
                 }.tabItem {
                     Image(systemName: "house")
@@ -59,10 +59,7 @@ struct DashboardView : View {
         .navigationDestination(for: String.self) { target in
             if target == "scoreboard"{
                 ScoreboardView(
-                    score: selectedScore ??  Score(
-                        player1: auth.user ?? User.unknown(),
-                        player2: User.unknown(),
-                    )
+                    score: Score(game:selectedGame!)
                 )
             }
         }
@@ -77,7 +74,7 @@ struct HomeView : View {
     @State private var showScoreboardSelectionModal = false
     @State private var refreshId = UUID()
     
-    var onStartScoreboard: (Score) -> Void
+    var onStartScoreboard: (Game) -> Void
     
     var body: some View {
         ScrollView{
@@ -116,11 +113,13 @@ struct HomeView : View {
         .sheet(isPresented: $showScoreboardSelectionModal) {
             ScoreboardSelectionView { player2, winningCondition, rankingType in
                 showScoreboardSelectionModal = false
-                onStartScoreboard(Score(
-                    player1: auth.user!,
-                    player2: player2,
-                    winningCondition: winningCondition,
-                    rankingType: rankingType
+                onStartScoreboard(
+                    Game(
+                        ranking_type: rankingType,
+                        winning_condition: winningCondition,
+                        status:.ongoing,
+                        player1: auth.user!,
+                        player2: player2,
                     )
                 )
             }

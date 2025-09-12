@@ -1,6 +1,6 @@
 import Foundation
 
-struct Game : Codable {
+class Game : Codable {
     let id:Int?
     
     //initial_score
@@ -9,11 +9,25 @@ struct Game : Codable {
     
     let information:String?
     let date:Date
-    let status:GameStatus
-    let results:[[Int]]?
+    
+    var status:GameStatus
+    var results:[[Int]]?
     
     let player1:User
     let player2:User
+    
+    
+    init(id: Int? = nil, ranking_type: RankingType, winning_condition: WinningCondition, information: String? = nil, date: Date = Date(), status: GameStatus, results: [[Int]]? = nil, player1: User, player2: User) {
+        self.id = id
+        self.ranking_type = ranking_type
+        self.winning_condition = winning_condition
+        self.information = information
+        self.date = date
+        self.status = status
+        self.results = results
+        self.player1 = player1
+        self.player2 = player2
+    }
     
     var finalResult:[Int]? {
         guard let results else { return nil }
@@ -41,17 +55,25 @@ struct Game : Codable {
     }
     
     
-    static func fromScore(_ score:Score) -> Game {
+    @discardableResult
+    func finish(_ score:Score) -> Self {
+        results = score.sets.map { [$0.player1, $0.player2] }
+        status = .finished
+        return self
+    }
+    
+    
+    static func anonimus() -> Game {
         Game(
-            id: nil,
-            ranking_type: score.rankingType,
-            winning_condition: score.winningCondition,
+            id: -1,
+            ranking_type: .friendly,
+            winning_condition: .bestof3,
             information: nil,
-            date: score.started_at,
-            status: .finished,
-            results: score.sets.map { [$0.player1, $0.player2] },
-            player1: score.player1,
-            player2: score.player2
+            date: Date(),
+            status: .ongoing,
+            results: nil,
+            player1: User.unknown(),
+            player2: User.unknown()
         )
     }
     

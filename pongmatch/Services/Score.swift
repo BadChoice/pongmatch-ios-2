@@ -26,29 +26,25 @@ class Score: Codable {
     var started_at = Date()
     var ended_at:Date? = nil
     
-    let players:[User]
-    
+    let game:Game
+        
     var score:Result = Result()
     var sets:[Result]  = []
     
     var gamePoints:Int = 11
-    var winningCondition:WinningCondition
-    var rankingType:RankingType
     
     private var firstServer:Player
     
     var history:[Player] = []
     var redoHistory:[Player] = []
 
-    init(player1:User, player2:User, winningCondition:WinningCondition = .bestof3, rankingType:RankingType = .friendly) {
-        self.players = [player1, player2]
-        self.winningCondition = winningCondition
-        self.rankingType = rankingType
+    init(game:Game) {
+        self.game = game
         self.firstServer = Player(rawValue: .random(in: 0...1))!
     }
     
-    var player1:User { players.first! }
-    var player2:User { players.last! }
+    var player1:User { game.player1 }
+    var player2:User { game.player2 }
     
     
     func player(_ player:Player) -> User {
@@ -80,11 +76,11 @@ class Score: Codable {
     func matchWinner() -> User?{
         guard winner() != nil else { return nil }
         
-        if setsResult.player1 == winningCondition.setsToWin {
+        if setsResult.player1 == game.winning_condition.setsToWin {
             return player1
         }
         
-        if setsResult.player2 == winningCondition.setsToWin {
+        if setsResult.player2 == game.winning_condition.setsToWin {
             return player2
         }
         
@@ -129,7 +125,7 @@ class Score: Codable {
     func startNext(){
         sets.append(score)
         
-        if setsResult.player1 == winningCondition.setsToWin || setsResult.player2 == winningCondition.setsToWin {
+        if setsResult.player1 == game.winning_condition.setsToWin || setsResult.player2 == game.winning_condition.setsToWin {
             return gameFinished()
         }
         

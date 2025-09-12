@@ -27,8 +27,8 @@ struct ScoreboardView: View {
                             .font(.footnote)
                             .foregroundColor(.secondary)*/
                         
-                        Text(syncedScore.score.rankingType.description + " ·")
-                        Text(syncedScore.score.winningCondition.description)
+                        Text(syncedScore.score.game.ranking_type.description + " ·")
+                        Text(syncedScore.score.game.winning_condition.description)
                     }
                     .font(.footnote)
                     .foregroundColor(.secondary)
@@ -184,7 +184,6 @@ private struct ScoreView : View {
 
 #Preview {
     ScoreboardView(score: Score(
-        player1: User.me(),
-        player2: User.unknown()
+        game:Game.fake()
     ))
 }

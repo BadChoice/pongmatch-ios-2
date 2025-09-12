@@ -35,8 +35,8 @@ struct ScoreboardView : View {
                 
                 HStack(spacing: 25) {
                     /* Label("Standard", systemImage:"bird.fill") */
-                    Label(syncedScore.score.rankingType.description, systemImage: "trophy.fill")
-                    Label(syncedScore.score.winningCondition.description, systemImage: "medal.fill")
+                    Label(syncedScore.score.game.ranking_type.description, systemImage: "trophy.fill")
+                    Label(syncedScore.score.game.winning_condition.description, systemImage: "medal.fill")
                         
                 }
                 .font(.footnote)
@@ -141,7 +141,7 @@ struct ScoreboardView : View {
             down: { buttonHandler?.onButtonPressed() }
         )
         .sheet(isPresented: $showFinishGame){
-            FinishGameView(game:Game.fromScore(syncedScore.score))
+            FinishGameView(game:syncedScore.score.game.finish(syncedScore.score))
                 .presentationDetents([.medium, .large]) // Bottom sheet style
                 .presentationDragIndicator(.visible)    // Show the small slider on top
         }
@@ -316,9 +316,6 @@ struct SetsScoreView : View {
 
 #Preview {
     if #available(macOS 26.0, *) {
-        ScoreboardView(score: Score(
-            player1: User.me(),
-            player2: User.unknown()
-        ))
+        ScoreboardView(score: Score(game: Game.fake()))
     }
 }

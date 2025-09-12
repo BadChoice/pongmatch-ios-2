@@ -82,11 +82,7 @@ struct LoginView: View {
 
             Spacer().frame(height: 40)
             NavigationLink("Scoreboard"){
-                ScoreboardView(score: Score(
-                    player1: User.unknown(),
-                    player2: User.unknown(),
-                    winningCondition: .bestof3, rankingType: .friendly                    
-                ))
+                ScoreboardView(score: Score(game: Game.anonimus()))
             }
             
             Spacer()

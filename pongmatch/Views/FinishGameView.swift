@@ -84,8 +84,5 @@ struct FinishGameView : View {
 }
 
 #Preview {
-    FinishGameView(game: Game.fromScore(Score(
-        player1: User.me(),
-        player2: User.unknown()
-    )))
+    FinishGameView(game: Game.fake())
 }
