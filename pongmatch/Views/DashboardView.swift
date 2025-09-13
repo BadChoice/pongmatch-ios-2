@@ -28,8 +28,10 @@ struct DashboardView : View {
         }
         .toolbar {
             Menu {
-                Button("Account", systemImage: "person.fill") {
-                    
+                NavigationLink {
+                    AccountView()
+                } label: {
+                    Label("Account", systemImage: "person.fill")
                 }
                 Button("Add Friend", systemImage: "person.badge.plus") {
                     
