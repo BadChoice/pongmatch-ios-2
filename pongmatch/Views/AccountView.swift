@@ -15,6 +15,8 @@ struct AccountView : View {
     @State private var inputImage: UIImage? = nil
     
     @State private var saving = false
+    @State private var savingAvatar = false
+    
     @State private var errorMessage: String? = nil
     
     var body: some View {
@@ -29,7 +31,7 @@ struct AccountView : View {
                                 .scaledToFill()
                                 .frame(width: 100, height: 100)
                                 .clipShape(Circle())
-                        } else if let url = URL(string: auth.user?.avatar ?? "") {
+                        } else if let url = Images.avatar(auth.user?.avatar ?? "") {
                             AsyncImage(url: url) { image in
                                 image.resizable().scaledToFill()
                             } placeholder: {
@@ -42,6 +44,10 @@ struct AccountView : View {
                                 .resizable()
                                 .frame(width: 100, height: 100)
                         }
+                        if savingAvatar {
+                            ProgressView()
+                        }
+                        
                         Button("Change Avatar") {
                             showImagePicker = true
                         }
@@ -70,13 +76,8 @@ struct AccountView : View {
                         Text(lang.description)
                     }
                 }
-                HStack {
-                    TextField("Prefix", text: $phonePrefix)
-                        .frame(width: 60)
-                        .keyboardType(.numberPad)
-                    TextField("Phone", text: $phone)
-                        .keyboardType(.phonePad)
-                }
+                TextField("Phone", text: $phone)
+                    .keyboardType(.phonePad)
                 TextField("Address", text: $address)
             }
             Section(header: Text("Challenge Acceptance")) {
@@ -99,28 +100,35 @@ struct AccountView : View {
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
-                        .font(.caption)
-                    
+                        .font(.caption)                    
                 }
             }
-            .onAppear {
-                let user = auth.user
-                name = user?.name ?? ""
-                language = user?.language ?? .english
-                phonePrefix = user?.phone_prefix ?? ""
-                phone = user?.phone ?? ""
-                address = user?.address ?? ""
-                acceptChallengesFrom = user?.accept_challenge_requests_from ?? .followers
-            }
-            .sheet(isPresented: $showImagePicker) {
-                //ImagePicker(image: $inputImage)
-            }
-            .onChange(of: inputImage) { _, newImage in
-                if let newImage = newImage {
-                    avatarImage = Image(uiImage: newImage)
-                    // Optionally upload avatar to backend here
+        }.onAppear {
+            let user = auth.user
+            name = user?.name ?? ""
+            language = user?.language ?? .english
+            phonePrefix = user?.phone_prefix ?? ""
+            phone = user?.phone ?? ""
+            address = user?.address ?? ""
+            acceptChallengesFrom = user?.accept_challenge_requests_from ?? .followers
+        }
+        .onChange(of: inputImage) { _, newImage in
+            if let newImage = newImage {
+                avatarImage = Image(uiImage: newImage)
+                Task {
+                    savingAvatar = true
+                    defer { savingAvatar = false }
+                    do{
+                        let newUser = try await auth.api.uploadAvatar(newImage)
+                        auth.user = newUser
+                    } catch {
+                        
+                    }
                 }
             }
+        }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(image: $inputImage, allowsCropping: true)
         }
     }
     

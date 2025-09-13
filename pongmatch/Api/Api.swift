@@ -1,5 +1,7 @@
 import Foundation
+import UIKit
 import RevoHttp
+
 internal import RevoFoundation
 
 class Api {
@@ -122,6 +124,29 @@ class Api {
             print(error)
             throw error
         }
+    }
+    
+    func uploadAvatar(_ image:UIImage) async throws -> User {
+
+        try await withCheckedThrowingContinuation { continuation in
+            struct Response : Codable {
+                let data:User
+            }
+            
+            let request = MultipartHttpRequest(method: .post, url: Pongmatch.url + "api/me/avatar", headers: headers)
+            let _ = request.addMultipart(paramName: "avatar", fileName: "avatar.jpg", image: image.resized(to: CGSize(width: 256, height: 256)))
+            
+            Http().callMultipart(request) { response in
+                do {
+                    let result:Response = try Self.parseResponse(response)
+                    return continuation.resume(returning: result.data)
+                }catch{
+                    print(error)
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    
     }
     
     func globalRankingPosition(_ user:User) async throws -> Int {
