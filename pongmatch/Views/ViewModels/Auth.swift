@@ -67,7 +67,6 @@ class AuthViewModel : ObservableObject {
     }
 
 
-
     func logout() {
         Storage().save(.apiToken, value: nil)
         withAnimation { isAuthenticated = false }

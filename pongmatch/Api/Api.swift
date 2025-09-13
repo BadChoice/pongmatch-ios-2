@@ -99,6 +99,31 @@ class Api {
         }
     }
     
+    func updateProfile(name:String, language:Language, timeZone:String, phonePrefix:String?, phone:String?, address:String?, acceptChallengesFrom:AcceptChallengeRequestFrom) async throws  -> User {
+        
+        struct Response : Codable {
+            let data:User
+        }
+        
+        do {
+            let response:Response = try await Self.call(method: .put, url: "me", params: [
+                "name": name,
+                "language": language.rawValue,
+                "timezone": timeZone,
+                "phone_prefix": phonePrefix ?? "",
+                "phone": phone ?? "",
+                "address": address ?? "",
+                "accept_challenges_from": acceptChallengesFrom.rawValue,
+            ], headers: headers)
+            
+            return response.data
+            
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     func globalRankingPosition(_ user:User) async throws -> Int {
         struct Response : Codable {
             let global_ranking:Int

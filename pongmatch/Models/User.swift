@@ -9,6 +9,7 @@ struct User : Codable {
     let email:String
     let ranking:Int
     let avatar:String?
+    let language:Language
     
     let games_won:Int?
     let games_lost:Int?
@@ -24,7 +25,7 @@ struct User : Codable {
                     .joined()                                 // join into string
     }
     
-    var language: String?
+    var phone_prefix: String?
     var phone: String?
     var address: String?
     var accept_challenge_requests_from: AcceptChallengeRequestFrom?
@@ -38,10 +39,11 @@ struct User : Codable {
             email:"jordi+pongmatch@gloobus.net",
             ranking:1500,
             avatar:"http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png",
+            language: .english,
             games_won: 102,
             games_lost: 53,
             last_match_date: Date(),
-            language: nil,
+            phone_prefix: nil,
             phone: nil,
             address: nil,
             accept_challenge_requests_from: nil
@@ -56,10 +58,11 @@ struct User : Codable {
             email: "unknown@codepassion.io",
             ranking: 0,
             avatar: "https://pongmatch.app/img/default-avatar.png",
+            language: .english,
             games_won: nil,
             games_lost: nil,
             last_match_date: nil,
-            language: nil,
+            phone_prefix: nil,
             phone: nil,
             address: nil,
             accept_challenge_requests_from: nil
