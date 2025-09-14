@@ -164,6 +164,11 @@ struct GameSummaryView : View {
             }
             Spacer()
         }
+        .sheet(isPresented: $showUploadResultsSheet) {
+            UploadResultsView(game: game)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
     }
 }
 
@@ -195,6 +200,8 @@ struct SetsScoreView2: View {
         }
     }
 }
+
+
 
 #Preview {
     let auth = AuthViewModel()
