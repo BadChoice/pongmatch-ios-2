@@ -2,8 +2,11 @@ import SwiftUI
 
 struct AccountView : View {
     @EnvironmentObject var auth: AuthViewModel
+    @Environment(\.dismiss) var dismiss
+    
     @State private var name: String = ""
-    @State private var language: String = "English"
+    @State private var language: Language = .english
+    @State private var phonePrefix: String = ""
     @State private var phone: String = ""
     @State private var address: String = ""
     @State private var acceptChallengesFrom: AcceptChallengeRequestFrom = .following
@@ -11,7 +14,10 @@ struct AccountView : View {
     @State private var showImagePicker = false
     @State private var inputImage: UIImage? = nil
     
-    let languages = ["English", "Spanish", "Catalan", "French", "German", "Chinese"]
+    @State private var saving = false
+    @State private var savingAvatar = false
+    
+    @State private var errorMessage: String? = nil
     
     var body: some View {
         Form {
@@ -25,7 +31,7 @@ struct AccountView : View {
                                 .scaledToFill()
                                 .frame(width: 100, height: 100)
                                 .clipShape(Circle())
-                        } else if let url = URL(string: auth.user?.avatar ?? "") {
+                        } else if let url = Images.avatar(auth.user?.avatar ?? "") {
                             AsyncImage(url: url) { image in
                                 image.resizable().scaledToFill()
                             } placeholder: {
@@ -38,6 +44,10 @@ struct AccountView : View {
                                 .resizable()
                                 .frame(width: 100, height: 100)
                         }
+                        if savingAvatar {
+                            ProgressView()
+                        }
+                        
                         Button("Change Avatar") {
                             showImagePicker = true
                         }
@@ -62,8 +72,8 @@ struct AccountView : View {
             Section(header: Text("Personal Info")) {
                 TextField("Name", text: $name)
                 Picker("Language", selection: $language) {
-                    ForEach(languages, id: \ .self) { lang in
-                        Text(lang)
+                    ForEach(Language.allCases, id: \ .self) { lang in
+                        Text(lang.description)
                     }
                 }
                 TextField("Phone", text: $phone)
@@ -79,27 +89,66 @@ struct AccountView : View {
                 .pickerStyle(SegmentedPickerStyle())
             }
             Section {
-                Button("Save") {
-                    // Save logic: update user profile via auth/api
+                if saving {
+                    ProgressView()
+                } else {
+                    Button("Save") {
+                        Task { await saveProfile() }
+                    }
+                }
+                
+                if let errorMessage = errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)                    
                 }
             }
-        }
-        .onAppear {
+        }.onAppear {
             let user = auth.user
             name = user?.name ?? ""
-            language = user?.language ?? "English"
+            language = user?.language ?? .english
+            phonePrefix = user?.phone_prefix ?? ""
             phone = user?.phone ?? ""
             address = user?.address ?? ""
             acceptChallengesFrom = user?.accept_challenge_requests_from ?? .followers
         }
-        .sheet(isPresented: $showImagePicker) {
-            //ImagePicker(image: $inputImage)
-        }
         .onChange(of: inputImage) { _, newImage in
             if let newImage = newImage {
                 avatarImage = Image(uiImage: newImage)
-                // Optionally upload avatar to backend here
+                Task {
+                    savingAvatar = true
+                    defer { savingAvatar = false }
+                    do{
+                        let newUser = try await auth.api.uploadAvatar(newImage)
+                        auth.user = newUser
+                    } catch {
+                        
+                    }
+                }
             }
+        }
+        .sheet(isPresented: $showImagePicker) {
+            ImagePicker(image: $inputImage, allowsCropping: true)
+        }
+    }
+    
+    private func saveProfile() async{
+        saving = true
+        defer { saving = false  }
+        do {
+            let updatedUser = try await auth.api.updateProfile(
+                name: name,
+                language: language,
+                timeZone: TimeZone.current.identifier,
+                phonePrefix: phonePrefix,
+                phone: phone,
+                address: address,
+                acceptChallengesFrom: acceptChallengesFrom
+            )
+            auth.user = updatedUser
+            dismiss()
+        } catch {
+            errorMessage = "Failed to save profile: \(error)"
         }
     }
 }

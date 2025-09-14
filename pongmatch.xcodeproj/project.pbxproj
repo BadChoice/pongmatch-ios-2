@@ -112,6 +112,7 @@
 				Enums/AcceptChallengeRequestFrom.swift,
 				Enums/GameStatus.swift,
 				Enums/InitialScore.swift,
+				Enums/Language.swift,
 				Enums/RankingType.swift,
 				Enums/WinningCondition.swift,
 				Models/Elo.swift,
