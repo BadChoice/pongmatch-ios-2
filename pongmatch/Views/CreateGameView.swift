@@ -8,6 +8,10 @@ struct CreateGameView : View {
     @State private var creatingGame = false
     @State private var opponent:User = User.unknown()
     @State private var errorMessage:String? = nil
+    @State private var selectedDate = Date()
+    @State private var initialScore: InitialScore = .standard
+    @State private var rankingType: RankingType = .friendly
+    @State private var winningCondition: WinningCondition = .bestof5
     
     var body: some View {
         ScrollView{
@@ -39,42 +43,49 @@ struct CreateGameView : View {
                 }
                 
                 Divider().padding(.vertical)
-                
                 VStack(spacing: 10){
                     HStack {
                         Label("Date", systemImage: "calendar")
                         Spacer()
-                        Text("Today, 18:30")
+                        DatePicker("", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                            .labelsHidden()
                     }
                     HStack {
-                        Label("Place", systemImage: "mappin.and.ellipse")
+                        Label("Initial Score", systemImage: "bird.fill")
                         Spacer()
-                        Text("My house")
-                    }
-                    HStack {
-                        Label("Information", systemImage: "info.circle")
-                        Spacer()
-                        Text("None defined")
-                    }
-                }
-                
-                Divider().padding(.vertical)
-                
-                VStack(spacing: 10){
-                    HStack {
-                        Label("Intital Score", systemImage: "bird.fill")
-                        Spacer()
-                        Text("Standard")
+                        Picker("", selection: $initialScore) {
+                            Text("Standard").tag(InitialScore.standard)
+                            Text("Fair").tag(InitialScore.fair)
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .frame(width: 120)
                     }
                     HStack {
                         Label("Ranking type", systemImage: "chart.bar.fill")
                         Spacer()
-                        Text("Friendly")
+                        Picker("", selection: $rankingType) {
+                            ForEach(RankingType.allCases, id: \ .self) { type in
+                                Text(type.description).tag(type)
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .frame(width: 120)
                     }
                     HStack {
                         Label("Winning condition", systemImage: "medal.fill")
                         Spacer()
-                        Text("Best of 5")
+                        Picker("", selection: $winningCondition) {
+                            ForEach(WinningCondition.allCases, id: \ .self) { condition in
+                                switch condition {
+                                case .single: Text("Single").tag(condition)
+                                case .bestof3: Text("Best of 3").tag(condition)
+                                case .bestof5: Text("Best of 5").tag(condition)
+                                case .bestof7: Text("Best of 7").tag(condition)
+                                }
+                            }
+                        }
+                        .pickerStyle(MenuPickerStyle())
+                        .frame(width: 120)
                     }
                 }
                 
@@ -127,10 +138,8 @@ struct CreateGameView : View {
         }
         creatingGame = true
         defer { creatingGame = false }
-        
-        let game = Game(ranking_type: .competitive, winning_condition: .bestof3, status: .waitingOpponent, player1: User.me(), player2: opponent)
+        let game = Game(ranking_type: rankingType, winning_condition: winningCondition, status: .waitingOpponent, player1: User.me(), player2: opponent)
         dismiss()
-        
         do {
             let _ = try await auth.api.store(game: game)
         } catch {
