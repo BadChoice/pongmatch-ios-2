@@ -3,17 +3,19 @@ import SwiftUI
 struct UserView : View {
     let user:User
     let winner:Bool
+    let showUnknownName:Bool
     
-    init(user: User, winner: Bool = false) {
+    init(user: User, winner: Bool = false, showUnknownName: Bool = false) {
         self.user = user
         self.winner = winner
+        self.showUnknownName = showUnknownName
     }
     
     var body: some View {
         HStack{
             AvatarView(user:user, winner:winner).frame(width: 48)
             
-            if user.id != User.unknown().id {
+            if showUnknownName || user.id != User.unknown().id {
                 VStack(alignment: .leading, spacing:4){
                     Text(user.name)
                         .lineLimit(1, reservesSpace: true)

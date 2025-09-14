@@ -40,17 +40,11 @@ struct ScoreboardSelectionView : View {
                     Text("Play against").bold()
                     Spacer()
                     Button {
-                        withAnimation { searchingPlayer2.toggle() }
+                        searchingPlayer2 = true
                     } label: {
                         UserView(user: player2)
+                            .foregroundStyle(.black)
                     }.padding(.trailing)
-                }
-            } else {
-                SearchFriendView(selectedFriend: $player2) { player2 in
-                    withAnimation {
-                        self.player2 = player2
-                        searchingPlayer2.toggle()
-                    }
                 }
             }
             
@@ -65,9 +59,16 @@ struct ScoreboardSelectionView : View {
                     .clipShape(.capsule)
                     .foregroundStyle(.white)
             }
-
-            
-        }.padding()
+        }
+        .padding()
+        .sheet(isPresented: $searchingPlayer2) {
+            SearchOpponentView(selectedFriend: $player2) { selected in
+                player2 = selected
+                searchingPlayer2 = false
+            }
+            .presentationDetents([.large])
+            .presentationDragIndicator(.visible)
+        }
     }
 }
 
