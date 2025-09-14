@@ -238,31 +238,43 @@ class Api {
         struct GameResponse : Codable {
             let data:Game
         }
-        
-        struct GameRequest : Codable {
-            let date:String
-            let information:String?
-            let status:String
-            let winning_condition:String
-            let ranking_type:String
-            let initial_score:String
-            let results:[[Int]]?
-            let player1_id:Int
-            let player2_id:Int
-        }
             
         do {
-            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", json:GameRequest(
-                date : game.date.toISOString,
-                information : game.information,
-                status : game.status.rawValue,
-                winning_condition : game.winning_condition.rawValue,
-                ranking_type : game.ranking_type.rawValue,
-                initial_score : InitialScore.standard.rawValue, //TODO
-                results : game.results,
-                player1_id : game.player1.id,
-                player2_id : game.player2.id,
-            ), headers: headers)            
+            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", params:[
+                "date" : game.date.toISOString,
+                "information" : game.information,
+                "status" : game.status.rawValue,
+                "winning_condition" : game.winning_condition.rawValue,
+                "ranking_type" : game.ranking_type.rawValue,
+                "initial_score" : InitialScore.standard.rawValue, //TODO
+                "player1_id" : game.player1.id,
+                "player2_id" : game.player2.id,
+            ], headers: headers)
+            return gameResponse.data
+            
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func uploadResults(_ game:Game) async throws -> Game {
+        guard let results = game.results, results.count > 0 else {
+            throw Errors.other("No results to upload")
+        }
+        
+        struct GameResponse : Codable {
+            let data:Game
+        }
+        
+        struct ResultsRequest : Codable {
+            let results:[[Int]]?
+        }
+        
+        do {
+            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", json:ResultsRequest(
+                results: results
+            ), headers: headers)
             return gameResponse.data
             
         } catch {

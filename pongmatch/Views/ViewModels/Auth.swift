@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+internal import RevoFoundation
 
 @MainActor
 class AuthViewModel : ObservableObject {
@@ -8,6 +9,7 @@ class AuthViewModel : ObservableObject {
     @Published var errorMessage: String?
     
     @Published var user:User!
+    @Published var games:[Game] = []
     var api:Api!
     
     init() {
@@ -43,7 +45,7 @@ class AuthViewModel : ObservableObject {
         
         errorMessage = nil
         isLoading = true
-        
+        defer { isLoading = false }
         do {
             let token = try await Api.register(
                 name:name,
@@ -63,7 +65,23 @@ class AuthViewModel : ObservableObject {
             errorMessage = "\(error)"
         }
                 
-        isLoading = false
+        
+    }
+    
+    func loadGames() async throws {
+        guard !isLoading else { return }
+        
+        errorMessage = nil
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            games = try await api.games()
+                .sort(by: \.date)
+                .reversed()
+        } catch {
+            errorMessage = "\(error)"
+        }
+            
     }
 
 

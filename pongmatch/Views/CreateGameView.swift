@@ -61,7 +61,7 @@ struct CreateGameView : View {
                         .frame(width: 120)
                     }
                     HStack {
-                        Label("Ranking type", systemImage: "chart.bar.fill")
+                        Label("Ranking type", systemImage: "trophy.fill")
                         Spacer()
                         Picker("", selection: $rankingType) {
                             ForEach(RankingType.allCases, id: \ .self) { type in
@@ -99,9 +99,10 @@ struct CreateGameView : View {
                 } label:{
                     HStack{
                         if creatingGame {
-                            ProgressView()
+                            ProgressView().tint(.white)
+                        } else {
+                            Label("Create", systemImage: "plus")
                         }
-                        Label("Create", systemImage: "plus")
                     }
                     .padding(.vertical)
                     .frame(maxWidth:.infinity)
@@ -138,10 +139,17 @@ struct CreateGameView : View {
         }
         creatingGame = true
         defer { creatingGame = false }
-        let game = Game(ranking_type: rankingType, winning_condition: winningCondition, status: .waitingOpponent, player1: User.me(), player2: opponent)
-        dismiss()
+        
         do {
-            let _ = try await auth.api.store(game: game)
+            let _ = try await auth.api.store(game: Game(
+                ranking_type: rankingType,
+                winning_condition: winningCondition,
+                status: .waitingOpponent,
+                player1: User.me(),
+                player2: opponent
+            ))
+            dismiss()
+            try? await auth.loadGames()
         } catch {
             errorMessage = "\(error)"
         }

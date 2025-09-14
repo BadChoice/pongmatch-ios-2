@@ -7,6 +7,7 @@ struct GameSummaryView : View {
     @Namespace private var namespace
     
     @State private var acceptingChallenge = false
+    @State private var showUploadResultsSheet = false
     
     var body: some View {
         VStack {
@@ -100,6 +101,14 @@ struct GameSummaryView : View {
                     }
                     .padding()
                     .glassEffect()
+                    
+                    Label("Upload results", systemImage: "arrow.up.doc")
+                        .padding()
+                        .glassEffect()
+                        .foregroundStyle(.secondary)
+                        .onTapGesture {
+                            showUploadResultsSheet = true
+                        }
                 }
                 
                 GlassEffectContainer{

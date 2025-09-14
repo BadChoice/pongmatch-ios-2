@@ -143,8 +143,9 @@ struct GamesHomeView : View {
     @EnvironmentObject private var auth: AuthViewModel
     @Binding var refreshID: UUID
 
-    @State var games: [Game] = []
-    @State var isLoadingGames = false
+    var games: [Game]  {
+        auth.games
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -178,20 +179,12 @@ struct GamesHomeView : View {
             }.padding()
         }
         .task {
-            await loadGames()
+            Task {
+                try? await auth.loadGames()
+            }
         }
         .onChange(of: refreshID) {
-            Task { await loadGames() }
-        }
-    }
-    
-    private func loadGames() async {
-        isLoadingGames = true
-        Task {
-            games = ((try? await auth.api.games()) ?? [])
-                .sort(by: \.date)
-                .reversed()
-            isLoadingGames = false
+            Task { try? await auth.loadGames() }
         }
     }
 }
