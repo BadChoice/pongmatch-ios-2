@@ -1,17 +1,22 @@
 import SwiftUI
 
 struct UploadResultsView: View {
-    let game: Game
-    @Environment(\.dismiss) private var dismiss
-    @State private var setResults: [[Int]] = [[0,0]]
-    var player1: User { game.player1 }
-    var player2: User { game.player2 }
     
+    let game: Game
+    @EnvironmentObject var auth: AuthViewModel
+    @EnvironmentObject var nav: NavigationManager
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var uploading: Bool = false
+    @State private var errorMessage: String?
+    
+    @State private var setResults: [[Int]] = [[0,0]]
+        
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Enter Set Results")
                 .font(.title2.bold())
-                .padding(.bottom, 8)
+                .padding(.vertical, 8)
             
             VStack(alignment: .leading, spacing: 12) {
                 
@@ -25,26 +30,25 @@ struct UploadResultsView: View {
                 }
                 
                 HStack {
-                VStack {
-                    Spacer().frame(height:25)
-                    AvatarView(user: player1).frame(width:30)
-                    AvatarView(user: player2).frame(width:30)
-                }
+                    VStack {
+                        Spacer().frame(height:22)
+                        AvatarView(user: game.player1)//.frame(width:40)
+                        AvatarView(user: game.player2)//.frame(width:40)
+                    }.frame(height:100)
                     ScrollView(.horizontal) {
-                        HStack{
+                        HStack(spacing: 8){
                             ForEach(setResults.indices, id: \ .self) { idx in
                                 VStack(alignment: .trailing){
                                     Text("Set \(idx + 1)")
                                         .font(.subheadline)
-                                        .frame(width: 50)
                                     
                                     Stepper(value: $setResults[idx][0], in: 0...99) {
                                         Text("\(setResults[idx][0])")
-                                            .frame(width: 50)
+                                            //.frame(width: 25)
                                     }
                                     Stepper(value: $setResults[idx][1], in: 0...99) {
                                         Text("\(setResults[idx][1])")
-                                            .frame(width: 50)
+                                            //.frame(width: 25)
                                     }
                                 }
                             }
@@ -64,24 +68,47 @@ struct UploadResultsView: View {
                     }
                 }
             }
+
+            Spacer()
             
-            
-            
-            Divider()
             Button {
-                // TODO: Upload results logic here
-                dismiss()
+                Task {
+                    await uploadResults()
+                }
             } label:{
-                Label("Upload results", systemImage: "arrow.up.doc")
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                if uploading {
+                    ProgressView().tint(.white)
+                } else {
+                    Label("Upload results", systemImage: "arrow.up.doc")
+                }
             }
+            .frame(maxWidth: .infinity)
+            .padding()
             .background(.black)
             .foregroundStyle(.white)
             .clipShape(.capsule)
-            Spacer()
+            
+            if let errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .font(.caption)
+                    .padding(.horizontal)
+            }
         }
         .padding()
+    }
+    
+    private func uploadResults() async {
+        uploading = true
+        defer { uploading = false }
+        errorMessage = nil
+        do {
+            let _ = try await auth.api.uploadResults(game, results: setResults)
+            nav.popToRoot()
+            try await auth.loadGames()
+        } catch {
+            errorMessage = "\(error)"
+        }
     }
 }
 
