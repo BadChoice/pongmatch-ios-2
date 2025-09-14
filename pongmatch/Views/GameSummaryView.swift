@@ -91,45 +91,65 @@ struct GameSummaryView : View {
             
             Divider().padding(.bottom)
             
-            VStack(spacing: 12) {
+            VStack(spacing: 18) {
                 if game.status == .planned {
                     NavigationLink {
                         ScoreboardView(score: Score(game: game))
                     } label: {
-                        Label("Scoreboard", systemImage: "squale.split.2x2")
+                        Label("Scoreboard", systemImage: "square.split.2x1")
                     }
+                    .padding()
+                    .glassEffect()
                 }
                 
-                HStack {
-                    if game.status == .waitingOpponent && game.player2.id == auth.user.id {
-                        Button {
-                            Task {
-                                try await auth.api.acceptChallenge(game)
+                GlassEffectContainer{
+                    HStack {
+                        if game.status == .waitingOpponent && game.player2.id == auth.user.id {
+                            Button {
+                                Task {
+                                    try await auth.api.acceptChallenge(game)
+                                }
+                            } label: {
+                                HStack{
+                                    if acceptingChallenge { ProgressView() }
+                                    Label("Accept", systemImage: "checkmark")
+                                }
+                                .padding()
+                                
                             }
-                        } label: {
-                            HStack{
-                                if acceptingChallenge { ProgressView() }
-                                Label("Accept", systemImage: "checkmark.circle")
+                            .bold()
+                            .glassEffect()
+                            .glassEffectUnion(id: "1", namespace: namespace)
+                            .disabled(acceptingChallenge)
+                            
+                            
+                            Button {
+                                Task {
+                                    try await auth.api.declineChallenge(game)
+                                }
+                            } label: {
+                                HStack{
+                                    if acceptingChallenge { ProgressView() }
+                                    Label("Decline", systemImage: "xmark" )
+                                }
+                                .padding()
                             }
-                        }.disabled(acceptingChallenge)
-                        
-                        Button {
-                            Task {
-                                try await auth.api.declineChallenge(game)
-                            }
-                        } label: {
-                            HStack{
-                                if acceptingChallenge { ProgressView() }
-                                Label("Decline", systemImage: "xmark.circle" )
-                            }
-                        }.disabled(acceptingChallenge)
+                            .foregroundStyle(.red)
+                            .glassEffect()
+                            .glassEffectUnion(id: "1", namespace: namespace)
+                            .disabled(acceptingChallenge)
+                        }
                     }
                 }
                 
                 if game.isFinished() {
                     Button("Share", systemImage: "square.and.arrow.up") { }
+                        .padding()
+                        .glassEffect()
                 } else {
                     Button("Add to calendar", systemImage: "calendar.badge.plus") { }
+                        .padding()
+                        .glassEffect()
                 }
                 
             }
@@ -173,5 +193,19 @@ struct SetsScoreView2: View {
     auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
     return NavigationStack {
         GameSummaryView(game: Game.fake())
+    }.environmentObject(auth)
+}
+
+
+#Preview {
+    let auth = AuthViewModel()
+    auth.user = User.me()
+    auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
+    return NavigationStack {
+        GameSummaryView(game: Game.fake(
+            status:.waitingOpponent,
+            player1: User.unknown(),
+            player2: auth.user
+        ))
     }.environmentObject(auth)
 }
