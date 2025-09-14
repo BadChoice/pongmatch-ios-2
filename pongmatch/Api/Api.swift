@@ -274,14 +274,10 @@ class Api {
             let data:Game
         }
         
-        struct ResultsRequest : Codable {
-            let results:[[Int]]?
-        }
-        
         do {
-            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games/\(id)/results", json:ResultsRequest(
-                results: resultsToUpload
-            ), headers: headers)
+            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games/\(id)/results", params:[
+                "results": resultsToUpload
+            ], headers: headers)
             return gameResponse.data
             
         } catch {

@@ -79,7 +79,7 @@ struct UploadResultsView: View {
                 if uploading {
                     ProgressView().tint(.white)
                 } else {
-                    Label("Upload results", systemImage: "arrow.up.doc")
+                    Label("Upload results", systemImage: "arrow.up.circle.fill")
                 }
             }
             .frame(maxWidth: .infinity)

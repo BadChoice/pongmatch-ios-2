@@ -102,7 +102,7 @@ struct GameSummaryView : View {
                     .padding()
                     .glassEffect()
                     
-                    Label("Upload results", systemImage: "arrow.up.doc")
+                    Label("Upload results", systemImage: "arrow.up.circle.fill")
                         .padding()
                         .glassEffect()
                         .foregroundStyle(.secondary)
