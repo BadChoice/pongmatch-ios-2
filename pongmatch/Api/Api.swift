@@ -269,7 +269,42 @@ class Api {
             print(error)
             throw error
         }
-
+    }
+    
+    func acceptChallenge(_ game:Game) async throws -> Game {
+        guard let id = game.id else {
+            throw Errors.other("Game ID is nil")
+        }
+        
+        struct Response : Codable {
+            let data:Game
+        }
+        
+        do{
+            let response:Response = try await Self.call(method: .post, url: "games/\(id)/accept", headers: headers)
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func declineChallenge(_ game:Game) async throws -> Game {
+        guard let id = game.id else {
+            throw Errors.other("Game ID is nil")
+        }
+        
+        struct Response : Codable {
+            let data:Game
+        }
+        
+        do{
+            let response:Response = try await Self.call(method: .post, url: "games/\(id)/decline", headers: headers)
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
     }
     
     

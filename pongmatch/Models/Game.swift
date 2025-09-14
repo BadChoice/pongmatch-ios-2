@@ -30,7 +30,7 @@ class Game : Codable {
     }
     
     var finalResult:[Int]? {
-        guard let results else { return nil }
+        guard let results, results.count > 0 else { return nil }
         
         let player1 = results.reduce(0) { partialResult, set in
             partialResult + (set[0] > set[1] ? 1 : 0)
@@ -46,14 +46,13 @@ class Game : Codable {
     }
     
     func isUpcoming() -> Bool {
-        [GameStatus.planned, GameStatus.waitingOpponent].contains(status)
+        [GameStatus.planned].contains(status)
     }
     
     func winner() -> User? {
         guard let finalResult = finalResult else { return nil }
         return finalResult[0] > finalResult[1] ? player1 : player2
     }
-    
     
     @discardableResult
     func finish(_ score:Score) -> Self {

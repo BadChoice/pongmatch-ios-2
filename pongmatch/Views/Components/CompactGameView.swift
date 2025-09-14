@@ -33,7 +33,7 @@ struct CompactGameView: View {
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
                 Group {
-                    if let finalResult = game.finalResult {
+                    if let finalResult = game.finalResult, finalResult.count > 0  {
                         Text("\(finalResult[0]) - \(finalResult[1])")
                     } else {
                         Text("VS")

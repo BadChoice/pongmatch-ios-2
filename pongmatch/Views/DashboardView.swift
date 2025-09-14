@@ -146,21 +146,32 @@ struct GamesHomeView : View {
     
     var body: some View {
         VStack(spacing: 0) {
+            
+            let currentGames = games.filter { $0.status == .ongoing }
             VStack(alignment: .leading){
                 Text("Current Games").font(.headline)
-                GamesScrollview(games:games.filter { $0.status == .ongoing
-                })
+                GamesScrollview(games:currentGames)
             }.padding()
+            
+            let challenges = games.filter { $0.status == .waitingOpponent }
+            if challenges.count > 0 {
+                VStack(alignment: .leading){
+                    Text("You have been challenged!").font(.headline)
+                    GamesScrollview(games:challenges)
+                }.padding()
+            }
+            
+            let upcoming = games.filter { $0.status == .planned }
+            if upcoming.count > 0 {
+                VStack(alignment: .leading){
+                    Text("Next Games").font(.headline)
+                    GamesScrollview(games:upcoming)
+                }.padding()
+            }
             
             VStack(alignment: .leading){
                 Text("Finished Games").font(.headline)
                 GamesScrollview(games:games.filter { $0.isFinished()
-                })
-            }.padding()
-            
-            VStack(alignment: .leading){
-                Text("Next Games").font(.headline)
-                GamesScrollview(games:games.filter { $0.isUpcoming()
                 })
             }.padding()
         }

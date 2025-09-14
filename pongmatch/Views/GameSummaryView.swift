@@ -3,7 +3,10 @@ import SwiftUI
 struct GameSummaryView : View {
     let game:Game
     
+    @EnvironmentObject private var auth: AuthViewModel
     @Namespace private var namespace
+    
+    @State private var acceptingChallenge = false
     
     var body: some View {
         VStack {
@@ -44,12 +47,17 @@ struct GameSummaryView : View {
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .matchedTransitionSource(id: "zoom_user_\(game.player1.id)", in: namespace)
                 }
-                if let finalResult = game.finalResult{
-                    HStack {
-                        Text("\(finalResult[0]) - \(finalResult[1])")
-                    }.font(.largeTitle.bold())
-                    
+                Group {
+                    if let finalResult = game.finalResult{
+                        HStack {
+                            Text("\(finalResult[0]) - \(finalResult[1])")
+                        }
+                    }else{
+                        Text("VS")
+                    }
                 }
+                .font(.largeTitle.bold())
+                
                 NavigationLink {
                     FriendView(user: game.player2)
                         .navigationTransition(.zoom(sourceID: "zoom_user_\(game.player2.id)", in: namespace))
@@ -62,9 +70,10 @@ struct GameSummaryView : View {
             .foregroundStyle(.black)
             .padding(.vertical, 20)
             
-            Divider()
+            
             
             if game.isFinished() {
+                Divider()
                 VStack(alignment: .leading) {
                     Text("Sets").font(.title2)
                     SetsScoreView2(game:game)
@@ -80,7 +89,43 @@ struct GameSummaryView : View {
             // Max consecutive points strike per set and overall
             // Set history table
             
-            HStack {
+            Divider().padding(.bottom)
+            
+            VStack(spacing: 12) {
+                if game.status == .planned {
+                    NavigationLink {
+                        ScoreboardView(score: Score(game: game))
+                    } label: {
+                        Label("Scoreboard", systemImage: "squale.split.2x2")
+                    }
+                }
+                
+                HStack {
+                    if game.status == .waitingOpponent && game.player2.id == auth.user.id {
+                        Button {
+                            Task {
+                                try await auth.api.acceptChallenge(game)
+                            }
+                        } label: {
+                            HStack{
+                                if acceptingChallenge { ProgressView() }
+                                Label("Accept", systemImage: "checkmark.circle")
+                            }
+                        }.disabled(acceptingChallenge)
+                        
+                        Button {
+                            Task {
+                                try await auth.api.declineChallenge(game)
+                            }
+                        } label: {
+                            HStack{
+                                if acceptingChallenge { ProgressView() }
+                                Label("Decline", systemImage: "xmark.circle" )
+                            }
+                        }.disabled(acceptingChallenge)
+                    }
+                }
+                
                 if game.isFinished() {
                     Button("Share", systemImage: "square.and.arrow.up") { }
                 } else {
@@ -123,7 +168,10 @@ struct SetsScoreView2: View {
 }
 
 #Preview {
-    NavigationStack {
+    let auth = AuthViewModel()
+    auth.user = User.me()
+    auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
+    return NavigationStack {
         GameSummaryView(game: Game.fake())
-    }
+    }.environmentObject(auth)
 }
