@@ -19,7 +19,7 @@ struct SearchOpponentView : View {
                 Text("Select Opponent")
                     .font(.title2)
                     .bold()
-                    .padding(.top)
+                    .padding(.bottom)
 
                 
                 VStack(spacing: 10) {
@@ -35,6 +35,7 @@ struct SearchOpponentView : View {
                     }
                     Spacer()
                 }
+                Spacer()
             }
             .padding()
             .searchable(text: $searchText, prompt: "Search for friends")

@@ -102,6 +102,12 @@ struct HomeView : View {
                     }
                 }.padding()
                 
+                NavigationLink {
+                    CreateGameView()
+                } label: {
+                    Label("Create Game", systemImage: "plus.circle")
+                }
+                
                 Divider()
                 
                 GamesHomeView(refreshID: $refreshId)
