@@ -107,6 +107,8 @@ struct HomeView : View {
                 } label: {
                     Label("Create Game", systemImage: "plus.circle")
                 }
+                .padding()
+                .glassEffect()
                 
                 Divider()
                 
