@@ -274,10 +274,14 @@ class Api {
             let data:Game
         }
         
+        struct ResultsRequest: Codable {
+            let results: [[Int]]
+        }
+        
         do {
-            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games/\(id)/results", params:[
-                "results": resultsToUpload
-            ], headers: headers)
+            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games/\(id)/results", json:ResultsRequest(
+                results: resultsToUpload
+            ), headers: headers)
             return gameResponse.data
             
         } catch {
@@ -351,11 +355,12 @@ class Api {
         
         let finalHeaders = headers.merging(["Content-Type": "application/json"]) { _, new in new }
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<T, Error>) -> Void in
-            Http.call(method, Pongmatch.url + "api/" + url, json: json, headers:finalHeaders) { (_ response:T?, _ error:String?)  in
-                guard let response else {
-                    return continuation.resume(throwing: Errors.other(error ?? "Unknown error"))
+            Http.call(method, Pongmatch.url + "api/" + url, json: json, headers:finalHeaders) { response in
+                do {
+                    continuation.resume(returning: try parseResponse(response))
+                } catch {
+                    continuation.resume(throwing: error)
                 }
-                return continuation.resume(returning: response)
             }
         }
     }

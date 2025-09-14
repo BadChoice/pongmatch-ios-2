@@ -1,5 +1,5 @@
 {
-  "originHash" : "f5d349285ad32d0c2f9dae477411b6a9ba43988d34c398ca10f731f750261569",
+  "originHash" : "1700cf50b74e6eaaa0fd21ca716e01a289674a2f15853c27d2a7b36618db0d4a",
   "pins" : [
     {
       "identity" : "confettiswiftui",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/revosystems/revohttp",
       "state" : {
-        "revision" : "1a56ad42b9c50ffd49c8b8de0434fe351889831c",
-        "version" : "0.3.9"
+        "revision" : "195b26896fbacddec5413363a6180d34c3fdd41e",
+        "version" : "0.3.10"
       }
     }
   ],

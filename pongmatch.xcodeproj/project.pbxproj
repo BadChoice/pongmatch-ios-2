@@ -1299,7 +1299,7 @@
 			repositoryURL = "https://github.com/revosystems/revohttp";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.3.9;
+				minimumVersion = 0.3.10;
 			};
 		};
 		BBCD8F872E72E50000E4D04A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {

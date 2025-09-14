@@ -48,16 +48,8 @@ struct GameSummaryView : View {
                         .frame(minWidth: 0, maxWidth: .infinity)
                         .matchedTransitionSource(id: "zoom_user_\(game.player1.id)", in: namespace)
                 }
-                Group {
-                    if let finalResult = game.finalResult{
-                        HStack {
-                            Text("\(finalResult[0]) - \(finalResult[1])")
-                        }
-                    }else{
-                        Text("VS")
-                    }
-                }
-                .font(.largeTitle.bold())
+                
+                FinalResult(game.finalResult)
                 
                 NavigationLink {
                     FriendView(user: game.player2)

@@ -26,13 +26,9 @@ struct FinishGameView : View {
             HStack {
                 CompactUserView(user: game.player1, winner:game.winner()?.id == game.player1.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
-                HStack{
-                    Text("\(game.finalResult?[0] ?? 0)")
-                    Text("-")
-                    Text("\(game.finalResult?[1] ?? 0)")
-                }.frame(minWidth: 0, maxWidth: .infinity)
-                    .font(.largeTitle.bold())
                 
+                FinalResult(game.finalResult)
+                    .frame(minWidth: 0, maxWidth: .infinity)
                 
                 CompactUserView(user: game.player2, winner:game.winner()?.id == game.player2.id)
                     .frame(minWidth: 0, maxWidth: .infinity)

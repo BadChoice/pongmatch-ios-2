@@ -104,8 +104,9 @@ struct UploadResultsView: View {
         errorMessage = nil
         do {
             let _ = try await auth.api.uploadResults(game, results: setResults)
-            nav.popToRoot()
+            dismiss()
             try await auth.loadGames()
+            nav.popToRoot()            
         } catch {
             errorMessage = "\(error)"
         }
