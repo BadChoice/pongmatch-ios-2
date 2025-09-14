@@ -56,7 +56,8 @@ struct FinishGameView : View {
                     uploadingGame = true
                     Task {
                         do {
-                            let _ = try await auth.api.store(game: game)
+                            let newGame = try await auth.api.store(game: game)
+                            let _ = try await auth.api.uploadResults(game, results:game.results)
                             await MainActor.run {
                                 dismiss()
                             }

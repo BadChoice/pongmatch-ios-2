@@ -258,8 +258,11 @@ class Api {
         }
     }
     
-    func uploadResults(_ game:Game) async throws -> Game {
-        guard let results = game.results, results.count > 0 else {
+    func uploadResults(_ game:Game, results:[[Int]]? = nil) async throws -> Game {
+        
+        let resultsToUpload = game.results ?? results
+        
+        guard let resultsToUpload, resultsToUpload.count > 0 else {
             throw Errors.other("No results to upload")
         }
         
@@ -273,7 +276,7 @@ class Api {
         
         do {
             let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", json:ResultsRequest(
-                results: results
+                results: resultsToUpload
             ), headers: headers)
             return gameResponse.data
             
