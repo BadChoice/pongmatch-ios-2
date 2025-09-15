@@ -2,6 +2,12 @@ import SwiftUI
 
 struct ScoreboardSelectionView : View {
     
+    enum ScoreboardMode: String, CaseIterable, Identifiable {
+        var id: String { rawValue }
+        case standard = "Standard Match"
+        case otp = "One Time Code"
+    }
+    
     var onSelect: (Game) -> Void
 
     @EnvironmentObject private var auth: AuthViewModel
@@ -13,97 +19,79 @@ struct ScoreboardSelectionView : View {
     @State private var searchingPlayer2 = false
     
     @State private var publicScoreboardCode = ""
+    @State private var selectedMode: ScoreboardMode = .standard
 
     var body: some View {
-        VStack(alignment: .leading) {
-            Text("Scoreboard")
-                .padding(.top)
-                .font(.largeTitle)
+        VStack(alignment: .leading, spacing: 20) {
             
-            
-            HStack{
-                Text("Win condition").bold()
-                Spacer()
-                Picker("Win condition", selection: $winCondition) {
-                    ForEach(WinningCondition.allCases, id:\.self) { condition in
-                        Text(condition.rawValue.capitalized)
-                    }
+            Picker("Mode", selection: $selectedMode) {
+                ForEach(ScoreboardMode.allCases) { mode in
+                    Text(mode.rawValue)
+                        .tag(mode)
                 }
             }
-            HStack{
-                Text("Ranking Type").bold()
-                Spacer()
-                Picker("Ranking Type", selection: $rankingType) {
-                    ForEach(RankingType.allCases, id:\.self) { rankingType in
-                        Text(rankingType.rawValue.capitalized)
+            .pickerStyle(.segmented)
+            .padding(.vertical)
+            
+            if selectedMode == .standard {
+                Group {
+                    HStack{
+                        Text("Win condition").bold()
+                        Spacer()
+                        Picker("Win condition", selection: $winCondition) {
+                            ForEach(WinningCondition.allCases, id:\.self) { condition in
+                                Text(condition.rawValue.capitalized)
+                            }
+                        }
                     }
-                }
-            }
-            if !searchingPlayer2 {
-                HStack{
-                    Text("Play against").bold()
-                    Spacer()
+                    HStack{
+                        Text("Ranking Type").bold()
+                        Spacer()
+                        Picker("Ranking Type", selection: $rankingType) {
+                            ForEach(RankingType.allCases, id:\.self) { rankingType in
+                                Text(rankingType.rawValue.capitalized)
+                            }
+                        }
+                    }
+                    if !searchingPlayer2 {
+                        HStack{
+                            Text("Play against").bold()
+                            Spacer()
+                            Button {
+                                searchingPlayer2 = true
+                            } label: {
+                                UserView(user: player2)
+                                    .foregroundStyle(.black)
+                            }.padding(.trailing)
+                        }
+                    }
                     Button {
-                        searchingPlayer2 = true
-                    } label: {
-                        UserView(user: player2)
-                            .foregroundStyle(.black)
-                    }.padding(.trailing)
+                        onSelect(
+                            Game(
+                                ranking_type: rankingType,
+                                winning_condition: winCondition,
+                                status: .ongoing,
+                                player1: User.me(),
+                                player2: player2
+                            )
+                        )
+                    } label:{
+                        Label("START", systemImage: "play.fill")
+                            .padding()
+                            .frame(minWidth: 0, maxWidth: .infinity)
+                            .background(.black)
+                            .clipShape(.capsule)
+                            .foregroundStyle(.white)
+                    }
+                    Text("Start a match with the selected values")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            } else if selectedMode == .otp {
+                OneTimeCodeView() { game in
+                    onSelect(game)
                 }
             }
-            
-
-            Button {
-                onSelect(
-                    Game(
-                        ranking_type: rankingType,
-                        winning_condition: winCondition,
-                        status: .ongoing,
-                        player1: User.me(),
-                        player2: player2
-                    )
-                )
-            } label:{
-                Label("START", systemImage: "play.fill")
-                    .padding()
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .background(.black)
-                    .clipShape(.capsule)
-                    .foregroundStyle(.white)
-            }
-            Text("Start a match with the selected values")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            
-            Divider().padding(.vertical, 40)
-            
-            // MARK - One time code
-            VStack(spacing: 10) {
-                TextField("One time code", text: $publicScoreboardCode)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.numberPad)
-                    .autocorrectionDisabled(true)
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-                
-                Button {
-                    searchGameWithScoreboardCode()
-                } label:{
-                    Label("START", systemImage: "lock.circle.dotted")
-                        .padding()
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .background(.black)
-                        .clipShape(.capsule)
-                        .foregroundStyle(.white)
-                }
-                
-                Text("Enter the one time code to start it with the digital scoreboard")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-            }
-            
             Spacer()
         }
         .padding()
@@ -117,12 +105,58 @@ struct ScoreboardSelectionView : View {
         }
     }
     
+
+}
+
+private struct OneTimeCodeView : View {
+
+    @EnvironmentObject private var auth: AuthViewModel
+    @State var publicScoreboardCode: String = ""
+    @State var errorMessage:String? = nil
+    
+    var onSelect: (Game) -> Void = { _ in }
+    
+    var body: some View {
+        TextField("One time code", text: $publicScoreboardCode)
+            .textInputAutocapitalization(.never)
+            .keyboardType(.numberPad)
+            .autocorrectionDisabled(true)
+            .padding()
+            .background(Color(UIColor.secondarySystemBackground))
+            .cornerRadius(8)
+            .padding(.horizontal)
+        Button {
+            searchGameWithScoreboardCode()
+        } label:{
+            Label("START", systemImage: "lock.circle.dotted")
+                .padding()
+                .frame(minWidth: 0, maxWidth: .infinity)
+                .background(.black)
+                .clipShape(.capsule)
+                .foregroundStyle(.white)
+        }
+        
+        if let errorMessage {
+            Text(errorMessage)
+                .foregroundColor(.red)
+                .font(.caption)
+                .padding(.horizontal)
+        }
+        
+        Text("Enter the one time code to start it with the digital scoreboard")
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+    }
+    
     private func searchGameWithScoreboardCode() {
         Task {
-            if let game = try? await auth.api.getGame(publicScoreboardCode: publicScoreboardCode) {
+            do {
+                let game = try await auth.api.getGame(publicScoreboardCode: publicScoreboardCode)
                 await MainActor.run {
                     onSelect(game)
                 }
+            } catch {
+                errorMessage = "\(error)"
             }
         }
     }
