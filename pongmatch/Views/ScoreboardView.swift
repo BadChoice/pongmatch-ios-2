@@ -163,7 +163,7 @@ struct BackgroundBlurredImage : View {
                     .resizable()
                     .scaledToFill()
                     .blur(radius: 40)
-                    .opacity(0.25)
+                    .opacity(0.10)
                     .ignoresSafeArea()
             } placeholder: {
                 Color.white.ignoresSafeArea()
