@@ -125,17 +125,9 @@ struct HomeView : View {
             refreshId = UUID()
         }
         .sheet(isPresented: $showScoreboardSelectionModal) {
-            ScoreboardSelectionView { player2, winningCondition, rankingType in
+            ScoreboardSelectionView { game in
                 showScoreboardSelectionModal = false
-                onStartScoreboard(
-                    Game(
-                        ranking_type: rankingType,
-                        winning_condition: winningCondition,
-                        status:.ongoing,
-                        player1: auth.user!,
-                        player2: player2,
-                    )
-                )
+                onStartScoreboard(game)
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
