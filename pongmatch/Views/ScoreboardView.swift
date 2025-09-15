@@ -25,7 +25,7 @@ struct ScoreboardView : View {
     var body: some View {
         ZStack {
             BackgroundBlurredImage(user:syncedScore.score?.player1)
-            
+            //Color.white.opacity(0.45).ignoresSafeArea()
             VStack(spacing: 14){
                 if syncedScore.score == nil {
                     Spacer()
@@ -163,10 +163,10 @@ struct BackgroundBlurredImage : View {
                     .resizable()
                     .scaledToFill()
                     .blur(radius: 40)
-                    .opacity(0.7)
+                    .opacity(0.25)
                     .ignoresSafeArea()
             } placeholder: {
-                Color.black.opacity(0.5).ignoresSafeArea()
+                Color.white.ignoresSafeArea()
             }
         }
     }
