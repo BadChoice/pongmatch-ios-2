@@ -36,9 +36,13 @@ struct DashboardView : View {
                 Button("Add Friend", systemImage: "person.badge.plus") {
                     
                 }
-                Button("Feedback", systemImage: "bubble") {
-                    
+                
+                NavigationLink {
+                    FeedbackView()
+                } label: {
+                    Label("Feedback", systemImage: "bubble")
                 }
+                
                 Divider()
                 Button("Logout", systemImage: "arrow.right.square") {
                     auth.logout()
