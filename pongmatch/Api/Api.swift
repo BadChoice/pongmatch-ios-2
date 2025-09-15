@@ -326,6 +326,20 @@ class Api {
         }
     }
     
+    func sendFeedback(_ message:String) async throws {
+        struct Response : Codable { }
+        
+        do{
+            let _ :Response = try await Self.call(method: .post, url: "feedback", params:[
+                "message" : message
+            ], headers: headers)
+            return
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     
     // MARK: ------- API Helpers Itself
     private var headers:[String:String] {

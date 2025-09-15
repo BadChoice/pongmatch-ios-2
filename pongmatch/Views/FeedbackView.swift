@@ -1,7 +1,9 @@
 import SwiftUI
 
 struct FeedbackView : View {
-    @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject private var auth: AuthViewModel
+    @EnvironmentObject private var nav: NavigationManager
+    
     @State private var feedbackText: String = ""
     @State private var isSubmitting: Bool = false
     @State private var isSubmitted: Bool = false
@@ -16,11 +18,6 @@ struct FeedbackView : View {
                         .multilineTextAlignment(.center)
                     Text("We appreciate your input and will use it to improve Pongmatch.")
                         .multilineTextAlignment(.center)
-                }
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        presentationMode.wrappedValue.dismiss()
-                    }
                 }
             } else {
                 VStack(spacing: 12) {
@@ -63,11 +60,19 @@ struct FeedbackView : View {
     private func submitFeedback() {
         guard !feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         isSubmitting = true
-        // Simulate upload delay
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            isSubmitting = false
-            isSubmitted = true
-            feedbackText = ""
+
+        Task {
+            do {
+                try await auth.api.sendFeedback(feedbackText)
+                isSubmitted = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    isSubmitting = false
+                    feedbackText = ""
+                    nav.popToRoot()
+                }
+            } catch {
+                
+            }
         }
     }
 }
