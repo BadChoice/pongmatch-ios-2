@@ -8,6 +8,7 @@ struct GameSummaryView : View {
     
     @State private var acceptingChallenge = false
     @State private var showUploadResultsSheet = false
+    @State private var publicScoreboardCode: String? = nil
     
     var body: some View {
         VStack {
@@ -86,22 +87,51 @@ struct GameSummaryView : View {
             
             VStack(spacing: 18) {
                 if game.status == .planned {
-                    NavigationLink {
-                        ScoreboardView(score: Score(game: game))
-                    } label: {
-                        Label("Scoreboard", systemImage: "square.split.2x1")
-                    }
-                    .padding()
-                    .glassEffect()
-                    
-                    Label("Upload results", systemImage: "arrow.up.circle.fill")
+                    HStack {
+                        NavigationLink {
+                            ScoreboardView(score: Score(game: game))
+                        } label: {
+                            Label("Scoreboard", systemImage: "square.split.2x1")
+                        }
+                        .padding()
+                        .foregroundStyle(.white)
+                        .bold()
+                        .glassEffect(.regular.tint(.black).interactive())
+                        
+
+                        Button {
+                            showUploadResultsSheet = true
+                        } label: {
+                            Label("Upload results", systemImage: "arrow.up.circle.fill")
+                        }
                         .padding()
                         .glassEffect()
-                        .foregroundStyle(.secondary)
-                        .onTapGesture {
-                            showUploadResultsSheet = true
+                    }
+                    
+                    Divider()
+                    
+                    if let publicScoreboardCode = Optional("123456") {
+                        
+                        HStack(spacing: 14){
+                            Text("\(publicScoreboardCode.prefix(3))")
+                            Text("\(publicScoreboardCode.suffix(3))")
                         }
+                        .font(.largeTitle.bold())
+                        .tracking(2)
+                        .transition(.opacity.combined(with: .scale))
+                        
+                    } else {
+                        Button {
+                            getPublicScoreboardCode()
+                        } label: {
+                            Label("Public Code", systemImage: "lock.circle.dotted")
+                        }
+                        .padding()
+                        .glassEffect()
+                    }
+                    
                 }
+                
                 
                 GlassEffectContainer{
                     HStack {
@@ -143,6 +173,7 @@ struct GameSummaryView : View {
                     }
                 }
                 
+                
                 if game.isFinished() {
                     Button("Share", systemImage: "square.and.arrow.up") { }
                         .padding()
@@ -160,6 +191,15 @@ struct GameSummaryView : View {
             UploadResultsView(game: game)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
+        }
+    }
+    
+    private func getPublicScoreboardCode() {
+        Task {
+            let code = try? await auth.api.getPublicScoreboardCode(game)
+            await MainActor.run {
+                withAnimation { publicScoreboardCode = code }
+            }
         }
     }
 }
