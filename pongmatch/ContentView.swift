@@ -13,6 +13,8 @@ import SwiftData
  [ ] Push notifications
  [ ] Follow / Unfollow users
  [ ] Finish and upload game from watch.
+ [ ] Return avatar full url in UserResource $user->avatarUrl()
+ [ ] TODO: send notification to User as he has a new follower
  */
 
 struct ContentView: View {

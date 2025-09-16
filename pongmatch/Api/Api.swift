@@ -204,6 +204,38 @@ class Api {
         }
     }
     
+    func follow(_ user:User) async throws {
+        struct Response:Codable {}
+        
+        do {
+            let _:Response = try await Self.call(method: .post, url: "friends/\(user.id)", headers: headers)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func unfollow(_ user:User) async throws {
+        struct Response:Codable {}
+        
+        do {
+            let _:Response = try await Self.call(method: .delete, url: "friends/\(user.id)", headers: headers)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func friendShipStatus(_ user:User) async throws -> FriendshipStatus {
+        do {
+            return try await Self.call(method: .get, url: "friends/\(user.id)/friendship", headers: headers)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+
+    
     func friends(search text:String?) async throws -> [User] {
         guard let text, !text.isEmpty else { return[] }
         

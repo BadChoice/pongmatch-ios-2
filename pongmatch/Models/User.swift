@@ -69,3 +69,9 @@ struct User : Codable {
         )
     }
 }
+
+
+struct FriendshipStatus:Codable {
+    let isFollowed:Bool
+    let followsMe:Bool
+}
