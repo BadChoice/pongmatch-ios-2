@@ -67,6 +67,20 @@ class Api {
         }
     }
     
+    func registerApnToken(_ token:String) async throws {
+        struct Response:Codable {}
+        
+        do {
+            let _:Response = try await client.call(method: .post, url: "me/apnToken", params:[
+                "token": token
+            ])
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+
+    
     func updateProfile(name:String, language:Language, timeZone:String, phonePrefix:String?, phone:String?, address:String?, acceptChallengesFrom:AcceptChallengeRequestFrom) async throws  -> User {
         
         struct Response : Codable {
