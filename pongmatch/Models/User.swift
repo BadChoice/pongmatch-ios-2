@@ -17,6 +17,8 @@ struct User : Codable {
     
     var global_ranking:Int?
     
+    var friendship:FriendshipStatus?
+    
     var initials:String {
         name.components(separatedBy: .whitespacesAndNewlines) // split by spaces
                     .filter { !$0.isEmpty }                   // remove empty parts
@@ -43,10 +45,11 @@ struct User : Codable {
             games_won: 102,
             games_lost: 53,
             last_match_date: Date(),
+            friendship: FriendshipStatus(isFollowed: false, followsMe: false),
             phone_prefix: nil,
             phone: nil,
             address: nil,
-            accept_challenge_requests_from: nil
+            accept_challenge_requests_from: nil,
         )
     }
     
@@ -62,6 +65,7 @@ struct User : Codable {
             games_won: nil,
             games_lost: nil,
             last_match_date: nil,
+            friendship: FriendshipStatus(isFollowed: false, followsMe: false),
             phone_prefix: nil,
             phone: nil,
             address: nil,

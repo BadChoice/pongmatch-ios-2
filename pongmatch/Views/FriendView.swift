@@ -3,9 +3,19 @@ import Charts
 
 
 struct FriendView : View {
+    @EnvironmentObject private var auth: AuthViewModel
+    
     let user:User
+    
     @State private var selectedSegment = 0
     @State private var globalRanking:Int? = nil
+    
+    @State var isFollowed:Bool
+    
+    init(user:User) {
+        self.user = user
+        self.isFollowed = user.friendship?.isFollowed ?? false
+    }
     
     var body: some View {
         VStack(spacing:24){
@@ -14,7 +24,7 @@ struct FriendView : View {
             Divider()
             HStack(spacing:40) {
                 Button("Challenge") { }
-                Button("Follow") { }
+                FollowButton(user: user, isFollowed: $isFollowed)
             }
             
             Divider()
@@ -119,6 +129,31 @@ struct EloHistory : View {
             }
         }
     }
+}
+
+struct FollowButton : View {
+    @EnvironmentObject private var auth: AuthViewModel
+    let user:User
+    @Binding var isFollowed:Bool
+    
+    var body: some View {
+        
+        Button {
+            Task {
+                try await isFollowed ? auth.api.unfollow(user) : auth.api.follow(user)
+                withAnimation { isFollowed.toggle()}
+            }
+        } label: {
+            Label(isFollowed ? "Following" : "Follow",
+                  systemImage: "heart.fill")
+                
+        }
+        .padding(6)
+        .background(isFollowed ? .black : .clear)
+        .foregroundStyle(isFollowed ? .white : .blue)
+        .cornerRadius(8)
+    }
+
 }
 
 #Preview {
