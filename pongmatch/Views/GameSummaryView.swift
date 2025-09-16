@@ -110,8 +110,7 @@ struct GameSummaryView : View {
                     
                     Divider()
                     
-                    if let publicScoreboardCode = Optional("123456") {
-                        
+                    if let publicScoreboardCode {                        
                         HStack(spacing: 14){
                             Text("\(publicScoreboardCode.prefix(3))")
                             Text("\(publicScoreboardCode.suffix(3))")

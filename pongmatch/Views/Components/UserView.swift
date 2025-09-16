@@ -66,9 +66,11 @@ struct CompactUserView : View {
 }
 
 #Preview {
-    UserView(user: User.me(), winner: true)
-}
-
-#Preview {
-    CompactUserView(user: User.me())
+    VStack(spacing:20) {
+        UserView(user: User.me(), winner: false)
+        UserView(user: User.me(), winner: true)
+        Divider()
+        CompactUserView(user: User.me())
+        CompactUserView(user: User.me(), winner:true)
+    }
 }

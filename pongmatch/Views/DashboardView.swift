@@ -83,44 +83,49 @@ struct HomeView : View {
     var onStartScoreboard: (Game) -> Void
     
     var body: some View {
-        ScrollView{
-            VStack(spacing: 20) {
-                UserHeaderView(user: auth.user ?? User.unknown())               
-
-                Divider()
-                
-                HStack {
-                    Button("Scoreboard", systemImage: "square.split.2x1"){
-                        showScoreboardSelectionModal = true
+/*        ZStack {
+            BackgroundBlurredImage(user:auth.user ?? User.unknown(), alpha: 0.8)
+            Color.black.opacity(0.45).ignoresSafeArea()
+  */
+            ScrollView{
+                VStack(spacing: 20) {
+                    UserHeaderView(user: auth.user ?? User.unknown())
+                    
+                    Divider()
+                    
+                    HStack {
+                        Button("Scoreboard", systemImage: "square.split.2x1"){
+                            showScoreboardSelectionModal = true
+                        }
+                        .padding()
+                        .foregroundStyle(.white)
+                        .bold()
+                        .glassEffect(.regular.tint(.black).interactive())
+                        
+                        if syncedScore.score != nil {
+                            Spacer().frame(width:20)
+                            NavigationLink("Continue scoreboard") {
+                                ScoreboardView()
+                            }
+                        }
+                    }.padding()
+                    
+                    NavigationLink {
+                        CreateGameView()
+                    } label: {
+                        Label("Create Game", systemImage: "plus.circle")
                     }
                     .padding()
-                    .foregroundStyle(.white)
-                    .bold()
-                    .glassEffect(.regular.tint(.black).interactive())
+                    .glassEffect()
                     
-                    if syncedScore.score != nil {
-                        Spacer().frame(width:20)
-                        NavigationLink("Continue scoreboard") {
-                            ScoreboardView()
-                        }
-                    }
-                }.padding()
-                
-                NavigationLink {
-                    CreateGameView()
-                } label: {
-                    Label("Create Game", systemImage: "plus.circle")
+                    Divider()
+                    
+                    GamesHomeView(refreshID: $refreshId)
+                    
+                    Spacer()
                 }
-                .padding()
-                .glassEffect()
-                
-                Divider()
-                
-                GamesHomeView(refreshID: $refreshId)
-
-                Spacer()
             }
-        }
+       /* }*/
         .refreshable {
             refreshId = UUID()
         }
@@ -131,7 +136,7 @@ struct HomeView : View {
             }
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
-        }     
+        }
     }
 }
 
@@ -191,4 +196,3 @@ struct GamesHomeView : View {
     auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
     return DashboardView().environmentObject(auth)
 }
-

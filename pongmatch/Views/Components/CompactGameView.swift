@@ -53,8 +53,10 @@ struct CompactGameView: View {
                 .padding(.vertical, 4)
         }
         .padding()
-        .background(.gray.opacity(0.1))
-        .cornerRadius(8)
+        //.background(.gray.opacity(0.1))
+        //.background(.white)
+        .glassEffect(in: .rect(cornerRadius: 16))
+        //.cornerRadius(8)
         .frame(width:290)
     }
 }

@@ -155,7 +155,13 @@ struct ScoreboardView : View {
 struct BackgroundBlurredImage : View {
     
     let user:User?
+    let alpha:Double
     
+    init(user:User?, alpha:Double = 0.10) {
+        self.user = user
+        self.alpha = alpha
+    }
+            
     var body: some View {
         if let url = Images.avatar(user?.avatar) {
             AsyncImage(url: url) { image in
@@ -163,7 +169,7 @@ struct BackgroundBlurredImage : View {
                     .resizable()
                     .scaledToFill()
                     .blur(radius: 40)
-                    .opacity(0.10)
+                    .opacity(alpha)
                     .ignoresSafeArea()
             } placeholder: {
                 Color.white.ignoresSafeArea()
