@@ -1,48 +1,14 @@
 import Foundation
 import UIKit
 import RevoHttp
-
 internal import RevoFoundation
 
 class Api {
-    
-    enum Errors : Error, CustomStringConvertible {
-        case not200(_ status:Int, _ error:ErrorResponse? = nil)
-        case notAuthorized
-        case forbidden
-        case notFound
-        case unprocessableContent(_ error:ErrorResponse?)
-        
-        case cantDecodeResponse
-        case emptyResponse
-        case errorResponse(_ error:ErrorResponse?)
-        case other(_ error:String)
-        
-        var description: String {
-            switch self {
-            case .not200(let status, let error): error?.message ?? "Can't process the request. \(status)"
-            case .notAuthorized: "Not authorized."
-            case .forbidden: "Forbidden."
-            case .notFound: "Not found."
-            case .unprocessableContent(let error): error?.message ?? "Unprocessable content."
-            case .cantDecodeResponse: "Unexpected server response."
-            case .emptyResponse: "No data received from server."
-            case .errorResponse(let error): error?.message  ?? "Can't process the request."
-            case .other(let error): "Other response \(error)"
-            }
-        }
-    }
-    
-    struct ErrorResponse : Codable {
-        let message:String
-        let errors:[String:[String]]?
-    }
-
-    
-    let token:String
+            
+    let client:ApiClient
     
     init(_ token:String){
-        self.token = token
+        self.client = ApiClient(token)
     }
 
     static func login(email:String, password:String, deviceName:String) async throws -> String {
@@ -51,7 +17,7 @@ class Api {
             let token:String
         }
         
-        let response:TokenResponse = try await Self.call(method: .post, url: "login", params:[
+        let response:TokenResponse = try await ApiClient.call(method: .post, url: "login", params:[
             "email": email,
             "password": password,
             "device_name" : deviceName
@@ -68,7 +34,7 @@ class Api {
             let token:String
         }
         
-        let response:TokenResponse = try await Self.call(method: .post, url: "register", params:[
+        let response:TokenResponse = try await ApiClient.call(method: .post, url: "register", params:[
             "name" : name,
             "username" : username,
             "email": email,
@@ -90,7 +56,7 @@ class Api {
             var data:User
         }
         do{
-            var userResponse:UserResponse = try await Self.call(method: .get, url: "me", headers: headers)
+            var userResponse:UserResponse = try await client.call(method: .get, url: "me")
             if let ranking = try? await globalRankingPosition(userResponse.data) {
                 userResponse.data.global_ranking = ranking
             }
@@ -108,7 +74,7 @@ class Api {
         }
         
         do {
-            let response:Response = try await Self.call(method: .put, url: "me", params: [
+            let response:Response = try await client.call(method: .put, url: "me", params: [
                 "name": name,
                 "language": language.rawValue,
                 "timezone": timeZone,
@@ -116,7 +82,7 @@ class Api {
                 "phone": phone ?? "",
                 "address": address ?? "",
                 "accept_challenges_from": acceptChallengesFrom.rawValue,
-            ], headers: headers)
+            ])
             
             return response.data
             
@@ -133,12 +99,12 @@ class Api {
                 let data:User
             }
             
-            let request = MultipartHttpRequest(method: .post, url: Pongmatch.url + "api/me/avatar", headers: headers)
+            let request = MultipartHttpRequest(method: .post, url: Pongmatch.url + "api/me/avatar", headers: client.headers)
             let _ = request.addMultipart(paramName: "avatar", fileName: "avatar.jpg", image: image.resized(to: CGSize(width: 256, height: 256)))
             
             Http().callMultipart(request) { response in
                 do {
-                    let result:Response = try Self.parseResponse(response)
+                    let result:Response = try ApiClient.parseResponse(response)
                     return continuation.resume(returning: result.data)
                 }catch{
                     print(error)
@@ -154,7 +120,7 @@ class Api {
             let global_ranking:Int
         }
         do {
-            let userResponse:Response = try await Self.call(method: .get, url: "users/\(user.id)/globalRankingPosition", headers: headers)
+            let userResponse:Response = try await client.call(method: .get, url: "users/\(user.id)/globalRankingPosition")
             return userResponse.global_ranking
         } catch {
             print(error)
@@ -168,7 +134,7 @@ class Api {
             let elo_history:[Elo]
         }
         do{
-            let userResponse:Response = try await Self.call(method: .get, url: "users/\(user.id)/eloHistory", headers: headers)
+            let userResponse:Response = try await client.call(method: .get, url: "users/\(user.id)/eloHistory")
             return userResponse.elo_history
         } catch {
             print(error)
@@ -181,7 +147,7 @@ class Api {
             let data:User
         }
         do{
-            let userResponse:UserResponse = try await Self.call(method: .get, url: "friend/\(id)", headers: headers)
+            let userResponse:UserResponse = try await client.call(method: .get, url: "friend/\(id)")
             return userResponse.data
         } catch {
             print(error)
@@ -196,7 +162,7 @@ class Api {
         }
         
         do {
-            let userResponse:FriendsResponse = try await Self.call(method: .get, url: "friends", headers: headers)
+            let userResponse:FriendsResponse = try await client.call(method: .get, url: "friends")
             return userResponse.data.unique(\.id)
         } catch {
             print(error)
@@ -208,7 +174,7 @@ class Api {
         struct Response:Codable {}
         
         do {
-            let _:Response = try await Self.call(method: .post, url: "friends/\(user.id)", headers: headers)
+            let _:Response = try await client.call(method: .post, url: "friends/\(user.id)")
         } catch {
             print(error)
             throw error
@@ -219,7 +185,7 @@ class Api {
         struct Response:Codable {}
         
         do {
-            let _:Response = try await Self.call(method: .delete, url: "friends/\(user.id)", headers: headers)
+            let _:Response = try await client.call(method: .delete, url: "friends/\(user.id)")
         } catch {
             print(error)
             throw error
@@ -228,7 +194,7 @@ class Api {
     
     func friendShipStatus(_ user:User) async throws -> FriendshipStatus {
         do {
-            return try await Self.call(method: .get, url: "friends/\(user.id)/friendship", headers: headers)
+            return try await client.call(method: .get, url: "friends/\(user.id)/friendship")
         } catch {
             print(error)
             throw error
@@ -244,7 +210,7 @@ class Api {
         }
         
         do {
-            let userResponse:FriendsResponse = try await Self.call(method: .get, url: "friends/search/\(text)", headers: headers)
+            let userResponse:FriendsResponse = try await client.call(method: .get, url: "friends/search/\(text)")
             return userResponse.data.unique(\.id)
         } catch {
             print(error)
@@ -258,7 +224,7 @@ class Api {
         }
         
         do {
-            let gamesResponse:GamesResponse = try await Self.call(method: .get, url: "games/finished", headers: headers)
+            let gamesResponse:GamesResponse = try await client.call(method: .get, url: "games/finished")
             return gamesResponse.data.unique(\.id)
         } catch {
             print(error)
@@ -272,7 +238,7 @@ class Api {
         }
             
         do {
-            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games", params:[
+            let gameResponse:GameResponse = try await client.call(method: .post, url: "games", params:[
                 "date" : game.date.toISOString,
                 "information" : game.information,
                 "status" : game.status.rawValue,
@@ -281,7 +247,7 @@ class Api {
                 "initial_score" : InitialScore.standard.rawValue, //TODO
                 "player1_id" : game.player1.id,
                 "player2_id" : game.player2.id,
-            ], headers: headers)
+            ])
             return gameResponse.data
             
         } catch {
@@ -293,13 +259,13 @@ class Api {
     func uploadResults(_ game:Game, results:[[Int]]? = nil) async throws -> Game {
         
         guard let id = game.id else {
-            throw Errors.other("Game ID is nil")
+            throw ApiClient.Errors.other("Game ID is nil")
         }
         
         let resultsToUpload = results ?? game.results
         
         guard let resultsToUpload, resultsToUpload.count > 0 else {
-            throw Errors.other("No results to upload")
+            throw ApiClient.Errors.other("No results to upload")
         }
         
         struct GameResponse : Codable {
@@ -311,9 +277,9 @@ class Api {
         }
         
         do {
-            let gameResponse:GameResponse = try await Self.call(method: .post, url: "games/\(id)/results", json:ResultsRequest(
+            let gameResponse:GameResponse = try await client.call(method: .post, url: "games/\(id)/results", json:ResultsRequest(
                 results: resultsToUpload
-            ), headers: headers)
+            ))
             return gameResponse.data
             
         } catch {
@@ -324,7 +290,7 @@ class Api {
     
     func acceptChallenge(_ game:Game) async throws -> Game {
         guard let id = game.id else {
-            throw Errors.other("Game ID is nil")
+            throw ApiClient.Errors.other("Game ID is nil")
         }
         
         struct Response : Codable {
@@ -332,7 +298,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await Self.call(method: .post, url: "games/\(id)/accept", headers: headers)
+            let response:Response = try await client.call(method: .post, url: "games/\(id)/accept")
             return response.data
         } catch {
             print(error)
@@ -342,7 +308,7 @@ class Api {
     
     func declineChallenge(_ game:Game) async throws -> Game {
         guard let id = game.id else {
-            throw Errors.other("Game ID is nil")
+            throw ApiClient.Errors.other("Game ID is nil")
         }
         
         struct Response : Codable {
@@ -350,7 +316,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await Self.call(method: .post, url: "games/\(id)/decline", headers: headers)
+            let response:Response = try await client.call(method: .post, url: "games/\(id)/decline")
             return response.data
         } catch {
             print(error)
@@ -364,7 +330,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await Self.call(method: .get, url: "games/\(publicScoreboardCode)", headers: headers)
+            let response:Response = try await client.call(method: .get, url: "games/\(publicScoreboardCode)")
             return response.data
         } catch {
             print(error)
@@ -374,7 +340,7 @@ class Api {
     
     func getPublicScoreboardCode(_ game:Game) async throws -> String {
         guard let id = game.id else {
-            throw Errors.other("Game ID is nil")
+            throw ApiClient.Errors.other("Game ID is nil")
         }
         
         struct Response : Codable {
@@ -382,7 +348,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await Self.call(method: .get, url: "games/\(id)/publicScoreboardCode", headers: headers)
+            let response:Response = try await client.call(method: .get, url: "games/\(id)/publicScoreboardCode")
             return response.code
         } catch {
             print(error)
@@ -394,9 +360,9 @@ class Api {
         struct Response : Codable { }
         
         do{
-            let _ :Response = try await Self.call(method: .post, url: "feedback", params:[
+            let _ :Response = try await client.call(method: .post, url: "feedback", params:[
                 "message" : message
-            ], headers: headers)
+            ])
             return
         } catch {
             print(error)
@@ -404,77 +370,4 @@ class Api {
         }
     }
     
-    
-    // MARK: ------- API Helpers Itself
-    private var headers:[String:String] {
-        [
-            "Authorization" : "Bearer \(token)",
-            "Accept": "application/json",
-        ]
-    }
-    
-    private static func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
-                
-        try await withCheckedThrowingContinuation { continuation in
-            print("Calling API: \(method) \(url) \(params)")
-                        
-            Http.call(method, url:Pongmatch.url + "api/" + url, params: params, headers:headers) { response in
-                do {
-                    continuation.resume(returning: try parseResponse(response))
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-    
-    private static func call<T:Codable,Z:Encodable>(method:HttpRequest.Method, url:String, json:Z, headers:[String:String] = [:]) async throws -> T {
-        try print("Calling API: \(method) \(url) \(json.jsonString())")
-        
-        let finalHeaders = headers.merging(["Content-Type": "application/json"]) { _, new in new }
-        return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<T, Error>) -> Void in
-            Http.call(method, Pongmatch.url + "api/" + url, json: json, headers:finalHeaders) { response in
-                do {
-                    continuation.resume(returning: try parseResponse(response))
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-    
-    private static func parseResponse<T:Decodable>(_ response:HttpResponse) throws -> T {
-        print("API Response: " + response.toString)
-        
-        var errorResponse: ErrorResponse? = nil
-        if let data = response.data {
-            errorResponse = try? jsonDecoder().decode(ErrorResponse.self, from: data)
-        }
-        
-        guard response.statusCode >= 200 && response.statusCode < 300 else {
-            if response.statusCode == 401 { throw Errors.notAuthorized }
-            if response.statusCode == 403 { throw Errors.forbidden }
-            if response.statusCode == 404 { throw Errors.notFound }
-            if response.statusCode == 422 { throw Errors.unprocessableContent(errorResponse) }
-            throw Errors.not200(response.statusCode, errorResponse)
-        }
-        
-        guard let data = response.data else {
-            throw Errors.emptyResponse
-        }
-        
-        do {
-            let response = try jsonDecoder().decode(T.self, from: data)
-            return response
-        } catch {
-            print("API Error: \(error)")
-            throw Errors.errorResponse(errorResponse)
-        }
-    }
-    
-    private static func jsonDecoder() -> JSONDecoder{
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .iso8601 // For ISO 8601 format
-        return decoder
-    }
 }
