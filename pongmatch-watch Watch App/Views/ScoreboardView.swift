@@ -3,12 +3,16 @@ import SwiftUI
 
 struct ScoreboardView: View {
     @ObservedObject private var syncedScore = SyncedScore.shared
+    @Environment(\.dismiss) private var dismiss
+    
     @State private var showResetConfirmation = false
     @State private var showFinishConfirmation = false
+    @State private var playersSwapped:Bool = false
     
     var newScore:Score?
     
-    @Environment(\.dismiss) private var dismiss
+    var player1: Score.Player { playersSwapped ? .player2 : .player1 }
+    var player2: Score.Player { playersSwapped ? .player1 : .player2 }
     
     init(score:Score? = nil) {
         newScore = score
@@ -35,8 +39,8 @@ struct ScoreboardView: View {
                     
                     HStack(spacing: 20) {
                         ZStack {
-                            AvatarView(user: syncedScore.score.player1).frame(width:40)
-                            if syncedScore.score.matchWinner()?.id == syncedScore.score.player1.id {
+                            AvatarView(user: syncedScore.score.player(player1)).frame(width:40)
+                            if syncedScore.score.matchWinner()?.id == syncedScore.score.player(player1).id {
                                 Image(systemName:"trophy.fill")
                                     .foregroundStyle(.black)
                                     .padding(4)
@@ -52,8 +56,8 @@ struct ScoreboardView: View {
                         }
                         
                         ZStack {
-                            AvatarView(user: syncedScore.score.player2).frame(width:40)
-                            if syncedScore.score.matchWinner()?.id == syncedScore.score.player2.id {
+                            AvatarView(user: syncedScore.score.player(player2)).frame(width:40)
+                            if syncedScore.score.matchWinner()?.id == syncedScore.score.player(player2).id {
                                 Image(systemName:"trophy.fill")
                                     .foregroundStyle(.black)
                                     .padding(4)
@@ -69,20 +73,20 @@ struct ScoreboardView: View {
                     HStack(spacing:20) {
                         ScoreView(
                             score: syncedScore.score,
-                            player:.player1
+                            player: player1
                         ).onTapGesture {
                             withAnimation {
-                                syncedScore.score.addScore(player: .player1)
+                                syncedScore.score.addScore(player: player1)
                                 syncedScore.sync()
                             }
                         }
                         
                         ScoreView(
                             score: syncedScore.score,
-                            player: .player2,
+                            player: player2,
                         ).onTapGesture {
                             withAnimation {
-                                syncedScore.score.addScore(player: .player2)
+                                syncedScore.score.addScore(player: player2)
                                 syncedScore.sync()
                             }
                         }
@@ -90,6 +94,15 @@ struct ScoreboardView: View {
                     
                     // BUTTONS
                     HStack(spacing: 12) {
+                        if syncedScore.score.history.count == 0 {
+                            Image(systemName: "arrow.left.arrow.right")
+                            .onTapGesture{
+                                withAnimation {
+                                    playersSwapped.toggle()
+                                }
+                            }
+                        }
+                        
                         if syncedScore.score.history.count > 0 {
                             Image(systemName: "arrow.uturn.backward").onTapGesture {
                                 withAnimation {

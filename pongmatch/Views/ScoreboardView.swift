@@ -47,13 +47,15 @@ struct ScoreboardView : View {
                         
                     
                     HStack (spacing:40) {
-                        UserView(user: syncedScore.score.player(player1)).frame(width:200)
+                        UserView(user: syncedScore.score.player(player1))
+                            .frame(width:200)
                         HStack {
                             Text("\(syncedScore.score.setsResult(for:player1))").bold()
                             Text("-")
                             Text("\(syncedScore.score.setsResult(for:player2))").bold()
                         }
-                        UserView(user: syncedScore.score.player(player2)).frame(width:200)
+                        UserView(user: syncedScore.score.player(player2))
+                            .frame(width:200)
                     }
                     
                     

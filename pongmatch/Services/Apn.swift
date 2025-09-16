@@ -2,6 +2,15 @@ import UIKit
 
 struct Apn {
     static func refreshPushToken() {
+        
+        guard !Storage().get(.apnTokenSaved) else {
+            return //already saved
+        }
+            
+        if let token:String = Storage().get(.apnToken){
+            return saveToken(token)
+        }
+        
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             switch settings.authorizationStatus {
             case .authorized, .provisional, .ephemeral:
@@ -31,5 +40,25 @@ struct Apn {
                     print("User denied notifications: \(error?.localizedDescription ?? "No error")")
                 }
             }
+    }
+    
+    static func onTokenReceived(_ deviceToken: Data) {
+        let tokenParts = deviceToken.map { String(format: "%02x", $0) }
+        let token = tokenParts.joined()
+        print("APNs device token: \(token)")
+        Storage().save(.apnToken, value: token)
+        
+        saveToken(token)
+    }
+    
+    private static func saveToken(_ token:String) {
+        Task {
+            do {
+                try await Api.makeFromStorageKey()?.registerApnToken(token)
+                Storage().save(.apnTokenSaved, value: true)
+            } catch {
+                
+            }
+        }
     }
 }

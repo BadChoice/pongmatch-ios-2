@@ -107,7 +107,7 @@ class Score: Codable {
         history.count % 2 == 1
     }
     
-    func addScore(player:Player, clearRedo:Bool = false){
+    func addScore(player:Player, clearRedo:Bool = true){
         guard winner() == nil else { return }
         
         history.append(player)
