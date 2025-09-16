@@ -137,6 +137,9 @@ struct HomeView : View {
             .presentationDetents([.medium, .large])
             .presentationDragIndicator(.visible)
         }
+        .onAppear {
+            Apn.refreshPushToken()
+        }
     }
 }
 

@@ -10,6 +10,13 @@ class Api {
     init(_ token:String){
         self.client = ApiClient(token)
     }
+    
+    static func makeFromStorageKey() -> Api? {
+        guard let token = Storage().get(.apiToken) else {
+            return nil
+        }
+        return Api(token)
+    }
 
     static func login(email:String, password:String, deviceName:String) async throws -> String {
         
