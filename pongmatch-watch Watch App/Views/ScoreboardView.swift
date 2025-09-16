@@ -7,6 +7,7 @@ struct ScoreboardView: View {
     
     @State private var showResetConfirmation = false
     @State private var showFinishConfirmation = false
+    @State private var showGameFinished = false
     @State private var playersSwapped:Bool = false
     
     var newScore:Score?
@@ -121,7 +122,14 @@ struct ScoreboardView: View {
                             }
                         }
                         
-                        if syncedScore.score.winner() != nil {
+                        if syncedScore.score.matchWinner() != nil {
+                            Image(systemName: "flag.pattern.checkered")
+                            .onTapGesture{
+                                showGameFinished = true
+                            }
+                        }
+                        
+                        else if syncedScore.score.winner() != nil {
                             Image(systemName: "play.fill").onTapGesture {
                                 withAnimation {
                                     syncedScore.score.startNext()
@@ -159,6 +167,8 @@ struct ScoreboardView: View {
                 syncedScore.replace(score: newScore)
                 syncedScore.sync()
             }
+        }.sheet(isPresented: $showGameFinished) {
+            GameFinishedView()
         }
     }
 }
