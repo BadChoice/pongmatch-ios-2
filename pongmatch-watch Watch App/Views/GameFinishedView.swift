@@ -3,6 +3,9 @@ import SwiftUI
 struct GameFinishedView : View {
     
     @ObservedObject private var syncedScore = SyncedScore.shared
+    @Environment(\.dismiss) private var dismiss
+    
+    var onContinue: (() -> Void)? = nil
     
     var game:Game {
         syncedScore.score.game
@@ -62,7 +65,9 @@ struct GameFinishedView : View {
                 }
                 
                 Button("Upload results") { }
-                Button("Continue") { }
+                Button("Continue") {
+                    onContinue?()
+                }
             }
         }
     }

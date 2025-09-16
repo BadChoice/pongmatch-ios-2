@@ -3,6 +3,8 @@ import SwiftUI
 
 struct ScoreboardView: View {
     @ObservedObject private var syncedScore = SyncedScore.shared
+    @EnvironmentObject private var path: NavigationManager
+    
     @Environment(\.dismiss) private var dismiss
     
     @State private var showResetConfirmation = false
@@ -98,9 +100,10 @@ struct ScoreboardView: View {
                         if syncedScore.score.history.count == 0 {
                             Image(systemName: "arrow.left.arrow.right")
                             .onTapGesture{
-                                withAnimation {
+                                path.popToRoot()
+                                /*withAnimation {
                                     playersSwapped.toggle()
-                                }
+                                }*/
                             }
                         }
                         
@@ -168,7 +171,11 @@ struct ScoreboardView: View {
                 syncedScore.sync()
             }
         }.sheet(isPresented: $showGameFinished) {
-            GameFinishedView()
+            GameFinishedView() {
+                showGameFinished = false // Dismiss the sheet
+            }
+        }.onChange(of: showGameFinished){ _, _ in
+            path.popToRoot()
         }
     }
 }

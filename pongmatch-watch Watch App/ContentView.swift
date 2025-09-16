@@ -10,9 +10,10 @@ import SwiftUI
 struct ContentView: View {
     
     @ObservedObject var syncedScoreboard = SyncedScore.shared
+    @StateObject private var path = NavigationManager()
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path.path) {
             VStack {
                 Text("Pongmatch")
                 if syncedScoreboard.score != nil {
@@ -38,6 +39,7 @@ struct ContentView: View {
             }
             .padding()
         }
+        .environmentObject(path)
     }
 }
 
