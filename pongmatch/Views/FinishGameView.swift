@@ -53,7 +53,7 @@ struct FinishGameView : View {
                     Task {
                         do {
                             let newGame = try await auth.api.store(game: game)
-                            let _ = try await auth.api.uploadResults(game, results:game.results)
+                            let _ = try await auth.api.uploadResults(newGame, results:game.results)
                             await MainActor.run {
                                 dismiss()
                             }
