@@ -8,7 +8,7 @@ struct FriendView : View {
     let user:User
     
     @State private var selectedSegment = 0
-    @State private var globalRanking:Int? = nil
+    @State private var deepDetails:UserDeepDetails? = nil
     
     @State var isFollowed:Bool
     
@@ -19,11 +19,21 @@ struct FriendView : View {
     
     var body: some View {
         VStack(spacing:24){
-            UserHeaderView(user: user, globalRanking: globalRanking)
+            UserHeaderView(user: user, globalRanking: deepDetails?.global_ranking)
+            
+            if let deepDetails {
+                HStack{
+                    Text("\(deepDetails.followers) followers")
+                    Text(" · ")
+                    Text("\(deepDetails.following) following")
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
             
             Divider()
             HStack(spacing:40) {
-                Button("Challenge") { }
+                Button("Challenge", systemImage: "figure.boxing") { }
                 FollowButton(user: user, isFollowed: $isFollowed)
             }
             
@@ -65,7 +75,10 @@ struct FriendView : View {
             Spacer()
         }.task {
             Task {
-                globalRanking = try? await AuthViewModel().api.globalRankingPosition(user)
+                let deepDetails = try? await AuthViewModel().api.deepDetails(user)
+                withAnimation {
+                    self.deepDetails = deepDetails
+                }
             }
         }
     }

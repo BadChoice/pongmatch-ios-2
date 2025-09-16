@@ -31,7 +31,7 @@ struct UserHeaderView : View {
                 HStack{
                     Text("\(user.games_won ?? 0)").frame(width:80)
                     Text("\(user.ranking)").frame(width:80)
-                    if let globalRanking = user.global_ranking ?? globalRanking {
+                    if let globalRanking = user.deepDetails?.global_ranking ?? globalRanking {
                         Text("\(globalRanking)").frame(width:80)
                     } else {
                         Text("-").frame(width:80)

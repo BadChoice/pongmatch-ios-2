@@ -57,8 +57,8 @@ class Api {
         }
         do{
             var userResponse:UserResponse = try await client.call(method: .get, url: "me")
-            if let ranking = try? await globalRankingPosition(userResponse.data) {
-                userResponse.data.global_ranking = ranking
+            if let details = try? await deepDetails(userResponse.data) {
+                userResponse.data.deepDetails = details
             }
             return userResponse.data
         } catch {
@@ -115,13 +115,10 @@ class Api {
     
     }
     
-    func globalRankingPosition(_ user:User) async throws -> Int {
-        struct Response : Codable {
-            let global_ranking:Int
-        }
+    func deepDetails(_ user:User) async throws -> UserDeepDetails {
         do {
-            let userResponse:Response = try await client.call(method: .get, url: "users/\(user.id)/globalRankingPosition")
-            return userResponse.global_ranking
+            let userResponse:UserDeepDetails = try await client.call(method: .get, url: "users/\(user.id)/deepDetails")
+            return userResponse
         } catch {
             print(error)
             throw error

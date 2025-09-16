@@ -15,8 +15,7 @@ struct User : Codable {
     let games_lost:Int?
     let last_match_date:Date?
     
-    var global_ranking:Int?
-    
+    var deepDetails:UserDeepDetails?
     var friendship:FriendshipStatus?
     
     var initials:String {
@@ -78,4 +77,10 @@ struct User : Codable {
 struct FriendshipStatus:Codable {
     let isFollowed:Bool
     let followsMe:Bool
+}
+
+struct UserDeepDetails:Codable{
+    let global_ranking:Int
+    let followers:Int
+    let following:Int
 }
