@@ -23,18 +23,7 @@ struct ContentView: View {
                 }
                 
                 NavigationLink("New match") {
-                    ScoreboardView(score: Score(game:
-                        Game(
-                            id: nil,
-                            ranking_type: .friendly,
-                            winning_condition: .bestof3,
-                            information: nil,
-                            date: Date(),
-                            status: .ongoing,
-                            player1: User.me(),
-                            player2: User.unknown()
-                        )
-                    ))
+                    ScoreboardSelectionView()                    
                 }
             }
             .padding()
