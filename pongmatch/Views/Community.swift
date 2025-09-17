@@ -11,6 +11,8 @@ struct Community : View {
     @State var friends:[User] = []
     @State var loading:Bool = false
     
+    @State var searchingUsers:Bool = false
+    
     var body: some View {
         let users = searchText.isEmpty ? friends : searchResults
         List {
@@ -24,7 +26,7 @@ struct Community : View {
                         Text(searchText.isEmpty ? "Add some friends to start playing!" : "Try searching for another name.")
                     } actions:{
                         Button("Add Friend") {
-                            //nav.push("addFriend")
+                            searchingUsers = true
                         }
                     }
                 } else {
@@ -39,9 +41,22 @@ struct Community : View {
                 }
             }
         }.overlay(
-            CustomSearchBar(text: $searchText),
+            HStack{
+                CustomSearchBar(text: $searchText)
+                Button {
+                    searchingUsers = true
+                } label: {
+                    Image(systemName: "plus")
+                        .padding()
+                }.glassEffect()
+            }.padding(),
             alignment: .bottom
         )
+        .sheet(isPresented: $searchingUsers){
+            Text("Searching users")
+                .presentationDetents([.large])
+                .presentationDragIndicator(.visible)                
+        }
         .task {
             Task {
                 friends = ((try? await auth.friends()) ?? [])

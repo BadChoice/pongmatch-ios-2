@@ -47,7 +47,9 @@ struct SearchOpponentView : View {
                         searchResults = [User.unknown()]
                     } else {
                         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s delay
-                        searchResults = ((try? await auth.searchFriends(newValue)) ?? []) + [User.unknown()]
+                        searchResults = ((try? await auth.searchFriends(newValue)) ?? []) + [User.unknown()].filter {
+                            $0.canBeChallengedByMe()
+                        }
                     }
                 }
             }

@@ -31,6 +31,17 @@ struct User : Codable {
     var address: String?
     var accept_challenge_requests_from: AcceptChallengeRequestFrom?
     
+    func canBeChallengedByMe() -> Bool {
+        guard let accept_challenge_requests_from else { return false }
+        
+        return switch accept_challenge_requests_from {
+        case .nobody: false
+        case .following: friendship?.followsMe ?? false
+        case .followers: friendship?.isFollowed ?? false
+        case .everybody: true
+        }
+    }
+    
     // MARK: Factory
     static func me() -> User {
         User(
@@ -48,7 +59,7 @@ struct User : Codable {
             phone_prefix: nil,
             phone: nil,
             address: nil,
-            accept_challenge_requests_from: nil,
+            accept_challenge_requests_from: .everybody,
         )
     }
     
@@ -68,7 +79,7 @@ struct User : Codable {
             phone_prefix: nil,
             phone: nil,
             address: nil,
-            accept_challenge_requests_from: nil
+            accept_challenge_requests_from: .everybody
         )
     }
 }
