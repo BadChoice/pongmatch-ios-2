@@ -83,10 +83,10 @@ struct HomeView : View {
     var onStartScoreboard: (Game) -> Void
     
     var body: some View {
-/*        ZStack {
+        /*ZStack {
             BackgroundBlurredImage(user:auth.user ?? User.unknown(), alpha: 0.8)
-            Color.black.opacity(0.45).ignoresSafeArea()
-  */
+            Color.black.opacity(0.6).ignoresSafeArea()*/
+
             ScrollView{
                 VStack(spacing: 20) {
                     UserHeaderView(user: auth.user ?? User.unknown())
@@ -117,6 +117,8 @@ struct HomeView : View {
                     }
                     .padding()
                     .glassEffect()
+                    //.glassEffect(.clear.interactive())
+                    //.foregroundStyle(.white)
                     
                     Divider()
                     
@@ -125,7 +127,7 @@ struct HomeView : View {
                     Spacer()
                 }
             }
-       /* }*/
+       /* } */
         .refreshable {
             refreshId = UUID()
         }
