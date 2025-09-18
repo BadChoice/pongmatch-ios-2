@@ -31,28 +31,17 @@ struct SearchUsersView : View {
                 }
                 
                 List(users, id: \.id) { user in
-                    HStack {
-                        // Make only the UserView area navigable
-                        NavigationLink {
-                            FriendView(user: user)
-                        } label: {
+                    NavigationLink {
+                        FriendView(user: user)
+                    } label: {
+                        HStack {
                             UserView(user: user)
+                            Spacer()
+                            friendshipView(for: user)
                         }
-                        .buttonStyle(.plain) // Prevents full-row button-like expansion
-                        
-                        Spacer(minLength: 8)
-                        
-                        // Independent follow/unfollow control
-                        friendshipView(for: user)
-                        
-                        // Passive chevron indicator (not interactive)
-                        Image(systemName: "chevron.right")
-                            .foregroundStyle(.gray)
-                            .padding(.leading, 4)
-                    }
-                    .contentShape(Rectangle()) // keeps row hit-testing predictable for non-link areas
-                    .task {
-                        await ensureFriendship(for: user)
+                        .task {
+                            await ensureFriendship(for: user)
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -121,9 +110,7 @@ private extension SearchUsersView {
             // Follow/Unfollow button
             if let friendship {
                 Button {
-                    Task {
-                        await toggleFollow(for: user, friendship: friendship)
-                    }
+
                 } label: {
                     HStack {
                         if isMutating {
@@ -159,30 +146,7 @@ private extension SearchUsersView {
         }
     }
     
-    func toggleFollow(for user: User, friendship: FriendshipStatus) async {
-        guard let api = auth.api else { return }
-        guard mutatingFollow.insert(user.id).inserted else { return }
-        defer { mutatingFollow.remove(user.id) }
-        
-        do {
-            if friendship.isFollowed {
-                try await api.unfollow(user)
-                // Optimistically update local state
-                updateUser(user.id) {
-                    $0.friendship = FriendshipStatus(isFollowed: false, followsMe: friendship.followsMe)
-                }
-            } else {
-                try await api.follow(user)
-                updateUser(user.id) {
-                    $0.friendship = FriendshipStatus(isFollowed: true, followsMe: friendship.followsMe)
-                }
-            }
-        } catch {
-            // Optionally expose an error to the UI
-            errorMessage = "\(error)"
-        }
-    }
-    
+
     func updateUser(_ id: Int, mutate: (inout User) -> Void) {
         if let idx = users.firstIndex(where: { $0.id == id }) {
             var copy = users[idx]
