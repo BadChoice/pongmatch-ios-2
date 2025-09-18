@@ -25,7 +25,7 @@ struct SearchOpponentView : View {
                 VStack(spacing: 10) {
                     ForEach(searchResults, id: \.id) { friend in
                         HStack{
-                            UserView(user: friend, showUnknownName: true)
+                            UserView(user: friend)
                             Spacer()
                         }
                         .onTapGesture() {

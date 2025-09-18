@@ -60,6 +60,7 @@ struct CreateGameView : View {
                 
                 Divider().padding(.vertical)
                 
+                Spacer()
                 
                 Button {
                     Task{

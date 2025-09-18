@@ -3,24 +3,22 @@ import SwiftUI
 struct UserView : View {
     let user:User
     let winner:Bool
-    let showUnknownName:Bool
     
-    init(user: User, winner: Bool = false, showUnknownName: Bool = false) {
+    init(user: User, winner: Bool = false) {
         self.user = user
         self.winner = winner
-        self.showUnknownName = showUnknownName
     }
     
     var body: some View {
         HStack{
             AvatarView(user:user, winner:winner).frame(width: 48)
             
-            if showUnknownName || user.id != User.unknown().id {
-                VStack(alignment: .leading, spacing:4){
-                    Text(user.name)
-                        .lineLimit(1, reservesSpace: true)
-                        .font(.headline)
-                    
+            VStack(alignment: .leading, spacing:4){
+                Text(user.name)
+                    .lineLimit(1, reservesSpace: true)
+                    .font(.headline)
+        
+                if user.id != User.unknown().id {
                     Text("\(user.ranking)")
                         .font(.system(size:12, weight: .bold))
                         .foregroundStyle(.white)
@@ -30,6 +28,7 @@ struct UserView : View {
                         .clipShape(.capsule)
                 }
             }
+        
         }
     }
 }
@@ -47,12 +46,12 @@ struct CompactUserView : View {
         HStack{
             VStack(alignment: .center, spacing:4){
                 AvatarView(user:user, winner: winner).frame(width: 40)
+                                
+                Text(user.name)
+                    .font(.footnote)
+                //    .lineLimit(2, reservesSpace: true)
                 
                 if user.id != User.unknown().id {
-                    Text(user.name)
-                        .font(.footnote)
-                    //    .lineLimit(2, reservesSpace: true)
-                    
                     Text("\(user.ranking)").font(.system(size:10, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(.vertical, 4)
