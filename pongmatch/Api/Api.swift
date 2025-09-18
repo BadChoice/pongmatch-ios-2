@@ -236,6 +236,22 @@ class Api {
         }
     }
     
+    func users(search text:String?) async throws -> [User] {
+        guard let text, !text.isEmpty else { return[] }
+        
+        struct UsersResponse : Codable {
+            let data:[User]
+        }
+        
+        do {
+            let userResponse:UsersResponse = try await client.call(method: .get, url: "users/search/\(text)")
+            return userResponse.data.unique(\.id)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     func games() async throws -> [Game] {
         struct GamesResponse : Codable {
             let data:[Game]

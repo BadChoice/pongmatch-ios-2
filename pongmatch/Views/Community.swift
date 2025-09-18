@@ -53,7 +53,7 @@ struct Community : View {
             alignment: .bottom
         )
         .sheet(isPresented: $searchingUsers){
-            Text("Searching users")
+            SearchUsersView()
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)                
         }

@@ -33,7 +33,9 @@ struct FriendView : View {
             
             Divider()
             HStack(spacing:40) {
-                Button("Challenge", systemImage: "figure.boxing") { }
+                Button("Challenge", systemImage: "figure.boxing") {
+                    
+                }.font(.caption)
                 FollowButton(user: user, isFollowed: $isFollowed)
             }
             
@@ -75,7 +77,7 @@ struct FriendView : View {
             Spacer()
         }.task {
             Task {
-                let deepDetails = try? await AuthViewModel().api.deepDetails(user)
+                let deepDetails = try? await auth.api.deepDetails(user)
                 withAnimation {
                     self.deepDetails = deepDetails
                 }
@@ -111,19 +113,19 @@ struct EloHistory : View {
         Group{
             if let eloHistory = eloHistory, !eloHistory.isEmpty {
                 Chart {
-                    ForEach(eloHistory) { entry in
+                    ForEach(eloHistory.indices, id: \.self) { index in
                         LineMark(
-                            x: .value("Date", entry.date),
-                            y: .value("ELO", entry.elo)
+                            x: .value("Date", index),
+                            y: .value("ELO", eloHistory[index].elo)
                         )
                         .interpolationMethod(.catmullRom)
                         .foregroundStyle(Color.blue)
                         PointMark(
-                            x: .value("Date", entry.date),
-                            y: .value("ELO", entry.elo)
+                            x: .value("Date", index),
+                            y: .value("ELO", eloHistory[index].elo)
                         )
                         .foregroundStyle(Color.blue.opacity(0.7))
-                        .accessibilityLabel("\(entry.elo)")
+                        .accessibilityLabel("\(eloHistory[index].elo)")
                     }
                 }
                 .chartYAxis {
@@ -161,6 +163,7 @@ struct FollowButton : View {
                   systemImage: "heart.fill")
                 
         }
+        .font(.caption)
         .padding(6)
         .background(isFollowed ? .black : .clear)
         .foregroundStyle(isFollowed ? .white : .blue)
