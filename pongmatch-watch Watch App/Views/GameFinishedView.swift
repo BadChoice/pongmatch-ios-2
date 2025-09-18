@@ -64,7 +64,10 @@ struct GameFinishedView : View {
                     Divider().padding()
                 }
                 
-                Button("Upload results") { }
+                Button("Upload results") {
+                    syncedScore.finishedOnWatch()
+                    onContinue?()
+                }
                 Button("Continue") {
                     onContinue?()
                 }

@@ -73,7 +73,7 @@ struct ScoreboardView: View {
                     Spacer()
                     
                     // SCORE
-                    HStack(spacing:20) {
+                    HStack(spacing:18) {
                         ScoreView(
                             score: syncedScore.score,
                             player: player1
@@ -96,7 +96,7 @@ struct ScoreboardView: View {
                     }
                     
                     // BUTTONS
-                    HStack(spacing: 12) {
+                    HStack(spacing: 24) {
                         if syncedScore.score.history.count == 0 {
                             Image(systemName: "arrow.left.arrow.right")
                             .onTapGesture{
@@ -189,8 +189,8 @@ private struct ScoreView : View {
         VStack{
             Text("\(score.score.forPlayer(player))")
                 .font(.largeTitle)
-                .padding(.vertical, 12)
-                .padding(.horizontal, 24)
+                .padding(.vertical, 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(score.isMatchPointFor(player: player) ? .green : .gray)
                 .cornerRadius(8)
                 .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
@@ -204,10 +204,9 @@ private struct ScoreView : View {
                     }
                 }
                 .foregroundStyle(.white)
-            }else{
+            } else {
                 Image(systemName: "circle.fill").font(.system(size: 8)).foregroundStyle(.black)
             }
-            
         }
     }
 }

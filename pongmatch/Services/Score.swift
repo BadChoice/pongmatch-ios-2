@@ -54,7 +54,7 @@ class Score: Codable {
     var server:Player {
         
         if score.player1 + score.player2 >= 20 {
-            return Player(rawValue:(history.count + firstServer.rawValue) % 2)!            
+            return Player(rawValue:(history.count + firstServer.rawValue) % 2)!
         }
         return Player(rawValue:(Int(history.count / 2) + firstServer.rawValue) % 2)!
     }
@@ -108,7 +108,10 @@ class Score: Codable {
     }
         
     var isSecondServe: Bool {
-        history.count % 2 == 1
+        if score.player1 + score.player2 >= 20 {
+            return true
+        }
+        return history.count % 2 == 1
     }
     
     func addScore(player:Player, clearRedo:Bool = true){
