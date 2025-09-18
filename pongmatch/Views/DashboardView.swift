@@ -103,33 +103,6 @@ struct HomeView : View {
                     
                     Divider()
                     
-                    if let syncedScore = syncedScore.score {
-                        NavigationLink {
-                            ScoreboardView()
-                        } label: {
-                            VStack{
-                                HStack{
-                                    PulseView()
-                                    Text("Current scoreboard")
-                                        .foregroundStyle(.secondary)
-                                }
-                                HStack {
-                                    CompactUserView(user: syncedScore.game.player1)
-                                        .frame(maxWidth: .infinity)
-                                    FinalResult([syncedScore.setsResult.player1, syncedScore.setsResult.player2])
-                                        .frame(maxWidth: .infinity)
-                                    CompactUserView(user: syncedScore.game.player2)
-                                        .frame(maxWidth: .infinity)
-                                }
-                            }
-                            .background(.white)
-                            .padding()
-                            .cornerRadius(12)
-                            .foregroundStyle(.black)
-                        }
-                        Divider()
-                    }
-                    
                     HStack {
                         Button("Scoreboard", systemImage: "square.split.2x1"){
                             showScoreboardSelectionModal = true
@@ -155,6 +128,17 @@ struct HomeView : View {
         .refreshable {
             refreshId = UUID()
         }
+        .overlay(alignment:.bottom) {
+            if let syncedScore = syncedScore.score {
+                NavigationLink {
+                    ScoreboardView(score: Score(game: Game.fake()))
+                } label: {
+                    FloatingGameView(game: Game.fake())
+                        .foregroundStyle(.black)
+                        .padding()
+                }
+            }
+        }
         .sheet(isPresented: $showScoreboardSelectionModal) {
             ScoreboardSelectionView { game in
                 showScoreboardSelectionModal = false
@@ -166,6 +150,33 @@ struct HomeView : View {
         .onAppear {
             Apn.refreshPushToken()
         }
+    }
+}
+
+struct FloatingGameView : View {
+    var game: Game
+    var body: some View {
+        HStack {
+            Spacer()
+            PulseView()
+            AvatarView(user: game.player1)
+                .frame(width: 24)
+            Group {
+                if let result = game.finalResult {
+                    Text("\(result[0]) -  \(result[1])")
+                } else {
+                    Text("VS")
+                }
+            }.font(.headline)
+                
+            AvatarView(user: game.player2)
+                .frame(width: 24)
+            Spacer()
+            Image(systemName: "play.fill")
+                
+        }
+        .padding()
+        .glassEffect()
     }
 }
 
