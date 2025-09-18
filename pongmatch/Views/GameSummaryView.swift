@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct GameSummaryView : View {
-    let game:Game
+    @State var game:Game
     
     @EnvironmentObject private var auth: AuthViewModel
     @Namespace private var namespace
     
-    @State private var acceptingChallenge = false
+    @State private var acceptChallenge = ApiAction()
+    @State private var fetchPublicScoreboardCode = ApiAction()
     @State private var showUploadResultsSheet = false
     @State private var publicScoreboardCode: String? = nil
     
@@ -97,93 +98,85 @@ struct GameSummaryView : View {
                         .foregroundStyle(.white)
                         .bold()
                         .glassEffect(.regular.tint(.black).interactive())
-                        
-
-                        Button {
-                            showUploadResultsSheet = true
-                        } label: {
-                            Label("Upload results", systemImage: "arrow.up.circle.fill")
-                        }
-                        .padding()
-                        .glassEffect()
                     }
                     
+                }
+                if game.status == .waitingOpponent && game.player2.id == auth.user.id {
+                    VStack(alignment: .center) {
+                        Text("YOU HAVE BEEN CHALLENGED")
+                            .multilineTextAlignment(.center)
+                            .font(.largeTitle)
+                    }
+                        
                     Divider()
+                    Spacer()
+                }
+                
+                publicScoreboardCodeView
                     
-                    if let publicScoreboardCode {                        
-                        HStack(spacing: 14){
-                            Text("\(publicScoreboardCode.prefix(3))")
-                            Text("\(publicScoreboardCode.suffix(3))")
-                        }
-                        .font(.largeTitle.bold())
-                        .tracking(2)
-                        .transition(.opacity.combined(with: .scale))
-                        
-                    } else {
-                        Button {
-                            getPublicScoreboardCode()
-                        } label: {
-                            Label("Public Code", systemImage: "lock.circle.dotted")
-                        }
-                        .padding()
-                        .glassEffect()
-                    }                    
-                }
-                
-                
-                GlassEffectContainer{
-                    HStack {
-                        if game.status == .waitingOpponent && game.player2.id == auth.user.id {
-                            Button {
-                                Task {
-                                    try await auth.api.acceptChallenge(game)
-                                }
-                            } label: {
-                                HStack{
-                                    if acceptingChallenge { ProgressView() }
-                                    Label("Accept", systemImage: "checkmark")
-                                }
-                                .padding()
-                                
-                            }
-                            .bold()
-                            .glassEffect()
-                            .glassEffectUnion(id: "1", namespace: namespace)
-                            .disabled(acceptingChallenge)
-                            
-                            
-                            Button {
-                                Task {
-                                    try await auth.api.declineChallenge(game)
-                                }
-                            } label: {
-                                HStack{
-                                    if acceptingChallenge { ProgressView() }
-                                    Label("Decline", systemImage: "xmark" )
-                                }
-                                .padding()
-                            }
-                            .foregroundStyle(.red)
-                            .glassEffect()
-                            .glassEffectUnion(id: "1", namespace: namespace)
-                            .disabled(acceptingChallenge)
-                        }
-                    }
-                }
-                
-                
-                if game.isFinished() {
-                    Button("Share", systemImage: "square.and.arrow.up") { }
-                        .padding()
-                        .glassEffect()
-                } else {
-                    Button("Add to calendar", systemImage: "calendar.badge.plus") { }
-                        .padding()
-                        .glassEffect()
-                }
-                
             }
             Spacer()
+        }
+        .toolbar {
+            if game.status == .planned {
+                ToolbarItem(placement: .bottomBar) {
+                    Button{
+                        showUploadResultsSheet = true
+                    } label :{
+                        Label("Upload results", systemImage: "arrow.up.circle.fill")
+                    }
+                }
+            }
+            
+            if game.status == .planned && publicScoreboardCode == nil {
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        getPublicScoreboardCode()
+                    } label: {
+                        Label("Public Code", systemImage: "lock.circle.dotted")
+                    }
+                }
+            }
+            
+            if game.status == .planned {
+                ToolbarItem(placement: .bottomBar) {
+                    Label("Add to calendar", systemImage: "calendar.badge.plus")
+                }
+                    
+            }
+            
+            if game.status == .waitingOpponent && game.player2.id == auth.user.id {
+                ToolbarItem(placement: .bottomBar){
+                    Button {
+                        Task { await acceptChallenge.run {
+                            game = try await auth.api.acceptChallenge(game)
+                        } }
+                    }
+                    label: {
+                        HStack {
+                            if acceptChallenge.loading { ProgressView() }
+                            Label("Accept Challenge", systemImage: "checkmark")
+                        }
+                    }
+                }
+                
+                ToolbarItem(placement: .bottomBar){
+                    Button {
+                        Task { await acceptChallenge.run {
+                            game = try await auth.api.declineChallenge(game)
+                        }}
+                    }
+                    label: {
+                        HStack {
+                            if acceptChallenge.loading { ProgressView() }
+                            Label("Decline Challenge", systemImage: "xmark")
+                        }
+                        .foregroundStyle(.red)
+                    }
+                }
+            }
+                   
+            
         }
         .sheet(isPresented: $showUploadResultsSheet) {
             UploadResultsView(game: game)
@@ -192,11 +185,44 @@ struct GameSummaryView : View {
         }
     }
     
+    @ViewBuilder
+    private var publicScoreboardCodeView: some View {
+        if fetchPublicScoreboardCode.loading {
+            Divider().padding(.vertical)
+            ProgressView()
+            Divider().padding(.vertical)
+        }
+        
+        if let error = fetchPublicScoreboardCode.errorMessage {
+            Divider().padding(.vertical)
+            Text(error)
+                .foregroundColor(.red)
+                .font(.caption)
+                .padding(.horizontal)
+            
+            Divider().padding(.vertical)
+        }
+        
+        if let publicScoreboardCode {
+            Divider().padding(.vertical)
+            HStack(spacing: 14){
+                Text("\(publicScoreboardCode.prefix(3))")
+                Text("\(publicScoreboardCode.suffix(3))")
+            }
+            .font(.largeTitle.bold())
+            .tracking(2)
+            
+            Divider().padding(.vertical)
+        }
+    }
+    
     private func getPublicScoreboardCode() {
         Task {
-            let code = try? await auth.api.getPublicScoreboardCode(game)
-            await MainActor.run {
-                withAnimation { publicScoreboardCode = code }
+            await fetchPublicScoreboardCode.run {
+                let code = try? await auth.api.getPublicScoreboardCode(game)
+                await MainActor.run {
+                    withAnimation { publicScoreboardCode = code }
+                }
             }
         }
     }
