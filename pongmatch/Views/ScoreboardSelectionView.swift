@@ -12,6 +12,7 @@ struct ScoreboardSelectionView : View {
 
     @EnvironmentObject private var auth: AuthViewModel
     
+    @State private var initialScore:InitialScore = .standard
     @State private var winCondition:WinningCondition = .bestof3
     @State private var rankingType:RankingType = .friendly
     @State private var player2:User = User.unknown()
@@ -22,7 +23,7 @@ struct ScoreboardSelectionView : View {
     @State private var selectedMode: ScoreboardMode = .standard
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading) {
             
             Picker("Mode", selection: $selectedMode) {
                 ForEach(ScoreboardMode.allCases) { mode in
@@ -36,35 +37,30 @@ struct ScoreboardSelectionView : View {
             if selectedMode == .standard {
                 Group {
                     HStack{
-                        Text("Win condition").bold()
+                        CompactUserView(user: auth.user)
+                            .frame(maxWidth: .infinity)
                         Spacer()
-                        Picker("Win condition", selection: $winCondition) {
-                            ForEach(WinningCondition.allCases, id:\.self) { condition in
-                                Text(condition.rawValue.capitalized)
-                            }
-                        }
-                    }
-                    HStack{
-                        Text("Ranking Type").bold()
+                        Text("VS").font(.title.bold())
                         Spacer()
-                        Picker("Ranking Type", selection: $rankingType) {
-                            ForEach(RankingType.allCases, id:\.self) { rankingType in
-                                Text(rankingType.rawValue.capitalized)
-                            }
+                        Button {
+                            searchingPlayer2 = true
+                        } label: {
+                            CompactUserView(user: player2)
+                                .foregroundStyle(.black)
                         }
-                    }
-                    if !searchingPlayer2 {
-                        HStack{
-                            Text("Play against").bold()
-                            Spacer()
-                            Button {
-                                searchingPlayer2 = true
-                            } label: {
-                                UserView(user: player2)
-                                    .foregroundStyle(.black)
-                            }.padding(.trailing)
-                        }
-                    }
+                        .frame(maxWidth: .infinity)
+                    }.frame(minHeight: 100)
+                    
+
+                    GameTypeSelectionView(
+                        initialScore: $initialScore,
+                        winCondition: $winCondition,
+                        rankingType: $rankingType
+                    )
+                    
+                    
+                    Spacer()
+                    
                     Button {
                         onSelect(
                             Game(

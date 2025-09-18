@@ -17,7 +17,7 @@ struct CreateGameView : View {
         ScrollView{
             VStack {
                 HStack{
-                    UserView(user: User.me())
+                    CompactUserView(user: auth.user)
                         .frame(minWidth: 0, maxWidth: .infinity)
                     
                     Text("VS").font(.largeTitle.bold())
@@ -32,7 +32,7 @@ struct CreateGameView : View {
                                 .foregroundStyle(.blue)
                                 
                         } else {
-                            UserView(user: opponent)
+                            CompactUserView(user: opponent)
                         }
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
@@ -50,43 +50,12 @@ struct CreateGameView : View {
                         DatePicker("", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
                             .labelsHidden()
                     }
-                    HStack {
-                        Label("Initial Score", systemImage: "bird.fill")
-                        Spacer()
-                        Picker("", selection: $initialScore) {
-                            Text("Standard").tag(InitialScore.standard)
-                            Text("Fair").tag(InitialScore.fair)
-                        }
-                        .pickerStyle(MenuPickerStyle())
-                        .frame(width: 120)
-                    }
-                    HStack {
-                        Label("Ranking type", systemImage: "trophy.fill")
-                        Spacer()
-                        Picker("", selection: $rankingType) {
-                            ForEach(RankingType.allCases, id: \ .self) { type in
-                                Text(type.description).tag(type)
-                            }
-                        }
-                        .pickerStyle(MenuPickerStyle())
-                        .frame(width: 120)
-                    }
-                    HStack {
-                        Label("Winning condition", systemImage: "medal.fill")
-                        Spacer()
-                        Picker("", selection: $winningCondition) {
-                            ForEach(WinningCondition.allCases, id: \ .self) { condition in
-                                switch condition {
-                                case .single: Text("Single").tag(condition)
-                                case .bestof3: Text("Best of 3").tag(condition)
-                                case .bestof5: Text("Best of 5").tag(condition)
-                                case .bestof7: Text("Best of 7").tag(condition)
-                                }
-                            }
-                        }
-                        .pickerStyle(MenuPickerStyle())
-                        .frame(width: 120)
-                    }
+                    
+                    GameTypeSelectionView(
+                        initialScore: $initialScore,
+                        winCondition: $winningCondition,
+                        rankingType: $rankingType
+                    )
                 }
                 
                 Divider().padding(.vertical)
@@ -107,7 +76,7 @@ struct CreateGameView : View {
                     .padding(.vertical)
                     .frame(maxWidth:.infinity)
                     .bold()
-                    .background(.black)
+                    .background(opponent.id == User.unknown().id ? .gray : .black)
                     .foregroundStyle(.white)
                     .clipShape(.capsule)
                 }.disabled(creatingGame || opponent.id == User.unknown().id)

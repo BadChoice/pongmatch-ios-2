@@ -21,8 +21,8 @@ struct FinishGameView: View {
                 .padding(.top, 4)
             
             HStack(spacing: 25) {
-                Label(game.ranking_type.description, systemImage: "trophy.fill")
-                Label(game.winning_condition.description, systemImage: "medal.fill")
+                Label(game.ranking_type.description, systemImage: RankingType.icon)
+                Label(game.winning_condition.description, systemImage: WinningCondition.icon)
             }
             .font(.footnote)
             .foregroundColor(.secondary)

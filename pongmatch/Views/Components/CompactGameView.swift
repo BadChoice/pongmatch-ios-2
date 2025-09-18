@@ -18,9 +18,9 @@ struct CompactGameView: View {
             
             HStack() {
                 /* Label("Standard", systemImage:"bird.fill") */
-                Label(game.ranking_type.description, systemImage: "trophy.fill")
+                Label(game.ranking_type.description, systemImage: RankingType.icon)
                 Spacer()
-                Label(game.winning_condition.description, systemImage: "medal.fill")
+                Label(game.winning_condition.description, systemImage: WinningCondition.icon)
                     
             }
             .font(.footnote)

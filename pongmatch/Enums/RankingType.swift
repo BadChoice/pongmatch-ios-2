@@ -8,4 +8,12 @@ enum RankingType : String, Codable, CaseIterable, CustomStringConvertible {
         case .friendly: "Friendly"
         }
     }
+    
+    static var title:String {
+        "Ranking type"
+    }
+    
+    static var icon:String {
+        "trophy.fill"
+    }
 }

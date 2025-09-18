@@ -41,4 +41,12 @@ enum WinningCondition : String, Codable, CaseIterable, CustomStringConvertible {
             case .bestof7 : "Best of 7"
         }
     }
+    
+    static var title:String {
+        "Winning condition"
+    }
+    
+    static var icon:String {
+        "medal.fill"
+    }
 }
