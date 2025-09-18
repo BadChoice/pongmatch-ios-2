@@ -12,6 +12,8 @@ struct SearchUsersView : View {
     @State private var loadingFriendship: Set<Int> = []
     @State private var mutatingFollow: Set<Int> = []
     
+    @FocusState private var isSearchFocused: Bool
+    
     init(_ users: [User]? = nil) {
         self.users = users ?? []
     }
@@ -35,24 +37,30 @@ struct SearchUsersView : View {
                         .padding(.horizontal)
                 }
                 
-                List(users, id: \.id) { user in
-                    NavigationLink {
-                        FriendView(user: user)
-                    } label: {
-                        HStack {
-                            UserView(user: user)
-                            Spacer()
-                            friendshipView(for: user)
+                VStack(spacing: 10) {
+                    ForEach(users, id: \.id) { user in
+                        NavigationLink {
+                            FriendView(user: user)
+                        } label: {
+                            HStack {
+                                UserView(user: user)
+                                Spacer()
+                                friendshipView(for: user)
+                            }
+                            .foregroundStyle(.primary)
+                            .task {
+                                await ensureFriendship(for: user)
+                            }
                         }
-                        .task {
-                            await ensureFriendship(for: user)
-                        }
+                        Divider()
                     }
                 }
-                .listStyle(.plain)
+                Spacer()
             }
         }
         .padding()
+        .focused($isSearchFocused)
+        .onAppear { isSearchFocused = true }
         .navigationTitle("Search Users")
         .searchable(text: $searchText, prompt: "Search users")
         .onChange(of: searchText) { _, newValue in
