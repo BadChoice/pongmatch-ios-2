@@ -67,7 +67,7 @@ struct ScoreboardSelectionView : View {
                                 ranking_type: rankingType,
                                 winning_condition: winCondition,
                                 status: .ongoing,
-                                player1: User.me(),
+                                player1: auth.user,
                                 player2: player2
                             )
                         )
