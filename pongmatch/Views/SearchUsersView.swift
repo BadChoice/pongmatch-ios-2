@@ -52,6 +52,7 @@ struct SearchUsersView : View {
                 .listStyle(.plain)
             }
         }
+        .padding()
         .navigationTitle("Search Users")
         .searchable(text: $searchText, prompt: "Search users")
         .onChange(of: searchText) { _, newValue in
