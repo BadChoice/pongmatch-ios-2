@@ -156,6 +156,13 @@ struct GamesHomeView : View {
     var body: some View {
         VStack(spacing: 0) {
             
+            if let watchGames:[Game] = Storage().get(.gamesFinishedOnWatch) {
+                VStack(alignment: .leading){
+                    Text("Watch finished games").font(.headline)
+                    GamesScrollview(games:watchGames)
+                }.padding()
+            }
+            
             let currentGames = games.filter { $0.status == .ongoing }
             VStack(alignment: .leading){
                 Text("Current Games").font(.headline)
