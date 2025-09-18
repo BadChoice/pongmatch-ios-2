@@ -4,15 +4,11 @@ struct FinishGameView: View {
 
     @EnvironmentObject private var auth: AuthViewModel
     @Environment(\.dismiss) private var dismiss
-    @State private var uploadingGame = false
+    
+    @State private var uploadGame = ApiAction()
     
     let game: Game
-    
-    private var shareURL: URL? {
-        guard let id = game.id else { return nil }
-        return URL(string: "pongmatch://game/\(id)")
-    }
-            
+                
     var body: some View {
         VStack(spacing: 20) {
             
@@ -43,54 +39,27 @@ struct FinishGameView: View {
             SetsScoreView2(game: game)
             
             Spacer()
-            
-            // Share button
-            if let shareURL {
-                ShareLink(item: shareURL) {
-                    Label("Share", systemImage: "square.and.arrow.up")
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .padding()
-                        .background(.black)
-                        .foregroundStyle(.white)
-                        .clipShape(.capsule)
-                        .bold()
-                }
-            } else {
-                // Disabled share button when there is no id yet
-                Label("Share", systemImage: "square.and.arrow.up")
-                    .frame(minWidth: 0, maxWidth: .infinity)
-                    .padding()
-                    .background(.gray.opacity(0.3))
-                    .foregroundStyle(.secondary)
-                    .clipShape(.capsule)
-                    .bold()
-                    .accessibilityHint("Unavailable until the game has an identifier")
-            }
+
             
             Button {
                 dismiss()
             } label: {
                 Text("Continue")
             }
-            .disabled(uploadingGame)
+            .disabled(uploadGame.loading)
             
-            if game.player2.id != User.unknown().id {
+            if !game.hasAnUnknownPlayer() {
                 Button {
-                    uploadingGame = true
                     Task {
-                        do {
+                        if (await uploadGame.run {
                             let newGame = try await auth.api.store(game: game)
                             let _ = try await auth.api.uploadResults(newGame, results: game.results)
-                            await MainActor.run {
-                                dismiss()
-                            }
-                        } catch {
-                            await MainActor.run { uploadingGame = false }
+                        }) {
+                            dismiss()
                         }
                     }
-                    
                 } label: {
-                    if uploadingGame {
+                    if uploadGame.loading {
                         ProgressView()
                     } else {
                         Label("Upload game", systemImage: "square.and.arrow.up")
@@ -102,7 +71,14 @@ struct FinishGameView: View {
                             .bold()
                     }
                 }
-                .disabled(uploadingGame)
+                .disabled(uploadGame.loading)
+                
+                if let errorMessage = uploadGame.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal)
+                }
             }
         }
         .padding()

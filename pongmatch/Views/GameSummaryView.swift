@@ -127,8 +127,7 @@ struct GameSummaryView : View {
                         }
                         .padding()
                         .glassEffect()
-                    }
-                    
+                    }                    
                 }
                 
                 

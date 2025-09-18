@@ -10,13 +10,7 @@ struct FinalResult: View {
     var body: some View {
         HStack {
             if let result, result.count > 0  {
-                Text("\(result[0])")
-                    .fontWeight(result[0] > result[1] ? .black : .bold)
-                
-                Text(" - ")
-                
-                Text("\(result[1])")
-                    .fontWeight(result[0] < result[1] ? .black : .bold)
+                Text("\(result[0]) - \(result[1])")
             } else {
                 Text("VS")
             }
