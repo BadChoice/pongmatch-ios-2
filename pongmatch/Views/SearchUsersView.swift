@@ -18,7 +18,12 @@ struct SearchUsersView : View {
     
     var body: some View {
         NavigationStack {
-            VStack {
+            VStack(alignment: .leading) {
+                Text("Search Players")
+                    .font(.title2)
+                    .bold()
+                    .padding(.bottom)
+                
                 if isSearching && users.isEmpty && !searchText.isEmpty {
                     ProgressView("Searching…")
                         .padding()
@@ -48,7 +53,7 @@ struct SearchUsersView : View {
             }
         }
         .navigationTitle("Search Users")
-        .searchable(text: $searchText, placement: .navigationBarDrawer, prompt: "Search users")
+        .searchable(text: $searchText, prompt: "Search users")
         .onChange(of: searchText) { _, newValue in
             debounceSearch(with: newValue)
         }        
