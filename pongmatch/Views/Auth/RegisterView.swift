@@ -62,14 +62,18 @@ struct RegisterView : View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 
-                
-                
-                TextField("Name", text: $name)
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-                    .focused($isNameFocused)
+                // Name
+                iconField(
+                    systemImage: "person.fill",
+                    tint: .secondary,
+                    content: {
+                        TextField("Name", text: $name)
+                            .focused($isNameFocused)
+                            .textContentType(.name)
+                            .submitLabel(.next)
+                    }
+                )
+                .padding(.horizontal)
                 
                 if !isNameValid && !name.isEmpty {
                     Text("Name must be at least 3 characters.")
@@ -78,11 +82,19 @@ struct RegisterView : View {
                         .padding(.horizontal)
                 }
                 
-                TextField("Username", text: $username)
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
+                // Username
+                iconField(
+                    systemImage: "at",
+                    tint: .secondary,
+                    content: {
+                        TextField("Username", text: $username)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled(true)
+                            .textContentType(.username)
+                            .submitLabel(.next)
+                    }
+                )
+                .padding(.horizontal)
                 
                 if !isUsernameValid && !username.isEmpty {
                     Text("Username must be >3 characters and have no spaces.")
@@ -91,14 +103,20 @@ struct RegisterView : View {
                         .padding(.horizontal)
                 }
                 
-                TextField("Email", text: $email)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.emailAddress)
-                    .autocorrectionDisabled(true)
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
+                // Email
+                iconField(
+                    systemImage: "envelope.fill",
+                    tint: .secondary,
+                    content: {
+                        TextField("Email", text: $email)
+                            .textInputAutocapitalization(.never)
+                            .keyboardType(.emailAddress)
+                            .autocorrectionDisabled(true)
+                            .textContentType(.emailAddress)
+                            .submitLabel(.next)
+                    }
+                )
+                .padding(.horizontal)
                 
                 if !isEmailValid && !email.isEmpty {
                     Text("Enter a valid email address.")
@@ -109,17 +127,29 @@ struct RegisterView : View {
                 
                 Divider().padding(.vertical)
                 
-                SecureField("Password", text: $password)
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
+                // Password
+                iconField(
+                    systemImage: "lock.fill",
+                    tint: .secondary,
+                    content: {
+                        SecureField("Password", text: $password)
+                            .textContentType(.newPassword)
+                            .submitLabel(.next)
+                    }
+                )
+                .padding(.horizontal)
                 
-                SecureField("Password Confirmation", text: $passwordConfirmation)
-                    .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
+                // Password Confirmation
+                iconField(
+                    systemImage: "lock.rotation.open",
+                    tint: .secondary,
+                    content: {
+                        SecureField("Password Confirmation", text: $passwordConfirmation)
+                            .textContentType(.newPassword)
+                            .submitLabel(.done)
+                    }
+                )
+                .padding(.horizontal)
                 
                 if !isPasswordConfirmed && !passwordConfirmation.isEmpty {
                     Text("Passwords do not match.")
@@ -141,13 +171,20 @@ struct RegisterView : View {
                     }
                 } label:{
                     HStack {
-                        if auth.isLoading { ProgressView() }
+                        if auth.isLoading { ProgressView().tint(.white) }
                         Text(auth.isLoading ? "" : "Sign Up")
                     }
+                    .padding()
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .background(.black)
+                    .clipShape(.capsule)
+                    .foregroundStyle(.white)
+                    .bold()
+                    .padding(.horizontal)
                 }
                 .disabled(auth.isLoading || email.isEmpty || username.isEmpty || password.isEmpty || password != passwordConfirmation || name.isEmpty || username.isEmpty)
                 .frame(height: 45)
-                .padding(.horizontal)
+                .padding(.top, 8)
                 
                 if auth.errorMessage != nil {
                     Text(auth.errorMessage!)
@@ -160,6 +197,25 @@ struct RegisterView : View {
             isNameFocused = true
         }
         
+    }
+}
+
+private extension RegisterView {
+    @ViewBuilder
+    func iconField<Content: View>(systemImage: String, tint: Color = .secondary, @ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: systemImage)
+                .foregroundStyle(tint)
+                .frame(width: 20)
+            Divider()
+                .frame(height: 24)
+                .overlay(Color.secondary.opacity(0.3))
+            content()
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(8)
+        .accessibilityElement(children: .combine)
     }
 }
 
