@@ -131,9 +131,9 @@ struct HomeView : View {
         .overlay(alignment:.bottom) {
             if let syncedScore = syncedScore.score {
                 NavigationLink {
-                    ScoreboardView(score: Score(game: Game.fake()))
+                    ScoreboardView(score: syncedScore)
                 } label: {
-                    FloatingGameView(game: Game.fake())
+                    FloatingGameView(score: syncedScore)
                         .foregroundStyle(.black)
                         .padding()
                 }
@@ -154,22 +154,19 @@ struct HomeView : View {
 }
 
 struct FloatingGameView : View {
-    var game: Game
+    var score: Score
     var body: some View {
         HStack {
             Spacer()
             PulseView()
-            AvatarView(user: game.player1)
+            AvatarView(user: score.game.player1)
                 .frame(width: 24)
             Group {
-                if let result = game.finalResult {
-                    Text("\(result[0]) -  \(result[1])")
-                } else {
-                    Text("VS")
-                }
+                let result = score.setsResult
+                Text("\(result.player1) - \(result.player2)")                
             }.font(.headline)
                 
-            AvatarView(user: game.player2)
+            AvatarView(user: score.game.player2)
                 .frame(width: 24)
             Spacer()
             Image(systemName: "play.fill")
