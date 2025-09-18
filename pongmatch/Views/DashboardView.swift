@@ -27,29 +27,39 @@ struct DashboardView : View {
             }
         }
         .toolbar {
-            Menu {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
-                    AccountView()
+                    CreateGameView()
                 } label: {
-                    Label("Account", systemImage: "person.fill")
-                }
-                Button("Add Friend", systemImage: "person.badge.plus") {
-                    
-                }
-                
-                NavigationLink {
-                    FeedbackView()
-                } label: {
-                    Label("Feedback", systemImage: "bubble")
-                }
-                
-                Divider()
-                Button("Logout", systemImage: "arrow.right.square") {
-                    auth.logout()
+                    Label("Create Game", systemImage: "plus")
                 }
             }
-            label : {
-                Image(systemName: "ellipsis")
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    NavigationLink {
+                        AccountView()
+                    } label: {
+                        Label("Account", systemImage: "person.fill")
+                    }
+                    Button("Add Friend", systemImage: "person.badge.plus") {
+                        
+                    }
+                    
+                    NavigationLink {
+                        FeedbackView()
+                    } label: {
+                        Label("Feedback", systemImage: "bubble")
+                    }
+                    
+                    Divider()
+                    Button("Logout", systemImage: "arrow.right.square") {
+                        auth.logout()
+                    }
+                }
+                label : {
+                    Image(systemName: "ellipsis")
+                }
             }
         }
         .task {
@@ -93,6 +103,33 @@ struct HomeView : View {
                     
                     Divider()
                     
+                    if let syncedScore = syncedScore.score {
+                        NavigationLink {
+                            ScoreboardView()
+                        } label: {
+                            VStack{
+                                HStack{
+                                    PulseView()
+                                    Text("Current scoreboard")
+                                        .foregroundStyle(.secondary)
+                                }
+                                HStack {
+                                    CompactUserView(user: syncedScore.game.player1)
+                                        .frame(maxWidth: .infinity)
+                                    FinalResult([syncedScore.setsResult.player1, syncedScore.setsResult.player2])
+                                        .frame(maxWidth: .infinity)
+                                    CompactUserView(user: syncedScore.game.player2)
+                                        .frame(maxWidth: .infinity)
+                                }
+                            }
+                            .background(.white)
+                            .padding()
+                            .cornerRadius(12)
+                            .foregroundStyle(.black)
+                        }
+                        Divider()
+                    }
+                    
                     HStack {
                         Button("Scoreboard", systemImage: "square.split.2x1"){
                             showScoreboardSelectionModal = true
@@ -102,21 +139,8 @@ struct HomeView : View {
                         .bold()
                         .glassEffect(.regular.tint(.black).interactive())
                         
-                        if syncedScore.score != nil {
-                            Spacer().frame(width:20)
-                            NavigationLink("Continue scoreboard") {
-                                ScoreboardView()
-                            }
-                        }
                     }.padding()
                     
-                    NavigationLink {
-                        CreateGameView()
-                    } label: {
-                        Label("Create Game", systemImage: "plus.circle")
-                    }
-                    .padding()
-                    .glassEffect()
                     //.glassEffect(.clear.interactive())
                     //.foregroundStyle(.white)
                     
@@ -155,7 +179,6 @@ struct GamesHomeView : View {
     
     var body: some View {
         VStack(spacing: 0) {
-            
             if let watchGames:[Game] = Storage().get(.gamesFinishedOnWatch) {
                 VStack(alignment: .leading){
                     Text("Watch finished games").font(.headline)

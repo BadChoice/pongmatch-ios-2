@@ -52,7 +52,6 @@ class Score: Codable {
     }
     
     var server:Player {
-        
         if score.player1 + score.player2 >= 20 {
             return Player(rawValue:(history.count + firstServer.rawValue) % 2)!
         }
