@@ -64,10 +64,13 @@ struct GameFinishedView : View {
                     Divider().padding()
                 }
                 
-                Button("Upload results") {
-                    syncedScore.finishedOnWatch()
-                    onContinue?()
+                if !syncedScore.score.game.hasAnUnknownPlayer(){
+                    Button("Upload results") {
+                        syncedScore.finishedOnWatch()
+                        onContinue?()
+                    }
                 }
+                
                 Button("Continue") {
                     onContinue?()
                 }

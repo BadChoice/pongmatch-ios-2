@@ -41,6 +41,10 @@ class Game : Codable {
         return [player1, player2]
     }
     
+    func hasAnUnknownPlayer() -> Bool {
+        [player1, player2].contains { $0.id == User.unknown().id }
+    }
+    
     func isFinished() -> Bool {
         status == .finished
     }
