@@ -100,8 +100,9 @@ struct DashboardView : View {
         .fullScreenCover(item: $presentableScoreboard, onDismiss: {
             // If you want to clear the game after dismissal, do it here
             // scoreboardGame = nil
+            OrientationManager.shared.resetToPortrait()
         }) { item in
-            ScoreboardView(score: Score(game: item.game))
+            ScoreboardView(score: Score(game: item.game)) 
         }
     }
 }

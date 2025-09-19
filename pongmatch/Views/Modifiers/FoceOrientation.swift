@@ -6,26 +6,16 @@ struct ForceOrientation: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onAppear {
-                setOrientation(orientation)
+                OrientationManager.shared.set(orientation)
             }
             .onDisappear {
-                // restore to portrait when leaving
-                setOrientation(.portrait)
+                OrientationManager.shared.set(.portrait)
             }
-    }
-    
-    private func setOrientation(_ mask: UIInterfaceOrientationMask) {
-        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
-        scene.requestGeometryUpdate(.iOS(interfaceOrientations: mask)) { error in
-            /*if let error {
-                print("Failed to update orientation: \(error)")
-            }*/
-        }
     }
 }
 
 extension View {
     func forceOrientation(_ orientation: UIInterfaceOrientationMask) -> some View {
-        self.modifier(ForceOrientation(orientation: orientation))
+        modifier(ForceOrientation(orientation: orientation))
     }
 }

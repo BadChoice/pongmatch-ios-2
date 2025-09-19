@@ -36,7 +36,7 @@ struct FinishGameView: View {
             
             Spacer()
             
-            SetsScoreView2(game: game)
+            HorizontalSetsScoreView(game: game)
             
             Spacer()
 

@@ -79,7 +79,7 @@ struct GameSummaryView : View {
                 
                 if game.isFinished() {
                     VStack(alignment: .leading) {
-                        SetsScoreView2(game:game)
+                        HorizontalSetsScoreView(game:game)
                     }
                     .padding()
                 }
@@ -256,7 +256,7 @@ struct GameSummaryView : View {
     }
 }
 
-struct SetsScoreView2: View {
+struct HorizontalSetsScoreView: View {
     let game:Game
     
     var results:[[Int]] {

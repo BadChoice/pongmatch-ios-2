@@ -12,4 +12,10 @@ class AppDelegate: NSObject, UIApplicationDelegate {
                      didFailToRegisterForRemoteNotificationsWithError error: Error) {
         print("Failed to register for notifications: \(error)")
     }
+    
+    // Orientation
+    func application(_ application: UIApplication,
+                     supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        OrientationManager.shared.supportedOrientations
+    }
 }

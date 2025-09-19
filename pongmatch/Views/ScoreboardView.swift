@@ -74,7 +74,7 @@ struct ScoreboardView : View {
                                     }
                                 }
                                 
-                                SetsScoreView(
+                                VerticalSetsScoreView(
                                     score: syncedScore.score,
                                     player1: player1,
                                     player2: player2
@@ -109,7 +109,7 @@ struct ScoreboardView : View {
             closingAngle: Angle.degrees(150)
         )
         //.disableSwipeBack()
-
+        .forceOrientation(.landscapeRight)
         .noSleep()
         .ignoresSafeArea(edges: .top) // Extend under nav bar
         .task {
@@ -173,7 +173,6 @@ struct ScoreboardView : View {
             }
         }
         }
-        .forceOrientation(.landscapeRight)
     }
 }
 
@@ -348,7 +347,7 @@ struct ScoreboardScoreView: View {
     }
 }
 
-struct SetsScoreView : View {
+struct VerticalSetsScoreView : View {
     let score:Score
     
     let player1:Score.Player
