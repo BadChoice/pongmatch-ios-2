@@ -183,19 +183,28 @@ struct GameSummaryView : View {
                 }
             }
             
-            if game.status == .finished {
                 ToolbarItem(placement: .bottomBar){
                     Menu {
-                        Button {
-                            //TODO
-                        } label: {
-                            Label("Dispute result", systemImage: "flag")
+                        if game.status == .waitingOpponent {
+                            Button("Edit game", systemImage: "pencil") {
+                                
+                            }
+                            
+                            Button("Delete", systemImage: "trash", role: .destructive) {
+                                
+                            }
+                        }
+                        
+                        if game.status == .finished {
+                            Button("Dispute result", systemImage: "flat") {
+                                
+                            }
                         }
                     } label: {
                         Image(systemName: "ellipsis")
                     }
                 }
-            }
+            
         }
         .sheet(isPresented: $showUploadResultsSheet) {
             UploadResultsView(game: game)

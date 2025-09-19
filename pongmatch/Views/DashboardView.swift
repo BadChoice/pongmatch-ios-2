@@ -6,8 +6,6 @@ struct DashboardView : View {
     @EnvironmentObject private var auth: AuthViewModel
     @EnvironmentObject private var nav: NavigationManager
     
-    @ObservedObject private var syncedScore = SyncedScore.shared
-    
     @State var isLoadingUser:Bool = true
     @State private var selectedGame: Game?
 
@@ -37,18 +35,10 @@ struct DashboardView : View {
                 }*/
             }
         }
-        .tabViewBottomAccessory{
-            if let syncedScore = syncedScore.score {
-                NavigationLink {
-                    ScoreboardView(score: syncedScore)
-                } label: {
-                    FloatingGameView(score: syncedScore)
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                }
-            }
-        }
+        .tabViewBottomAccessory(content: CurrentGameView.init)
         .tabBarMinimizeBehavior(.onScrollDown)
         .toolbar {
+            //https://xavier7t.com/liquid-glass-navigation-bar-in-swiftui?source=more_articles_bottom_blogs
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
                     CreateGameView()
@@ -115,10 +105,6 @@ struct HomeView : View {
     var onStartScoreboard: (Game) -> Void
     
     var body: some View {
-        /*ZStack {
-            BackgroundBlurredImage(user:auth.user ?? User.unknown(), alpha: 0.8)
-            Color.black.opacity(0.6).ignoresSafeArea()*/
-
             ScrollView{
                 VStack(spacing: 20) {
                     UserHeaderView(user: auth.user ?? User.unknown())
@@ -136,9 +122,6 @@ struct HomeView : View {
                         
                     }.padding()
                     
-                    //.glassEffect(.clear.interactive())
-                    //.foregroundStyle(.white)
-                    
                     Divider()
                     
                     GamesHomeView(refreshID: $refreshId)
@@ -146,7 +129,6 @@ struct HomeView : View {
                     Spacer()
                 }
             }
-       /* } */
         .refreshable {
             refreshId = UUID()
         }
@@ -164,32 +146,6 @@ struct HomeView : View {
     }
 }
 
-struct FloatingGameView : View {
-    var score: Score
-    var body: some View {
-        HStack {
-            PulseView()
-            
-            Spacer()
-            
-            AvatarView(user: score.game.player1)
-                .frame(width: 24, height:24)
-            Group {
-                let result = score.setsResult
-                Text("\(result.player1) - \(result.player2)")                
-            }.font(.headline)
-                
-            AvatarView(user: score.game.player2)
-                .frame(width: 24, height:24)
-            
-            Spacer()
-            
-            Image(systemName: "play.fill")
-                .foregroundStyle(.primary)
-        }
-        .foregroundStyle(.primary)
-    }
-}
 
 struct GamesHomeView : View {
     @EnvironmentObject private var auth: AuthViewModel
