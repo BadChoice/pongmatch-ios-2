@@ -14,6 +14,9 @@ struct LoginView: View {
     @State private var password:String = ""
     @State private var registering: Bool = false
     
+    @FocusState private var focusedField: Field?
+    private enum Field { case email, password }
+    
     var body: some View {
         VStack {
             Spacer().frame(height: 80)
@@ -23,27 +26,46 @@ struct LoginView: View {
                 .scaledToFit()
                 .frame(width: 60)
             
-            
             Spacer().frame(height: 60)
             
-            TextField("Email", text: $email)
-                .textInputAutocapitalization(.never)
-                .keyboardType(.emailAddress)
-                .autocorrectionDisabled(true)
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-                .padding(.horizontal)
+            // Email
+            iconField(
+                systemImage: "envelope.fill",
+                tint: .accentColor
+            ) {
+                TextField("Email", text: $email)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.emailAddress)
+                    .autocorrectionDisabled(true)
+                    .textContentType(.emailAddress)
+                    .submitLabel(.next)
+                    .focused($focusedField, equals: .email)
+                    .onSubmit { focusedField = .password }
+            }
+            .padding(.horizontal)
             
-            SecureField("Password", text: $password, prompt: Text("Password"))
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled(true)
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
-                .cornerRadius(8)
-                .padding(.horizontal)
-                .textContentType(.password)
-                .submitLabel(.done)
+            // Password
+            iconField(
+                systemImage: "lock.fill",
+                tint: .accentColor
+            ) {
+                SecureField("Password", text: $password, prompt: Text("Password"))
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled(true)
+                    .textContentType(.password)
+                    .submitLabel(.done)
+                    .focused($focusedField, equals: .password)
+                    .onSubmit {
+                        Task {
+                            await auth.login(
+                                email: email,
+                                password: password,
+                                deviceName: UIDevice.current.name
+                            )
+                        }
+                    }
+            }
+            .padding(.horizontal)
                 
             Button {
                 Task {
@@ -81,16 +103,44 @@ struct LoginView: View {
             }
 
             Spacer().frame(height: 40)
-            NavigationLink("Scoreboard"){
+            NavigationLink {
                 ScoreboardView(score: Score(game: Game.anonimus()))
+            } label: {
+                Label("Scoreboard", systemImage: "square.split.2x1")
             }
             
             Spacer()
-        }.sheet(isPresented: $registering) {
+        }
+        .sheet(isPresented: $registering) {
             RegisterView()
                 //.presentationDetents([.medium, .large]) // Bottom sheet style
                 .presentationDragIndicator(.visible)
         }
+        .onAppear {
+            focusedField = .email
+        }
+    }
+}
+
+private extension LoginView {
+    @ViewBuilder
+    func iconField<Content: View>(systemImage: String, tint: Color = .secondary, @ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: systemImage)
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(tint)
+                .frame(width: 20, alignment: .leading)
+                .font(.system(size: 16, weight: .regular)) // consistent symbol sizing
+            Divider()
+                .frame(height: 24)
+                .overlay(Color.secondary.opacity(0.3))
+            content()
+        }
+        .padding()
+        .background(Color(UIColor.secondarySystemBackground))
+        .cornerRadius(8)
+        .accessibilityElement(children: .combine)
+        .alignmentGuide(.firstTextBaseline) { d in d[.firstTextBaseline] }
     }
 }
 
