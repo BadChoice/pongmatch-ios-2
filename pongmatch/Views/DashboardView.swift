@@ -13,19 +13,29 @@ struct DashboardView : View {
     var body: some View {
         TabView {
             if isLoadingUser {
-                ProgressView()
+                Tab {
+                    ProgressView()
+                }
             } else {
-                HomeView { game in
-                    selectedGame = game
-                    nav.push("scoreboard")
-                }.tabItem {
-                    Image(systemName: "house")
+                Tab("", systemImage: "house") {
+                    HomeView { game in
+                        selectedGame = game
+                        nav.push("scoreboard")
+                    }
                 }
-                Community().tabItem {
-                    Image(systemName: "person.3")
+                
+                Tab("", systemImage: "person.3") {
+                    Community()
                 }
+                                
+                /*Tab("Four", systemImage: "magnifyingglass", role: .search) {
+                    NavigationStack {
+                        Text("Patata")
+                    }
+                }*/
             }
         }
+        .tabBarMinimizeBehavior(.onScrollDown)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {

@@ -5,8 +5,9 @@ struct FeedbackView : View {
     @EnvironmentObject private var nav: NavigationManager
     
     @State private var feedbackText: String = ""
-    @State private var isSubmitting: Bool = false
     @State private var isSubmitted: Bool = false
+    
+    @State private var submiteFeedback = ApiAction()
 
     var body: some View {
         VStack(spacing: 24) {
@@ -38,10 +39,8 @@ struct FeedbackView : View {
                             .stroke(Color(.systemGray4), lineWidth: 1)
                     )
                 Button(action: submitFeedback) {
-                    if isSubmitting {
+                    if submiteFeedback.loading {
                         ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .frame(maxWidth: .infinity)
                     } else {
                         Text("Send Feedback")
                             .frame(maxWidth: .infinity)
@@ -51,7 +50,7 @@ struct FeedbackView : View {
                             .cornerRadius(10)
                     }
                 }
-                .disabled(isSubmitting || feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(submiteFeedback.loading || feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }
         .padding()
@@ -59,19 +58,13 @@ struct FeedbackView : View {
 
     private func submitFeedback() {
         guard !feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        isSubmitting = true
-
+        
         Task {
-            do {
+            let isSubmitted = await submiteFeedback.run {
                 try await auth.api.sendFeedback(feedbackText)
-                isSubmitted = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    isSubmitting = false
-                    feedbackText = ""
-                    nav.popToRoot()
-                }
-            } catch {
-                
+            }
+            if isSubmitted {
+                nav.popToRoot()
             }
         }
     }
