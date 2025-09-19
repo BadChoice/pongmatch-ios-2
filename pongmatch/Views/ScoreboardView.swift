@@ -43,7 +43,7 @@ struct ScoreboardView : View {
                             
                     }
                     .font(.footnote)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.teal)
                         
                     
                     HStack (spacing:40) {
@@ -305,7 +305,7 @@ struct ScoreboardScoreView: View {
                 .font(.system(size: 50, weight:.bold))
                 .frame(width:200, height:180)
                 .foregroundStyle(.white)
-                .background(score.isMatchPointFor(player: player) ? .green : .black)
+                .background(score.isMatchPointFor(player: player) ? .green : Color.accentColor)
                 .cornerRadius(8)
                 .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
             

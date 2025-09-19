@@ -24,7 +24,7 @@ struct UserView : View {
                         .foregroundStyle(.white)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 8)
-                        .background(.black)
+                        .background(Color.accentColor)
                         .clipShape(.capsule)
                 }
             }
@@ -49,6 +49,7 @@ struct CompactUserView : View {
                                 
                 Text(user.name)
                     .font(.footnote)
+                    .multilineTextAlignment(.center)
                 //    .lineLimit(2, reservesSpace: true)
                 
                 if user.id != User.unknown().id {
@@ -56,7 +57,7 @@ struct CompactUserView : View {
                         .foregroundStyle(.white)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 8)
-                        .background(.black)
+                        .background(Color.accentColor)
                         .clipShape(.capsule)
                 }
             }

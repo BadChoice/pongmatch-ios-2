@@ -46,7 +46,7 @@ struct ScoreboardSelectionView : View {
                             searchingPlayer2 = true
                         } label: {
                             CompactUserView(user: player2)
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.primary)
                         }
                         .frame(maxWidth: .infinity)
                     }.frame(minHeight: 100)
@@ -75,7 +75,7 @@ struct ScoreboardSelectionView : View {
                         Label("START", systemImage: "play.fill")
                             .padding()
                             .frame(minWidth: 0, maxWidth: .infinity)
-                            .background(.black)
+                            .background(Color.accentColor)
                             .clipShape(.capsule)
                             .foregroundStyle(.white)
                     }

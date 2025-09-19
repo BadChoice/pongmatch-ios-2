@@ -45,7 +45,7 @@ struct ScoreboardView: View {
                             AvatarView(user: syncedScore.score.player(player1)).frame(width:40)
                             if syncedScore.score.matchWinner()?.id == syncedScore.score.player(player1).id {
                                 Image(systemName:"trophy.fill")
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(.primary)
                                     .padding(4)
                                     .background(.green)
                                     .clipShape(.circle)
@@ -62,7 +62,7 @@ struct ScoreboardView: View {
                             AvatarView(user: syncedScore.score.player(player2)).frame(width:40)
                             if syncedScore.score.matchWinner()?.id == syncedScore.score.player(player2).id {
                                 Image(systemName:"trophy.fill")
-                                    .foregroundStyle(.black)
+                                    .foregroundStyle(.primary)
                                     .padding(4)
                                     .background(.green)
                                     .clipShape(.circle)
@@ -205,7 +205,7 @@ private struct ScoreView : View {
                 }
                 .foregroundStyle(.white)
             } else {
-                Image(systemName: "circle.fill").font(.system(size: 8)).foregroundStyle(.black)
+                Image(systemName: "circle.fill").font(.system(size: 8)).foregroundStyle(.primary)
             }
         }
     }

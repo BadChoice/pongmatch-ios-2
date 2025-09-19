@@ -24,7 +24,7 @@ struct Pongmatch_widgetLiveActivity: Widget {
         ActivityConfiguration(for: Pongmatch_widgetAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
-                Text("Hello \(context.state.emoji)")
+                Text("\(context.state.emoji) JP  2 - 1  GM")
             }
             .activityBackgroundTint(Color.cyan)
             .activitySystemActionForegroundColor(Color.black)

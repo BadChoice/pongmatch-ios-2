@@ -110,7 +110,7 @@ struct HomeView : View {
                         .padding()
                         .foregroundStyle(.white)
                         .bold()
-                        .glassEffect(.regular.tint(.black).interactive())
+                        .glassEffect(.regular.tint(Color.accentColor).interactive())
                         
                     }.padding()
                     
@@ -134,7 +134,7 @@ struct HomeView : View {
                     ScoreboardView(score: syncedScore)
                 } label: {
                     FloatingGameView(score: syncedScore)
-                        .foregroundStyle(.black)
+                        .foregroundStyle(.primary)
                         .padding()
                 }
             }
@@ -157,7 +157,6 @@ struct FloatingGameView : View {
     var score: Score
     var body: some View {
         HStack {
-            Spacer()
             PulseView()
             AvatarView(user: score.game.player1)
                 .frame(width: 24)
@@ -170,7 +169,7 @@ struct FloatingGameView : View {
                 .frame(width: 24)
             Spacer()
             Image(systemName: "play.fill")
-                
+                .foregroundStyle(.primary)
         }
         .padding()
         .glassEffect()
@@ -237,5 +236,7 @@ struct GamesHomeView : View {
     let auth = AuthViewModel()
     auth.user = User.me()
     auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
-    return DashboardView().environmentObject(auth)
+    return NavigationStack {
+        DashboardView()
+    }.environmentObject(auth)
 }

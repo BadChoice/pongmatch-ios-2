@@ -136,8 +136,8 @@ private extension SearchUsersView {
                     }
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(friendship.isFollowed ? .black : Color.gray.opacity(0.15))
-                    .foregroundStyle(friendship.isFollowed ? .white : .black)
+                    .background(friendship.isFollowed ? Color.accentColor : Color.gray.opacity(0.15))
+                    .foregroundStyle(friendship.isFollowed ? .white : .primary)
                     .cornerRadius(8)
                 }
                 .disabled(isMutating)

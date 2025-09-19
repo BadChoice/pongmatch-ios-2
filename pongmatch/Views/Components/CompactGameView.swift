@@ -14,7 +14,7 @@ struct CompactGameView: View {
                 }
             }
             .font(.footnote)
-            .foregroundStyle(.secondary)
+            .foregroundStyle(.teal)
             
             HStack() {
                 /* Label("Standard", systemImage:"bird.fill") */
@@ -24,7 +24,7 @@ struct CompactGameView: View {
                     
             }
             .font(.footnote)
-            .foregroundColor(.secondary)
+            .foregroundColor(.teal)
             
             Divider()
             
@@ -53,11 +53,11 @@ struct CompactGameView: View {
                 .padding(.vertical, 4)
         }
         .padding()
-        .background(.gray.opacity(0.1))
+        .background(.white.opacity(0.1))
         //.background(.white)
         //.glassEffect(.clear.interactive(), in: .rect(cornerRadius: 16))
         //.glassEffect(in: .rect(cornerRadius: 16))
-        //.cornerRadius(8)
+        .cornerRadius(8)
         .frame(width:290)
     }
 }

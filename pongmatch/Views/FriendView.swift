@@ -165,7 +165,7 @@ struct FollowButton : View {
         }
         .font(.caption)
         .padding(6)
-        .background(isFollowed ? .black : .clear)
+        .background(isFollowed ? Color.accentColor : .clear)
         .foregroundStyle(isFollowed ? .white : .blue)
         .cornerRadius(8)
     }

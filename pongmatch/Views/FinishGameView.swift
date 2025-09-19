@@ -65,7 +65,7 @@ struct FinishGameView: View {
                         Label("Upload game", systemImage: "square.and.arrow.up")
                             .frame(minWidth: 0, maxWidth: .infinity)
                             .padding()
-                            .background(.black)
+                            .background(Color.accentColor)
                             .foregroundStyle(.white)
                             .clipShape(.capsule)
                             .bold()

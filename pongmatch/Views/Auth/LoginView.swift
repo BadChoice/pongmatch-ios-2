@@ -60,7 +60,7 @@ struct LoginView: View {
                 }
                 .padding()
                 .frame(minWidth: 0, maxWidth: .infinity)
-                .background(.black)
+                .background(Color.accentColor)
                 .clipShape(.capsule)
                 .foregroundStyle(.white)
                 .bold()

@@ -84,7 +84,7 @@ struct UploadResultsView: View {
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(.black)
+            .background(Color.accentColor)
             .foregroundStyle(.white)
             .clipShape(.capsule)
             

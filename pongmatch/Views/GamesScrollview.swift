@@ -23,7 +23,7 @@ struct GamesScrollview : View {
                                 .navigationTransition(.zoom(sourceID: "zoom_game_\(game.id!)", in: namespace))
                         } label: {
                             CompactGameView(game: game)
-                                .foregroundStyle(.black)
+                                .foregroundStyle(.primary)
                                 .matchedTransitionSource(id: "zoom_game_\(game.id!)", in: namespace)
                         }
                     }

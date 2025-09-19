@@ -62,7 +62,7 @@ struct GameSummaryView : View {
                             .matchedTransitionSource(id: "zoom_user_\(game.player2.id)", in: namespace)
                     }
                 }
-                .foregroundStyle(.black)
+                .foregroundStyle(.primary)
                 .padding(.vertical, 20)
                 
                 
@@ -95,7 +95,7 @@ struct GameSummaryView : View {
                             .padding()
                             .foregroundStyle(.white)
                             .bold()
-                            .glassEffect(.regular.tint(.black).interactive())
+                            .glassEffect(.regular.tint(Color.accentColor).interactive())
                         }
                         
                     }

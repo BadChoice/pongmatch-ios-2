@@ -77,7 +77,7 @@ struct CreateGameView : View {
                     .padding(.vertical)
                     .frame(maxWidth:.infinity)
                     .bold()
-                    .background(opponent.id == User.unknown().id ? .gray : .black)
+                    .background(opponent.id == User.unknown().id ? .gray.opacity(0.2) : Color.accentColor)
                     .foregroundStyle(.white)
                     .clipShape(.capsule)
                 }.disabled(creatingGame || opponent.id == User.unknown().id)
