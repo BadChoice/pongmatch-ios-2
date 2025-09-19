@@ -63,10 +63,19 @@ struct GameSummaryView : View {
                     }
                 }
                 .foregroundStyle(.primary)
-                .padding(.vertical, 20)
+                .padding(.vertical, 14)
                 
+                Divider()
                 
-                Divider().padding(.bottom)
+                if let description = game.information {
+                    Text(description)
+                        .lineLimit(2, reservesSpace: true)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .padding(.vertical, 4)
+                    
+                    Divider().padding(.bottom)
+                }
                 
                 if game.isFinished() {
                     VStack(alignment: .leading) {

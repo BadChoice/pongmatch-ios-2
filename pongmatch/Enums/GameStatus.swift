@@ -9,10 +9,10 @@ enum GameStatus : String, Codable, CustomStringConvertible {
     
     var description: String {
         switch self {
-        case .needsOpponent: "Needs Oponent"
-        case .waitingOpponent: "Waiting for Oponent"
+        case .needsOpponent: "Needs Opponent"
+        case .waitingOpponent: "Waiting Opponent"
         case .planned: "Planned"
-        case .ongoing: "Ongoing"
+        case .ongoing: "On going"
         case .finished: "Finished"
         case .canceled: "Canceled"
         case .opponentDeclined: "Opponent Declined"

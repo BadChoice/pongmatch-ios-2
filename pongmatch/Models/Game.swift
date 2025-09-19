@@ -80,7 +80,7 @@ class Game : Codable {
         )
     }
     
-    static func fake(status:GameStatus = .planned, player1:User = User.me(), player2:User = User.unknown()) -> Game {
+    static func fake(id:Int = -1, status:GameStatus = .planned, player1:User = User.me(), player2:User = User.unknown()) -> Game {
         Game(
             id: -1,
             ranking_type: .competitive,

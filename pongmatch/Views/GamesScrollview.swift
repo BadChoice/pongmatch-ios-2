@@ -10,13 +10,12 @@ struct GamesScrollview : View {
     let games:[Game]
     
     var body: some View {
-        ScrollView(.horizontal){
+        ScrollView(.horizontal) {
             if games.isEmpty {
                 Text("No games")
-                    .foregroundStyle(.secondary)
-                //ContentUnavailableView("No games", systemImage: "trophy.fill")
+                    .foregroundStyle(.secondary)            
             } else {
-                HStack{
+                LazyHStack {
                     ForEach(games, id:\.id) { game in
                         NavigationLink {
                             GameSummaryView(game: game)
@@ -25,11 +24,26 @@ struct GamesScrollview : View {
                             CompactGameView(game: game)
                                 .foregroundStyle(.primary)
                                 .matchedTransitionSource(id: "zoom_game_\(game.id!)", in: namespace)
+                                
                         }
                     }
-                }
+                }.scrollTargetLayout()
             }
         }
+        //.scrollTargetBehavior(.paging)
+        .scrollTargetBehavior(.viewAligned)
+        //.safeAreaPadding(.horizontal, 20.0)
+        .scrollIndicators(.hidden)
         .padding(.bottom)
     }
+}
+
+#Preview {
+    GamesScrollview(games: [
+        Game.fake(id: 1),
+        Game.fake(id: 2),
+        Game.fake(id: 3),
+        Game.fake(id: 4),
+        Game.fake(id: 5),
+    ])
 }

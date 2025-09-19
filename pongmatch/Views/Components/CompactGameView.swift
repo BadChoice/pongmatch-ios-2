@@ -5,16 +5,13 @@ struct CompactGameView: View {
     
     var body: some View {
         VStack (alignment: .leading){
-            VStack(alignment: .leading) {
-                HStack{
-                    Image(systemName: "calendar")
-                    Text(game.date.displayForHumans)
-                    Spacer()
-                    Label(game.status.description, systemImage: game.status.icon)
-                }
+            HStack {
+                Label(game.date.displayForHumans, systemImage: "calendar")
+                    .font(.caption)
+                Spacer()
+                Label(game.status.description, systemImage: game.status.icon)
+                    .font(.caption)
             }
-            .font(.footnote)
-            .foregroundStyle(.teal)
             
             HStack() {
                 /* Label("Standard", systemImage:"bird.fill") */
@@ -24,7 +21,7 @@ struct CompactGameView: View {
                     
             }
             .font(.footnote)
-            .foregroundColor(.teal)
+            .foregroundColor(.secondary)
             
             Divider()
             
@@ -32,33 +29,22 @@ struct CompactGameView: View {
                 CompactUserView(user: game.player1, winner: game.winner()?.id == game.player1.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
-                Group {
-                    FinalResult(game.finalResult)                    
-                }.font(.largeTitle)
-                    .bold()
-                    .frame(minWidth: 0, maxWidth: .infinity)
+                VStack {
+                    FinalResult(game.finalResult)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity)
                 
                 CompactUserView(user: game.player2, winner: game.winner()?.id == game.player2.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
-            
-            
-            
-            Divider()
-            
-            Text(game.information ?? "")
-                .lineLimit(2, reservesSpace: true)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .padding(.vertical, 4)
         }
         .padding()
-        .background(.white.opacity(0.1))
+        .background(.secondary.opacity(0.1))
         //.background(.white)
         //.glassEffect(.clear.interactive(), in: .rect(cornerRadius: 16))
         //.glassEffect(in: .rect(cornerRadius: 16))
         .cornerRadius(8)
-        .frame(width:290)
+        .frame(width:280)
     }
 }
 

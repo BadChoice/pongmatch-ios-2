@@ -43,7 +43,7 @@ struct ScoreboardView : View {
                             
                     }
                     .font(.footnote)
-                    .foregroundColor(.teal)
+                    .foregroundColor(.secondary)
                         
                     
                     HStack (spacing:40) {
