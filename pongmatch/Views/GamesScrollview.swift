@@ -24,7 +24,6 @@ struct GamesScrollview : View {
                             CompactGameView(game: game)
                                 .foregroundStyle(.primary)
                                 .matchedTransitionSource(id: "zoom_game_\(game.id!)", in: namespace)
-                                
                         }
                     }
                 }.scrollTargetLayout()

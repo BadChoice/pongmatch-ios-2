@@ -5,6 +5,7 @@ import ConfettiSwiftUI
 struct ScoreboardView : View {
     
     @ObservedObject private var syncedScore = SyncedScore.shared
+    @Environment(\.dismiss) private var dismiss
             
     @State var buttonHandler:ScoreButtonHandler?
     var newScore:Score?
@@ -23,91 +24,92 @@ struct ScoreboardView : View {
     }
     
     var body: some View {
-        NavigationView {
-            ZStack {
-                BackgroundBlurredImage(user:syncedScore.score?.player1)
-                //Color.white.opacity(0.45).ignoresSafeArea()
-                VStack(spacing: 14){
-                    if syncedScore.score == nil {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                    else{
-                        // Header
-                        Spacer().frame(height:20)
-                        HStack(spacing: 25) {
-                            /* Label("Standard", systemImage:"bird.fill") */
-                            Label(syncedScore.score.game.ranking_type.description, systemImage: RankingType.icon)
-                            Label(syncedScore.score.game.winning_condition.description, systemImage: WinningCondition.icon)
+        NavigationStack {
+            NavigationView {
+                ZStack {
+                    BackgroundBlurredImage(user:syncedScore.score?.player1)
+                    //Color.white.opacity(0.45).ignoresSafeArea()
+                    VStack(spacing: 14){
+                        if syncedScore.score == nil {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
                         }
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                                                
-                        HStack (spacing:40) {
-                            UserView(user: syncedScore.score.player(player1))
-                                .frame(width:200)
-                            HStack {
-                                Text("\(syncedScore.score.setsResult(for:player1))").bold()
-                                Text("-")
-                                Text("\(syncedScore.score.setsResult(for:player2))").bold()
+                        else{
+                            // Header
+                            Spacer().frame(height:20)
+                            HStack(spacing: 25) {
+                                /* Label("Standard", systemImage:"bird.fill") */
+                                Label(syncedScore.score.game.ranking_type.description, systemImage: RankingType.icon)
+                                Label(syncedScore.score.game.winning_condition.description, systemImage: WinningCondition.icon)
                             }
-                            UserView(user: syncedScore.score.player(player2))
-                                .frame(width:200)
-                        }
-                        
-                        
-                        // Score
-                        HStack(alignment:.top, spacing: 30) {
-                            ScoreboardScoreView(
-                                score:syncedScore.score,
-                                player:player1
-                            ).onTapGesture {
-                                withAnimation {
-                                    syncedScore.score.addScore(player: player1)
-                                    syncedScore.sync()
-                                    if syncedScore.score.winner() != nil {
-                                        confetti += 1
-                                    }
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                            
+                            HStack (spacing:40) {
+                                UserView(user: syncedScore.score.player(player1))
+                                    .frame(width:200)
+                                HStack {
+                                    Text("\(syncedScore.score.setsResult(for:player1))").bold()
+                                    Text("-")
+                                    Text("\(syncedScore.score.setsResult(for:player2))").bold()
                                 }
+                                UserView(user: syncedScore.score.player(player2))
+                                    .frame(width:200)
                             }
                             
-                            SetsScoreView(
-                                score: syncedScore.score,
-                                player1: player1,
-                                player2: player2
-                            )
                             
-                            ScoreboardScoreView(
-                                score:syncedScore.score,
-                                player:player2
-                            ).onTapGesture {
-                                withAnimation {
-                                    syncedScore.score.addScore(player: player2)
-                                    syncedScore.sync()
-                                    if syncedScore.score.winner() != nil {
-                                        confetti += 1
+                            // Score
+                            HStack(alignment:.top, spacing: 30) {
+                                ScoreboardScoreView(
+                                    score:syncedScore.score,
+                                    player:player1
+                                ).onTapGesture {
+                                    withAnimation {
+                                        syncedScore.score.addScore(player: player1)
+                                        syncedScore.sync()
+                                        if syncedScore.score.winner() != nil {
+                                            confetti += 1
+                                        }
                                     }
                                 }
-                            }
-                        }.overlay(alignment:.bottom) {
-                            ScoreBoardActionsView(syncedScore: syncedScore, playersSwapped: $playersSwapped, showFinishGame: $showFinishGame)
-                                .offset(.init(width: 0, height: 30)
+                                
+                                SetsScoreView(
+                                    score: syncedScore.score,
+                                    player1: player1,
+                                    player2: player2
                                 )
+                                
+                                ScoreboardScoreView(
+                                    score:syncedScore.score,
+                                    player:player2
+                                ).onTapGesture {
+                                    withAnimation {
+                                        syncedScore.score.addScore(player: player2)
+                                        syncedScore.sync()
+                                        if syncedScore.score.winner() != nil {
+                                            confetti += 1
+                                        }
+                                    }
+                                }
+                            }.overlay(alignment:.bottom) {
+                                ScoreBoardActionsView(syncedScore: syncedScore, playersSwapped: $playersSwapped, showFinishGame: $showFinishGame)
+                                    .offset(.init(width: 0, height: 30)
+                                    )
+                            }
                         }
-                    }
-                }.ignoresSafeArea(edges: .top)
+                    }.ignoresSafeArea(edges: .top)
+                }
+                .ignoresSafeArea(edges: .top)
             }
-            .ignoresSafeArea(edges: .top)
-        }
         .confettiCannon(
             trigger: $confetti,
             num: 100,
             openingAngle: Angle.degrees(30),
             closingAngle: Angle.degrees(150)
         )
-        .disableSwipeBack()
-        .forceOrientation(.landscapeRight)
+        //.disableSwipeBack()
+
         .noSleep()
         .ignoresSafeArea(edges: .top) // Extend under nav bar
         .task {
@@ -153,6 +155,13 @@ struct ScoreboardView : View {
                 .presentationDragIndicator(.visible)    // Show the small slider on top
         }
         .toolbar {
+            
+            ToolbarItem(placement: .navigationBarLeading){
+                Button("", systemImage: "xmark") {
+                    dismiss()
+                }
+            }
+            
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     Button("Stop Scoreboard") {
@@ -163,6 +172,8 @@ struct ScoreboardView : View {
                 }
             }
         }
+        }
+        .forceOrientation(.landscapeRight)
     }
 }
 

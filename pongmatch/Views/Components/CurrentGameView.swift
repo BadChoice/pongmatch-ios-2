@@ -35,7 +35,8 @@ struct CurrentGameView : View {
                 }
             } else {
                 HStack {
-                    Label("Start a scoreboard", systemImage: "square.split.2x1")
+                    Image(systemName: "square.split.2x1")
+                    Text("Start a scoreboard")
                     Spacer()
                     Image(systemName: "play.fill")
                         .foregroundStyle(.primary)

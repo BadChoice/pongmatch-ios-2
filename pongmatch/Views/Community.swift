@@ -40,26 +40,23 @@ struct Community : View {
                     Spacer().frame(height: 80)
                 }
             }
-        }.overlay(
-            HStack{
-                CustomSearchBar(text: $searchText)
-                Button {
-                    searchingUsers = true
-                } label: {
-                    Image(systemName: "plus")
-                        .padding()
-                }.glassEffect()
-            }.padding(),
-            alignment: .bottom
-        )
+        }
         .sheet(isPresented: $searchingUsers){
             SearchUsersView()
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)                
         }
+        .searchable(text: $searchText, placement: .toolbar, prompt: "Search for friends")
         .task {
             Task {
                 friends = ((try? await auth.friends()) ?? [])
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("", systemImage: "plus") {
+                    searchingUsers = true
+                }
             }
         }
         .onChange(of: searchText) { _, newValue in

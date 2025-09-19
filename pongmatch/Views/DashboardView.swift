@@ -7,8 +7,18 @@ struct DashboardView : View {
     @EnvironmentObject private var nav: NavigationManager
     
     @State var isLoadingUser:Bool = true
-    @State private var selectedGame: Game?
-
+    @State private var scoreboardGame: Game? {
+        didSet {
+            print("Setting scoreboard game to \(String(describing: scoreboardGame))")
+        }
+    }
+    
+    // Identifiable wrapper so we can use .fullScreenCover(item:)
+    private struct PresentableGame: Identifiable {
+        let id = UUID()
+        let game: Game
+    }
+    @State private var presentableScoreboard: PresentableGame?
         
     var body: some View {
         TabView {
@@ -18,24 +28,28 @@ struct DashboardView : View {
                 }
             } else {
                 Tab("", systemImage: "house") {
-                    HomeView { game in
-                        selectedGame = game
-                        nav.push("scoreboard")
+                    NavigationStack {
+                        HomeView { game in
+                            scoreboardGame = game
+                            presentableScoreboard = PresentableGame(game: game)
+                        }
                     }
                 }
                 
                 Tab("", systemImage: "person.3") {
-                    Community()
-                }
-                                
-                /*Tab("Four", systemImage: "magnifyingglass", role: .search) {
                     NavigationStack {
-                        Text("Patata")
+                        Community()
                     }
-                }*/
+                }
             }
         }
-        .tabViewBottomAccessory(content: CurrentGameView.init)
+        .tabViewBottomAccessory {
+            CurrentGameView().onTapGesture {
+                let game = Game.fake()
+                scoreboardGame = game
+                presentableScoreboard = PresentableGame(game: game)
+            }
+        }
         .tabBarMinimizeBehavior(.onScrollDown)
         .toolbar {
             //https://xavier7t.com/liquid-glass-navigation-bar-in-swiftui?source=more_articles_bottom_blogs
@@ -81,15 +95,13 @@ struct DashboardView : View {
                 }
                 guard auth.user == nil else { return }
                 try await auth.fetchMe()
-                
             }
         }
-        .navigationDestination(for: String.self) { target in
-            if target == "scoreboard"{
-                ScoreboardView(
-                    score: Score(game:selectedGame!)
-                )
-            }
+        .fullScreenCover(item: $presentableScoreboard, onDismiss: {
+            // If you want to clear the game after dismissal, do it here
+            // scoreboardGame = nil
+        }) { item in
+            ScoreboardView(score: Score(game: item.game))
         }
     }
 }

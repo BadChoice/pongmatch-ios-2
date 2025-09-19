@@ -126,7 +126,7 @@ struct GameSummaryView : View {
         }
         .toolbar {
             if game.status == .planned {
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button{
                         showUploadResultsSheet = true
                     } label :{
@@ -136,7 +136,7 @@ struct GameSummaryView : View {
             }
             
             if game.status == .planned && publicScoreboardCode == nil {
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         getPublicScoreboardCode()
                     } label: {
@@ -146,7 +146,7 @@ struct GameSummaryView : View {
             }
             
             if game.status == .planned {
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .topBarTrailing) {
                     Label("Add to calendar", systemImage: "calendar.badge.plus")
                 }
                     
@@ -167,7 +167,7 @@ struct GameSummaryView : View {
                     }
                 }
                 
-                ToolbarItem(placement: .bottomBar){
+                ToolbarItem(placement: .topBarTrailing){
                     Button {
                         Task { await acceptChallenge.run {
                             game = try await auth.api.declineChallenge(game)
@@ -183,7 +183,7 @@ struct GameSummaryView : View {
                 }
             }
             
-                ToolbarItem(placement: .bottomBar){
+                ToolbarItem(placement: .topBarTrailing){
                     Menu {
                         if game.status == .waitingOpponent {
                             Button("Edit game", systemImage: "pencil") {
