@@ -158,6 +158,8 @@ struct RegisterView : View {
                         .padding(.horizontal)
                 }
                 
+                Spacer()
+                
                 Button {
                     Task {
                         await auth.register(

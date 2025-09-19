@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject private var auth: AuthViewModel
+    @Environment(\.openURL) private var openURL
 
     @State private var email:String = ""
     @State private var password:String = ""
@@ -66,6 +67,20 @@ struct LoginView: View {
                     }
             }
             .padding(.horizontal)
+
+            // Forgot password
+            HStack {
+                Spacer()
+                Button {
+                    openURL(Pongmatch.forgotPasswordUrl)
+                } label: {
+                    Text("Forgot password?")
+                        .font(.footnote)
+                        .foregroundStyle(.primary)
+                        .underline()
+                }
+                .padding(.trailing)
+            }
                 
             Button {
                 Task {
