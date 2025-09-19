@@ -6,6 +6,8 @@ struct DashboardView : View {
     @EnvironmentObject private var auth: AuthViewModel
     @EnvironmentObject private var nav: NavigationManager
     
+    @ObservedObject private var syncedScore = SyncedScore.shared
+    
     @State var isLoadingUser:Bool = true
     @State private var selectedGame: Game?
 
@@ -33,6 +35,16 @@ struct DashboardView : View {
                         Text("Patata")
                     }
                 }*/
+            }
+        }
+        .tabViewBottomAccessory{
+            if let syncedScore = syncedScore.score {
+                NavigationLink {
+                    ScoreboardView(score: syncedScore)
+                } label: {
+                    FloatingGameView(score: syncedScore)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                }
             }
         }
         .tabBarMinimizeBehavior(.onScrollDown)
@@ -138,17 +150,6 @@ struct HomeView : View {
         .refreshable {
             refreshId = UUID()
         }
-        .overlay(alignment:.bottom) {
-            if let syncedScore = syncedScore.score {
-                NavigationLink {
-                    ScoreboardView(score: syncedScore)
-                } label: {
-                    FloatingGameView(score: syncedScore)
-                        .foregroundStyle(.primary)
-                        .padding()
-                }
-            }
-        }
         .sheet(isPresented: $showScoreboardSelectionModal) {
             ScoreboardSelectionView { game in
                 showScoreboardSelectionModal = false
@@ -168,21 +169,25 @@ struct FloatingGameView : View {
     var body: some View {
         HStack {
             PulseView()
+            
+            Spacer()
+            
             AvatarView(user: score.game.player1)
-                .frame(width: 24)
+                .frame(width: 24, height:24)
             Group {
                 let result = score.setsResult
                 Text("\(result.player1) - \(result.player2)")                
             }.font(.headline)
                 
             AvatarView(user: score.game.player2)
-                .frame(width: 24)
+                .frame(width: 24, height:24)
+            
             Spacer()
+            
             Image(systemName: "play.fill")
                 .foregroundStyle(.primary)
         }
-        .padding()
-        .glassEffect()
+        .foregroundStyle(.primary)
     }
 }
 
