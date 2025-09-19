@@ -24,15 +24,11 @@ struct ContentView: View {
     @StateObject private var path = NavigationManager()
     
     var body: some View {
-        Group {
+        NavigationStack(path: $path.path) {
             if auth.isAuthenticated {
-                NavigationStack(path: $path.path) {
-                    DashboardView()                        
-                }
+                DashboardView()
             } else {
-                NavigationStack(path: $path.path) {
-                    LoginView()
-                }
+                LoginView()
             }
         }
         .environmentObject(auth)
