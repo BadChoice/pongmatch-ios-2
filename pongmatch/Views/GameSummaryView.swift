@@ -153,7 +153,7 @@ struct GameSummaryView : View {
             }
             
             if game.status == .waitingOpponent && game.player2.id == auth.user.id {
-                ToolbarItem(placement: .bottomBar){
+                ToolbarItem(placement: .primaryAction){
                     Button {
                         Task { await acceptChallenge.run {
                             game = try await auth.api.acceptChallenge(game)

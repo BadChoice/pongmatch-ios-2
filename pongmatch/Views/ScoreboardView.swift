@@ -193,7 +193,6 @@ struct BackgroundBlurredImage : View {
 }
 
 
-
 struct ScoreBoardActionsView:View {
     
     @ObservedObject var syncedScore:SyncedScore
