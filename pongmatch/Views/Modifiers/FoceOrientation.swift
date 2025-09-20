@@ -6,12 +6,14 @@ struct ForceOrientation: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onAppear {
-                OrientationManager.shared.set(orientation)
+                //DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    OrientationManager.shared.set(orientation)
+                //}
             }
-            .onDisappear {
-                /*DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            .onDisappear(){
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     OrientationManager.shared.set(.portrait)
-                }*/
+                }
             }
     }
 }

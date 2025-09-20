@@ -13,9 +13,9 @@ final class OrientationManager {
                 print("Failed to update orientation: \(error)")
             }
         }
-    }
-    
-    func resetToPortrait() {
-        set(.portrait)
+        // Force UIKit to re-query supported orientations
+        if let rootVC = UIApplication.shared.windows.first?.rootViewController {
+            rootVC.setNeedsUpdateOfSupportedInterfaceOrientations()
+        }
     }
 }
