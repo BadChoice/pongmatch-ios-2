@@ -9,7 +9,9 @@ struct ForceOrientation: ViewModifier {
                 OrientationManager.shared.set(orientation)
             }
             .onDisappear {
-                OrientationManager.shared.set(.portrait)
+                /*DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    OrientationManager.shared.set(.portrait)
+                }*/
             }
     }
 }

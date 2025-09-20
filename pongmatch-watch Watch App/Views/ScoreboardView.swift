@@ -211,8 +211,15 @@ private struct ScoreView : View {
     }
 }
 
-#Preview {
+#Preview(traits:.landscapeLeft) {
     ScoreboardView(score: Score(
         game:Game.fake()
     ))
 }
+
+#Preview {
+    ScoreboardView(score: Score(
+        game:Game.fake()
+    )).colorScheme(.dark)
+}
+

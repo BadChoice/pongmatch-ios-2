@@ -51,43 +51,6 @@ struct DashboardView : View {
             }
         }
         .tabBarMinimizeBehavior(.onScrollDown)
-        .toolbar {
-            //https://xavier7t.com/liquid-glass-navigation-bar-in-swiftui?source=more_articles_bottom_blogs
-            ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink {
-                    CreateGameView()
-                } label: {
-                    Label("Create Game", systemImage: "plus")
-                }
-            }
-            
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Menu {
-                    NavigationLink {
-                        AccountView()
-                    } label: {
-                        Label("Account", systemImage: "person.fill")
-                    }
-                    Button("Add Friend", systemImage: "person.badge.plus") {
-                        
-                    }
-                    
-                    NavigationLink {
-                        FeedbackView()
-                    } label: {
-                        Label("Feedback", systemImage: "bubble")
-                    }
-                    
-                    Divider()
-                    Button("Logout", systemImage: "arrow.right.square") {
-                        auth.logout()
-                    }
-                }
-                label : {
-                    Image(systemName: "ellipsis")
-                }
-            }
-        }
         .task {
             Task {
                 defer {
@@ -144,6 +107,43 @@ struct HomeView : View {
             }
         .refreshable {
             refreshId = UUID()
+        }
+        .toolbar {
+            //https://xavier7t.com/liquid-glass-navigation-bar-in-swiftui?source=more_articles_bottom_blogs
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink {
+                    CreateGameView()
+                } label: {
+                    Label("Create Game", systemImage: "plus")
+                }
+            }
+            
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    NavigationLink {
+                        AccountView()
+                    } label: {
+                        Label("Account", systemImage: "person.fill")
+                    }
+                    Button("Add Friend", systemImage: "person.badge.plus") {
+                        
+                    }
+                    
+                    NavigationLink {
+                        FeedbackView()
+                    } label: {
+                        Label("Feedback", systemImage: "bubble")
+                    }
+                    
+                    Divider()
+                    Button("Logout", systemImage: "arrow.right.square") {
+                        auth.logout()
+                    }
+                }
+                label : {
+                    Image(systemName: "ellipsis")
+                }
+            }
         }
         .sheet(isPresented: $showScoreboardSelectionModal) {
             ScoreboardSelectionView { game in

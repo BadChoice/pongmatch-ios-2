@@ -34,13 +34,13 @@ struct CurrentGameView : View {
                     .frame(maxWidth: .infinity)
                 }
             } else {
-                HStack {
+                /*HStack {
                     Image(systemName: "square.split.2x1")
                     Text("Start a scoreboard")
                     Spacer()
                     Image(systemName: "play.fill")
                         .foregroundStyle(.primary)
-                }
+                }*/
             }
         }
         .padding(.horizontal)
