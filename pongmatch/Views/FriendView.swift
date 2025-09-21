@@ -100,9 +100,13 @@ struct FriendView : View {
                         } else if (oneVsOne?.games.isEmpty ?? true){
                             Text("You have no matches against \(user.name)")
                         } else {
-                            HStack {
-                                Text("WON: \(oneVsOne?.won ?? 0)")
-                                Text("LOST: \(oneVsOne?.lost ?? 0)")
+                            if let oneVsOne {
+                                WinLossBar(
+                                    me:auth.user,
+                                    friend:user,
+                                    wins: oneVsOne.won,
+                                    losses: oneVsOne.lost
+                                ).padding(.horizontal, 4)
                             }
                             GamesScrollview(games: oneVsOne?.games ?? [])
                         }
@@ -146,7 +150,6 @@ struct FriendView : View {
         }
     }
 }
-
 
 
 struct FollowButton : View {
