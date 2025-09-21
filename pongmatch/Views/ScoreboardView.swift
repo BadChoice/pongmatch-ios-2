@@ -180,10 +180,12 @@ struct BackgroundBlurredImage : View {
     
     let user:User?
     let alpha:Double
+    let blur:Double
     
-    init(user:User?, alpha:Double = 0.10) {
+    init(user:User?, alpha:Double = 0.10, blur:Double = 20.0) {
         self.user = user
         self.alpha = alpha
+        self.blur = blur
     }
             
     var body: some View {
@@ -192,7 +194,7 @@ struct BackgroundBlurredImage : View {
                 image
                     .resizable()
                     .scaledToFill()
-                    .blur(radius: 20)
+                    .blur(radius: blur)
                     .opacity(alpha)
                     .ignoresSafeArea()
             } placeholder: {
