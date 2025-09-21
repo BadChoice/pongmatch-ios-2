@@ -15,6 +15,8 @@ struct ScoreboardView : View {
     
     @State private var confetti: Int = 0
 
+    var keyHandler          = GamePadInputHandler()
+    var volumeButtonHandler = VolumeButtonsHandler()
     
     var player1: Score.Player { playersSwapped ? .player2 : .player1 }
     var player2: Score.Player { playersSwapped ? .player1 : .player2 }
@@ -117,38 +119,33 @@ struct ScoreboardView : View {
                 syncedScore.replace(score: newScore)
                 syncedScore.sync()
             }
-            
-            buttonHandler = ScoreButtonHandler {
-                withAnimation {
-                    syncedScore.score.addScore(player: .player1)
-                    syncedScore.sync()
-                    if syncedScore.score.winner() != nil {
-                        confetti += 1
-                    }
-                }
-            } onPlayer2: {
-                withAnimation {
-                    syncedScore.score.addScore(player: .player2)
-                    syncedScore.sync()
-                    if syncedScore.score.winner() != nil {
-                        confetti += 1
-                    }
-                }
-            } onUndo: {
-                withAnimation {
-                    syncedScore.score.undo()
-                    syncedScore.sync()
+        }
+        .background {
+            KeyCommandHandler { key in
+                keyHandler.onInput(key)
+                if syncedScore.score.winner() != nil {
+                    confetti += 1
                 }
             }
         }
-        .background {
-            KeyCommandHandler { _ in buttonHandler?.onButtonPressed() }
-        }
         .onVolumeButtons(
-            up:   { buttonHandler?.onButtonPressed() },
-            down: { buttonHandler?.onButtonPressed() }
+            up:   {
+                withAnimation {
+                    volumeButtonHandler.onButtonPressed()
+                    if syncedScore.score.winner() != nil {
+                        confetti += 1
+                    }
+                }
+            },
+            down: {
+                withAnimation {
+                    volumeButtonHandler.onButtonPressed()
+                    if syncedScore.score.winner() != nil {
+                        confetti += 1
+                    }
+                }
+            }
         )
-
         .sheet(isPresented: $showFinishGame){
             FinishGameView(game:syncedScore.score.game.finish(syncedScore.score))
                 .presentationDetents([.medium, .large]) // Bottom sheet style

@@ -18,7 +18,13 @@ struct KeyCommandHandler: UIViewControllerRepresentable {
             [
                 UIKeyCommand(input: " ", modifierFlags: [], action: #selector(handleKey(_:))),
                 UIKeyCommand(input: "a", modifierFlags: [], action: #selector(handleKey(_:))),
-                UIKeyCommand(input: "b", modifierFlags: [], action: #selector(handleKey(_:)))
+                UIKeyCommand(input: "b", modifierFlags: [], action: #selector(handleKey(_:))),
+                
+                //Gamepad
+                UIKeyCommand(input: "h", modifierFlags: [], action: #selector(handleKey(_:))), //player1
+                UIKeyCommand(input: "i", modifierFlags: [], action: #selector(handleKey(_:))), //player2
+                UIKeyCommand(input: "y", modifierFlags: [], action: #selector(handleKey(_:))), //undo
+                UIKeyCommand(input: "j", modifierFlags: [], action: #selector(handleKey(_:))), //redo
             ]
         }
         
