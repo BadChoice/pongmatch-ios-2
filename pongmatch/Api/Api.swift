@@ -173,6 +173,20 @@ class Api {
         }
     }
     
+    func friendGames(_ id:Int) async throws -> [Game] {
+        struct GamesResponse : Codable {
+            let data:[Game]
+        }
+        
+        do {
+            let gamesResponse:GamesResponse = try await client.call(method: .get, url: "friends/\(id)/games")
+            return gamesResponse.data.unique(\.id)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     func friends() async throws -> [User] {
         
         struct FriendsResponse : Codable {
@@ -384,6 +398,22 @@ class Api {
         do{
             let response:Response = try await client.call(method: .get, url: "games/\(id)/publicScoreboardCode")
             return response.code
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func delete(game:Game) async throws {
+        guard let id = game.id else {
+            throw ApiClient.Errors.other("Game ID is nil")
+        }
+        
+        struct Response : Codable {
+        }
+        
+        do{
+            let _:Response = try await client.call(method: .delete, url: "games/\(id)")
         } catch {
             print(error)
             throw error

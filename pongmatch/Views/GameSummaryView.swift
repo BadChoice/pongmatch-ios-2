@@ -4,12 +4,15 @@ struct GameSummaryView : View {
     @State var game:Game
     
     @EnvironmentObject private var auth: AuthViewModel
+    @Environment(\.dismiss) private var dismiss
     @Namespace private var namespace
-    
+        
     @State private var acceptChallenge = ApiAction()
     @State private var fetchPublicScoreboardCode = ApiAction()
     @State private var showUploadResultsSheet = false
     @State private var publicScoreboardCode: String? = nil
+    
+    @State private var deleteGame = ApiAction()
     
     var body: some View {
         ScrollView {
@@ -191,12 +194,18 @@ struct GameSummaryView : View {
                             }
                             
                             Button("Delete", systemImage: "trash", role: .destructive) {
-                                
-                            }
+                                Task {
+                                    if (await deleteGame.run {
+                                        try await auth.api.delete(game: game)
+                                    }) {
+                                        dismiss()
+                                    }
+                                }
+                            }.disabled(deleteGame.loading)
                         }
                         
                         if game.status == .finished {
-                            Button("Dispute result", systemImage: "flat") {
+                            Button("Dispute result", systemImage: "flag") {
                                 
                             }
                         }
