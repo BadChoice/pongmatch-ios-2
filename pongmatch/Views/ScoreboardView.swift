@@ -7,7 +7,6 @@ struct ScoreboardView : View {
     @ObservedObject private var syncedScore = SyncedScore.shared
     @Environment(\.dismiss) private var dismiss
             
-    @State var buttonHandler:ScoreButtonHandler?
     var newScore:Score?
     
     @State var playersSwapped:Bool = false
