@@ -37,9 +37,13 @@ struct FriendView : View {
                 
                 Divider()
                 HStack(spacing:40) {
-                    Button("Challenge", systemImage: "figure.boxing") {
-                        
-                    }.font(.caption)
+                    if user.canBeChallengedByMe() {
+                        NavigationLink{
+                            CreateGameView(opponent: user)
+                        } label: {
+                            Label ("Challenge", systemImage: "figure.boxing") .font(.caption)
+                        }
+                    }
                     FollowButton(user: user, isFollowed: $isFollowed)
                 }
                 

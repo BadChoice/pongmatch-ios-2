@@ -6,12 +6,16 @@ struct CreateGameView : View {
     
     @State private var selectingOpponent = false
     @State private var creatingGame = false
-    @State private var opponent:User = User.unknown()
+    @State private var opponent:User
     @State private var errorMessage:String? = nil
     @State private var selectedDate = Date()
     @State private var initialScore: InitialScore = .standard
     @State private var rankingType: RankingType = .friendly
     @State private var winningCondition: WinningCondition = .bestof5
+    
+    init(opponent:User? = nil) {
+        self.opponent = opponent ?? User.unknown()
+    }
     
     var body: some View {
         ScrollView{
@@ -21,8 +25,7 @@ struct CreateGameView : View {
                         .frame(minWidth: 0, maxWidth: .infinity)
                     
                     Text("VS").font(.largeTitle.bold())
-                    
-                    
+                                        
                     Group {
                         if opponent.id == User.unknown().id {
                             Image(systemName: "plus.circle.dashed")
