@@ -187,6 +187,27 @@ class Api {
         }
     }
     
+    struct OneVsOne : Codable {
+        let won:Int
+        let lost:Int
+        let games:[Game]
+    }
+    
+    func friendOneVsOne(_ id:Int) async throws -> OneVsOne {
+        struct GamesResponse : Codable {
+            let won:Int
+            let lost:Int
+            let games:[Game]
+        }
+        
+        do {
+            return try await client.call(method: .get, url: "friends/\(id)/oneVsOne")
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     func friends() async throws -> [User] {
         
         struct FriendsResponse : Codable {

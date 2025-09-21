@@ -10,8 +10,10 @@ struct FriendView : View {
     
     @State var isFollowed:Bool
     @State var fetchGames = ApiAction()
+    @State var fetchOneVsOne = ApiAction()
     
     @State var games:[Game] = []
+    @State var oneVsOne:Api.OneVsOne? = nil
     
     init(user:User) {
         self.user = user
@@ -72,14 +74,38 @@ struct FriendView : View {
                                 .foregroundStyle(.red)
                                 .font(.caption)
                         } else if games.isEmpty {
-                            Text("Next matches for \(user.name)")
+                            Text("\(user.name) hasn't played any matches yet")
                         } else {
-                            GamesScrollview(games: games)
+                            GamesScrollview(games: games.filter { !$0.isFinished() })
                         }
                     case 1:
-                        Text("Previous matches for \(user.name)")
+                        if fetchGames.loading {
+                            ProgressView()
+                        } else if let error = fetchGames.errorMessage {
+                            Text("Error: \(error)")
+                                .foregroundStyle(.red)
+                                .font(.caption)
+                        } else if games.isEmpty {
+                            Text("\(user.name) hasn't played any matches yet")
+                        } else {
+                            GamesScrollview(games: games.filter { $0.isFinished() })
+                        }
                     case 2:
-                        Text("1vs1 matches for \(user.name)")
+                        if fetchOneVsOne.loading {
+                            ProgressView()
+                        } else if let error = fetchOneVsOne.errorMessage {
+                            Text("Error: \(error)")
+                                .foregroundStyle(.red)
+                                .font(.caption)
+                        } else if (oneVsOne?.games.isEmpty ?? true){
+                            Text("You have no matches against \(user.name)")
+                        } else {
+                            HStack {
+                                Text("WON: \(oneVsOne?.won ?? 0)")
+                                Text("LOST: \(oneVsOne?.lost ?? 0)")
+                            }
+                            GamesScrollview(games: oneVsOne?.games ?? [])
+                        }
                     default:
                         EmptyView()
                     }
@@ -91,6 +117,7 @@ struct FriendView : View {
         }.task {
             fetchDetails()
             fetchFriendGames()
+            apiFetchOneVsOne()
         }
     }
     
@@ -107,6 +134,14 @@ struct FriendView : View {
         Task {
             await fetchGames.run {
                 games = try await auth.api.friendGames(user.id)
+            }
+        }
+    }
+    
+    private func apiFetchOneVsOne(){
+        Task {
+            await fetchOneVsOne.run {
+                oneVsOne = try await auth.api.friendOneVsOne(user.id)
             }
         }
     }
