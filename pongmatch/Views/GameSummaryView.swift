@@ -232,7 +232,7 @@ struct GameSummaryView : View {
             
         }
         .sheet(isPresented: $showUploadResultsSheet) {
-            UploadResultsView(game: game)
+            UploadResultsView(game: $game)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }

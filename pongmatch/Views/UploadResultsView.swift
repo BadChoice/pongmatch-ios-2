@@ -2,7 +2,7 @@ import SwiftUI
 
 struct UploadResultsView: View {
     
-    @State var game: Game
+    @Binding var game: Game
     
     @EnvironmentObject var auth: AuthViewModel
     @Environment(\.dismiss) private var dismiss
@@ -113,5 +113,6 @@ struct UploadResultsView: View {
 
 
 #Preview {
-    UploadResultsView(game:Game.fake())
+    @Previewable @State var game = Game.fake()
+    UploadResultsView(game:$game)
 }
