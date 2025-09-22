@@ -10,12 +10,17 @@ struct GameSummaryView : View {
         
     @State private var acceptChallenge = ApiAction()
     @State private var fetchPublicScoreboardCode = ApiAction()
+    @State private var fetchPlayersDetails = ApiAction()
+    
     @State private var showUploadResultsSheet = false
     @State private var publicScoreboardCode: String? = nil
     
     @State private var deleteGame = ApiAction()
     
     @StateObject private var calendarManager = CalendarManager()
+    
+    @State private var player1Details:Api.PlayerDetails? = nil
+    @State private var player2Details:Api.PlayerDetails? = nil
 
     
     var body: some View {
@@ -84,7 +89,9 @@ struct GameSummaryView : View {
                     Divider().padding(.bottom)
                 }
                 
-                if let results = game.results {
+                earnedPoints
+                
+                if let results = game.results, !results.isEmpty {
                     WinLossBar(
                         me:game.player1,
                         friend: game.player2,
@@ -100,6 +107,8 @@ struct GameSummaryView : View {
                     }
                     .padding()
                 }
+                
+                
                 
                 // https://ttcup.com/videos/4558453588f55d5aa02ddf8dd46deefc66f086f3/
                 // Winning percentage per own server per set
@@ -123,8 +132,9 @@ struct GameSummaryView : View {
                             .bold()
                             .glassEffect(.regular.tint(Color.accentColor).interactive())
                         }
-                        
+                        .padding(.vertical)
                     }
+                    
                     if game.status == .waitingOpponent && game.player2.id == auth.user.id {
                         VStack(alignment: .center) {
                             Text("YOU HAVE BEEN CHALLENGED")
@@ -212,39 +222,83 @@ struct GameSummaryView : View {
                 }
             }
             
-                ToolbarItem(placement: .topBarTrailing){
-                    Menu {
-                        if game.status == .waitingOpponent {
-                            Button("Edit game", systemImage: "pencil") {
-                                
-                            }
+            ToolbarItem(placement: .topBarTrailing){
+                Menu {
+                    if game.status == .waitingOpponent {
+                        Button("Edit game", systemImage: "pencil") {
                             
-                            Button("Delete", systemImage: "trash", role: .destructive) {
-                                Task {
-                                    if (await deleteGame.run {
-                                        try await auth.api.delete(game: game)
-                                    }) {
-                                        dismiss()
-                                    }
-                                }
-                            }.disabled(deleteGame.loading)
                         }
                         
-                        if game.status == .finished {
-                            Button("Dispute result", systemImage: "flag") {
-                                
+                        Button("Delete", systemImage: "trash", role: .destructive) {
+                            Task {
+                                if (await deleteGame.run {
+                                    try await auth.api.delete(game: game)
+                                }) {
+                                    dismiss()
+                                }
                             }
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis")
+                        }.disabled(deleteGame.loading)
                     }
+                    
+                    if game.status == .finished {
+                        Button("Dispute result", systemImage: "flag") {
+                            
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
                 }
+            }
             
+        }
+        .task {
+            if game.isFinished() && game.ranking_type == .competitive {
+                Task {
+                    (player1Details, player2Details) = try await auth.api.playersDetails(game: game)
+                }
+            }
         }
         .sheet(isPresented: $showUploadResultsSheet) {
             UploadResultsView(game: $game)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
+        }
+    }
+    
+    @ViewBuilder
+    private var earnedPoints: some View {
+        
+        if let player1Details, let player2Details {
+            VStack{
+                HStack {
+                    
+                    Image(systemName: player1Details.earned_points ?? 0 > 0 ? "arrow.up" : "arrow.down")
+                            .foregroundStyle(player1Details.earned_points ?? 0 > 0 ? .green : .red)
+                    
+                    Text("\(player1Details.earned_points ?? 0)")
+                        .bold()
+                    Text("\(player1Details.resulting_points ?? 0)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    
+                    Spacer()
+                    
+                    Text("\(player2Details.earned_points ?? 0)")
+                        .bold()
+                    Text("\(player2Details.resulting_points ?? 0)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    
+                    Image(systemName: player2Details.earned_points ?? 0 > 0 ? "arrow.up" : "arrow.down")
+                            .foregroundStyle(player2Details.earned_points ?? 0 > 0 ? .green : .red)
+                }
+                .padding(.horizontal, 40)
+                .padding(.vertical, 10)
+                
+                Divider()
+            }
+            .foregroundStyle(.primary)
         }
     }
     

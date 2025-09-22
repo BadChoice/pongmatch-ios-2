@@ -425,6 +425,30 @@ class Api {
         }
     }
     
+    struct PlayerDetails : Codable {
+        let resulting_points:Int?
+        let earned_points:Int?
+    }
+    
+    func playersDetails(game:Game) async throws -> (player1:PlayerDetails?, player2:PlayerDetails?) {
+        guard let id = game.id else {
+            throw ApiClient.Errors.other("Game ID is nil")
+        }
+        
+        struct Response : Codable {
+            let player1:PlayerDetails?
+            let player2:PlayerDetails?
+        }
+        
+        do{
+            let response:Response = try await client.call(method: .get, url: "games/\(id)/playersDetails")
+            return (response.player1, response.player2)
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     func delete(game:Game) async throws {
         guard let id = game.id else {
             throw ApiClient.Errors.other("Game ID is nil")
