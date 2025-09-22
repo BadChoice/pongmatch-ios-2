@@ -5,7 +5,7 @@ struct PodiumView: View {
                        
     var body: some View {
         HStack {
-            Group{
+            ZStack{
                 if users.count > 1 {
                     NavigationLink {
                         FriendView(user: users[1])
@@ -15,9 +15,9 @@ struct PodiumView: View {
                 } else {
                     userView(user: User.unknown(), position: 1)
                 }
-            }.frame(minWidth: 0, maxWidth: .infinity)
+            }.frame(maxWidth: .infinity)
             
-            Group {
+            ZStack {
                 if users.count > 0 {
                     NavigationLink {
                         FriendView(user: users[0])
@@ -27,9 +27,9 @@ struct PodiumView: View {
                 } else {
                     userView(user: User.unknown(), position: 0)
                 }
-            }.frame(minWidth: 0, maxWidth: .infinity)
+            }.frame(maxWidth: .infinity)
             
-            Group {
+            ZStack {
                 if users.count > 2 {
                     NavigationLink {
                         FriendView(user: users[2])
@@ -39,7 +39,7 @@ struct PodiumView: View {
                 } else {
                     userView(user: User.unknown(), position: 2)
                 }
-            }.frame(minWidth: 0, maxWidth: .infinity)                
+            }.frame(maxWidth: .infinity)
         }
     }
     
@@ -79,15 +79,16 @@ struct PodiumView: View {
                 .background(Color.accentColor)
                 .clipShape(.capsule)
         }
+        .foregroundStyle(.primary)
     }
             
     
     private func strokeColor(position:Int) -> Color {
         switch position {
-        case 0: Color.yellow
-        case 1:  Color.gray
-        case 2:  Color.brown
-        default: Color.clear
+        case 0:  .yellow
+        case 1:  .gray
+        case 2:  .brown
+        default: .clear
         }
     }
 

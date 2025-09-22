@@ -17,7 +17,7 @@ struct Community : View {
         var users = friends
         
         if let user = auth.user {
-            users.append(auth.user)
+            users.append(user)
         }
         
         return users
@@ -33,7 +33,6 @@ struct Community : View {
             if loading {
                 ProgressView()
             } else {
-                
                 if searchText.isEmpty && !users.isEmpty {
                     PodiumView(users: topUsers)
                         .padding()
@@ -51,16 +50,16 @@ struct Community : View {
                     }
                 } else {
                     ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
-                        NavigationLink{
-                            FriendView(user: friend)
-                        } label: {
-                            UserView(user: friend)
+                        if !topUsers.contains(where: { $0.id == friend.id }) || !searchText.isEmpty {
+                            NavigationLink{
+                                FriendView(user: friend)
+                            } label: {
+                                UserView(user: friend)
+                            }
                         }
                     }
-                    Spacer().frame(height: 80)
                 }
             }
-        
         }
         .sheet(isPresented: $searchingUsers){
             SearchUsersView()
