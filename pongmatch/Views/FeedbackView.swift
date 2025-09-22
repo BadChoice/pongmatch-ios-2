@@ -2,7 +2,8 @@ import SwiftUI
 
 struct FeedbackView : View {
     @EnvironmentObject private var auth: AuthViewModel
-    @EnvironmentObject private var nav: NavigationManager
+    
+    @Environment(\.dismiss) private var dismiss
     
     @State private var feedbackText: String = ""
     @State private var isSubmitted: Bool = false
@@ -59,12 +60,15 @@ struct FeedbackView : View {
     private func submitFeedback() {
         guard !feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         
-        Task {
-            let isSubmitted = await submiteFeedback.run {
+        Task {            
+            isSubmitted = await submiteFeedback.run {
                 try await auth.api.sendFeedback(feedbackText)
             }
+            
             if isSubmitted {
-                nav.popToRoot()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    dismiss()
+                }
             }
         }
     }
