@@ -14,6 +14,9 @@ struct GameSummaryView : View {
     
     @State private var deleteGame = ApiAction()
     
+    @StateObject private var calendarManager = CalendarManager()
+
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -148,9 +151,22 @@ struct GameSummaryView : View {
                 }
             }
             
-            if game.status == .planned {
+            if game.status == .planned && game.date > Date() {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Label("Add to calendar", systemImage: "calendar.badge.plus")
+                    Button {
+                        calendarManager.requestAccess { granted in
+                            guard granted else {
+                                return
+                            }
+                            try? calendarManager.addEvent(
+                                title: "Ping Pong Match",
+                                startDate: game.date,
+                                endDate: game.date.addingTimeInterval(900) // 15 min
+                            )
+                        }
+                    } label: {
+                        Label("Add to calendar", systemImage: "calendar.badge.plus")
+                    }
                 }
                     
             }

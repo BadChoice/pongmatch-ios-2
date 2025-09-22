@@ -58,6 +58,12 @@ struct Community : View {
                     searchingUsers = true
                 }
             }
+            
+            ToolbarItem(placement: .topBarTrailing ){
+                ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            }
         }
         .onChange(of: searchText) { _, newValue in
             loading = true

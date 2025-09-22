@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 class Game : Codable {
     let id:Int?

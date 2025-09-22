@@ -135,8 +135,16 @@ struct HomeView : View {
                     } label: {
                         Label("Account", systemImage: "person.fill")
                     }
-                    Button("Add Friend", systemImage: "person.badge.plus") {
-                        
+                    
+                    NavigationLink {
+                        FriendView(user: auth.user!)
+                    } label: {
+                        Label("Profile", systemImage: "person.fill")
+                    }
+                    
+                    
+                    ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
+                        Label("Share", systemImage: "square.and.arrow.up")
                     }
                     
                     NavigationLink {

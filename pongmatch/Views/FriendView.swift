@@ -36,18 +36,30 @@ struct FriendView : View {
                 }
                 
                 Divider()
-                HStack(spacing:40) {
-                    if user.canBeChallengedByMe() {
-                        NavigationLink{
-                            CreateGameView(opponent: user)
-                        } label: {
-                            Label ("Challenge", systemImage: "figure.boxing") .font(.caption)
+                
+                if user.id != auth.user.id {
+                    
+                    HStack(spacing:40) {
+                        if user.canBeChallengedByMe() {
+                            NavigationLink{
+                                CreateGameView(opponent: user)
+                            } label: {
+                                Label ("Challenge", systemImage: "figure.boxing") .font(.caption)
+                            }
                         }
+                        FollowButton(user: user, isFollowed: $isFollowed)
                     }
-                    FollowButton(user: user, isFollowed: $isFollowed)
+                    
+                    Divider()
+                    
                 }
                 
-                Divider()
+                WinLossBar(
+                    me:user,
+                    friend:User.unknown(),
+                    wins: user.games_won ?? 0,
+                    losses: user.games_lost ?? 0
+                ).padding()
                 
                 VStack(alignment: .leading){
                     Text("ELO Evolution")
@@ -63,7 +75,9 @@ struct FriendView : View {
                 Picker("Match Type", selection: $selectedSegment) {
                     Text("Upcoming").tag(0)
                     Text("Recent").tag(1)
-                    Text("1 VS 1").tag(2)
+                    if auth.user.id != user.id {
+                        Text("1 VS 1").tag(2)
+                    }
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
@@ -147,6 +161,7 @@ struct FriendView : View {
     }
     
     private func apiFetchOneVsOne(){
+        if auth.user.id == user.id { return }
         Task {
             await fetchOneVsOne.run {
                 oneVsOne = try await auth.api.friendOneVsOne(user.id)

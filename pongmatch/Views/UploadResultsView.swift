@@ -2,9 +2,9 @@ import SwiftUI
 
 struct UploadResultsView: View {
     
-    let game: Game
+    @State var game: Game
+    
     @EnvironmentObject var auth: AuthViewModel
-    @EnvironmentObject var nav: NavigationManager
     @Environment(\.dismiss) private var dismiss
     
     @State private var uploading: Bool = false
@@ -103,10 +103,8 @@ struct UploadResultsView: View {
         defer { uploading = false }
         errorMessage = nil
         do {
-            let _ = try await auth.api.uploadResults(game, results: setResults)
+            game = try await auth.api.uploadResults(game, results: setResults)
             dismiss()
-            try await auth.loadGames()
-            nav.popToRoot()            
         } catch {
             errorMessage = "\(error)"
         }
