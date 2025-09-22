@@ -43,18 +43,16 @@ struct DashboardView : View {
                     }
                 }
                 
-                Tab("Search", systemImage: "magnifyingglass", role: .search) {
+                /*Tab("Search", systemImage: "magnifyingglass", role: .search) {
                     NavigationStack{
                         Text("Searching...")
                     }.searchable(text:$search)
-                }
+                }*/
             }
         }
         .tabViewBottomAccessory {
             CurrentGameView().onTapGesture {
-                let game = Game.fake()
-                scoreboardGame = game
-                presentableScoreboard = PresentableGame(game: game)
+                presentableScoreboard = PresentableGame(game: SyncedScore.shared.score.game)
             }
         }
         .tabBarMinimizeBehavior(.onScrollDown)

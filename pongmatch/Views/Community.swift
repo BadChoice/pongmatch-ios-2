@@ -34,23 +34,26 @@ struct Community : View {
                 ProgressView()
             } else {
                 if searchText.isEmpty && !users.isEmpty {
-                    PodiumView(users: topUsers)
-                        .padding()
+                    Section {
+                        PodiumView(users: topUsers)
+                            .padding(.vertical)
+                            .padding(.top, 20)
+                    }
                 }
                 
-                if users.isEmpty {
-                    ContentUnavailableView {
-                        Label(searchText.isEmpty ? "No friends" : "No results", systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass")
-                    } description: {
-                        Text(searchText.isEmpty ? "Add some friends to start playing!" : "Try searching for another name.")
-                    } actions:{
-                        Button("Add Friend") {
-                            searchingUsers = true
+                Section {
+                    if users.isEmpty {
+                        ContentUnavailableView {
+                            Label(searchText.isEmpty ? "No friends" : "No results", systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass")
+                        } description: {
+                            Text(searchText.isEmpty ? "Add some friends to start playing!" : "Try searching for another name.")
+                        } actions:{
+                            Button("Add Friend") {
+                                searchingUsers = true
+                            }
                         }
-                    }
-                } else {
-                    ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
-                        if !topUsers.contains(where: { $0.id == friend.id }) || !searchText.isEmpty {
+                    } else {
+                        ForEach(users.sort(by: \.ranking).reversed(), id: \.id) { friend in
                             NavigationLink{
                                 FriendView(user: friend)
                             } label: {

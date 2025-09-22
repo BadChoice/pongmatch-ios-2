@@ -5,6 +5,7 @@ struct WinLossBar: View {
     let friend:User
     let wins: Int
     let losses: Int
+    let label:String?
     
     private var total: Int { max(wins + losses, 0) }
     private var winRatio: CGFloat {
@@ -26,7 +27,7 @@ struct WinLossBar: View {
                     //.font(.caption)
                     .foregroundStyle(.green)
                 Spacer()
-                Text("Win Ratio")
+                Text(label ?? "Win Ratio")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                 Text("\(winRatioPercentInt)%")
@@ -71,9 +72,9 @@ struct WinLossBar: View {
 
 #Preview {
     VStack(spacing: 24) {
-        WinLossBar(me: User.me(), friend: User.unknown(), wins:7, losses: 3)
-        WinLossBar(me: User.me(), friend: User.unknown(), wins: 12, losses: 25)
-        WinLossBar(me: User.me(), friend: User.unknown(), wins: 1, losses: 0)
-        WinLossBar(me: User.me(), friend: User.unknown(), wins: 0, losses: 9,)
+        WinLossBar(me: User.me(), friend: User.unknown(), wins:7, losses: 3, label: nil)
+        WinLossBar(me: User.me(), friend: User.unknown(), wins: 12, losses: 25, label: nil)
+        WinLossBar(me: User.me(), friend: User.unknown(), wins: 1, losses: 0, label: nil)
+        WinLossBar(me: User.me(), friend: User.unknown(), wins: 0, losses: 9, label: nil)
     }
 }

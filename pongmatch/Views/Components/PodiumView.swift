@@ -5,37 +5,25 @@ struct PodiumView: View {
                        
     var body: some View {
         HStack {
-            ZStack{
+            Group {
                 if users.count > 1 {
-                    NavigationLink {
-                        FriendView(user: users[1])
-                    } label: {
-                        userView(user: users[1], position: 1)
-                    }.navigationLinkIndicatorVisibility(.hidden)
+                    userView(user: users[1], position: 1)
                 } else {
                     userView(user: User.unknown(), position: 1)
                 }
             }.frame(maxWidth: .infinity)
             
-            ZStack {
+            Group {
                 if users.count > 0 {
-                    NavigationLink {
-                        FriendView(user: users[0])
-                    } label: {
-                        userView(user: users[0], position: 0)
-                    }.navigationLinkIndicatorVisibility(.hidden)
+                    userView(user: users[0], position: 0)
                 } else {
                     userView(user: User.unknown(), position: 0)
                 }
             }.frame(maxWidth: .infinity)
             
-            ZStack {
+            Group {
                 if users.count > 2 {
-                    NavigationLink {
-                        FriendView(user: users[2])
-                    } label: {
-                        userView(user: users[2], position: 2)
-                    }.navigationLinkIndicatorVisibility(.hidden)
+                     userView(user: users[2], position: 2)
                 } else {
                     userView(user: User.unknown(), position: 2)
                 }

@@ -5,8 +5,8 @@ struct SmallGameView : View {
     
     var body: some View {
         ZStack {
-            BackgroundBlurredImage(user:game.player1, alpha:1)
-            Color.black.opacity(0.25).ignoresSafeArea()
+            BackgroundBlurredImage(user:game.player1, alpha:0.8, blur: 10)
+            Color.black.opacity(0.35).ignoresSafeArea()
             
             
             VStack {
@@ -44,11 +44,10 @@ struct SmallGameView : View {
                 .padding(.horizontal)
                 .padding(.bottom, 12)
             }
-            
-
         }
         .frame(width: 260, height: 120)
         .cornerRadius(20)
+        .glassEffect(.clear.interactive(), in: .rect(cornerRadius: 20))
         .overlay(alignment:.top) {
             Label("Finished", systemImage: "flag.checkered")
                 .font(.caption.bold())
@@ -65,6 +64,7 @@ struct SmallGameView : View {
                 .foregroundStyle(.white)
                 .offset(x:0, y:-14)
         }
+
         //.shadow(radius: 5)
     }
 }

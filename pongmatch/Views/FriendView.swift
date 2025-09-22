@@ -58,7 +58,8 @@ struct FriendView : View {
                     me:user,
                     friend:User.unknown(),
                     wins: user.games_won ?? 0,
-                    losses: user.games_lost ?? 0
+                    losses: user.games_lost ?? 0,
+                    label:nil
                 ).padding()
                 
                 VStack(alignment: .leading){
@@ -123,7 +124,8 @@ struct FriendView : View {
                                     me:auth.user,
                                     friend:user,
                                     wins: oneVsOne.won,
-                                    losses: oneVsOne.lost
+                                    losses: oneVsOne.lost,
+                                    label: nil,
                                 ).padding(.horizontal, 4)
                             }
                             GamesScrollview(games: oneVsOne?.games ?? [])

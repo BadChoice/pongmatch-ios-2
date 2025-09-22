@@ -1,4 +1,5 @@
 import SwiftUI
+internal import RevoFoundation
 
 struct GameSummaryView : View {
     @State var game:Game
@@ -83,7 +84,17 @@ struct GameSummaryView : View {
                     Divider().padding(.bottom)
                 }
                 
-                if game.isFinished() {
+                if let results = game.results {
+                    WinLossBar(
+                        me:game.player1,
+                        friend: game.player2,
+                        wins: results.sum { $0[0] },
+                        losses: results.sum { $0[1] },
+                        label: "Points ratio"
+                    )
+                    .padding(.horizontal)
+                        
+                    
                     VStack(alignment: .leading) {
                         HorizontalSetsScoreView(game:game)
                     }
@@ -168,7 +179,6 @@ struct GameSummaryView : View {
                         Label("Add to calendar", systemImage: "calendar.badge.plus")
                     }
                 }
-                    
             }
             
             if game.status == .waitingOpponent && game.player2.id == auth.user.id {

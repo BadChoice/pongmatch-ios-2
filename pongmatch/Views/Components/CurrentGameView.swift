@@ -6,45 +6,50 @@ struct CurrentGameView : View {
     @ObservedObject private var syncedScore = SyncedScore.shared
         
     var body: some View {
-        Group {
-            if let score = syncedScore.score {
-                NavigationLink {
-                    ScoreboardView(score: score)
-                } label:{
+        if let score = syncedScore.score {
+            HStack {
+                PulseView()
+                
+                Spacer().frame(width:20)
+                
+                AvatarView(user: score.game.player1)
+                    .frame(width: 24, height:24)
+                Group {
+                    let result = score.setsResult
+                    Text("\(result.player1) - \(result.player2)")
+                }.font(.headline)
+                
+                AvatarView(user: score.game.player2)
+                    .frame(width: 24, height:24)
+                
+                if let results = score.game.results, results.count > 0 {
+                    Spacer().frame(width:20)
                     HStack {
-                        PulseView()
-                        
-                        Spacer()
-                        
-                        AvatarView(user: score.game.player1)
-                            .frame(width: 24, height:24)
-                        Group {
-                            let result = score.setsResult
-                            Text("\(result.player1) - \(result.player2)")
-                        }.font(.headline)
-                        
-                        AvatarView(user: score.game.player2)
-                            .frame(width: 24, height:24)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "play.fill")
-                            .foregroundStyle(.primary)
+                        ForEach(results.indices, id: \.self) { idx in
+                            let result = results[idx]
+                            VStack{
+                                Text("\(result[0])")
+                                Text("\(result[1])")
+                            }
+                        }
                     }
-                    .frame(maxWidth: .infinity)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
-            } else {
-                /*HStack {
-                    Image(systemName: "square.split.2x1")
-                    Text("Start a scoreboard")
-                    Spacer()
-                    Image(systemName: "play.fill")
-                        .foregroundStyle(.primary)
-                }*/
-            }
+                
+                Spacer()
+                
+                Image(systemName: "play.fill")
+                    .foregroundStyle(.primary)
+            }        
+            .padding(.horizontal)
+            .foregroundStyle(.primary)
         }
-        .padding(.horizontal)
-        .foregroundStyle(.primary)
-        .frame(maxWidth: .infinity)
     }
+}
+
+
+#Preview {
+    SyncedScore.shared.score = Score(game: Game.fake())
+    return CurrentGameView()
 }
