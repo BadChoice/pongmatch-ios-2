@@ -13,12 +13,32 @@ struct Community : View {
     
     @State var searchingUsers:Bool = false
     
+    var topUsers: [User] {
+        var users = friends
+        
+        if let user = auth.user {
+            users.append(auth.user)
+        }
+        
+        return users
+            .sort(by: \.ranking)
+            .reversed()
+            .prefix(3)
+            .map { $0 }
+    }
+    
     var body: some View {
         let users = searchText.isEmpty ? friends : searchResults
         List {
             if loading {
                 ProgressView()
             } else {
+                
+                if searchText.isEmpty && !users.isEmpty {
+                    PodiumView(users: topUsers)
+                        .padding()
+                }
+                
                 if users.isEmpty {
                     ContentUnavailableView {
                         Label(searchText.isEmpty ? "No friends" : "No results", systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass")
@@ -40,6 +60,7 @@ struct Community : View {
                     Spacer().frame(height: 80)
                 }
             }
+        
         }
         .sheet(isPresented: $searchingUsers){
             SearchUsersView()
