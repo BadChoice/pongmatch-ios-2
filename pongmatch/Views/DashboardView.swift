@@ -7,6 +7,7 @@ struct DashboardView : View {
     @EnvironmentObject private var nav: NavigationManager
     
     @State var isLoadingUser:Bool = true
+    @State var search: String = ""
     @State private var scoreboardGame: Game? {
         didSet {
             print("Setting scoreboard game to \(String(describing: scoreboardGame))")
@@ -40,6 +41,12 @@ struct DashboardView : View {
                     NavigationStack {
                         Community()
                     }
+                }
+                
+                Tab("Search", systemImage: "magnifyingglass", role: .search) {
+                    NavigationStack{
+                        Text("Searching...")
+                    }.searchable(text:$search)
                 }
             }
         }

@@ -152,7 +152,7 @@ struct ScoreboardView : View {
         }
         .toolbar {
             
-            ToolbarItem(placement: .navigationBarLeading){
+            ToolbarItem(placement: .cancellationAction){
                 Button("", systemImage: "xmark") {
                     dismiss()
                 }
