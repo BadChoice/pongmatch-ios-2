@@ -137,17 +137,17 @@ struct HomeView : View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     NavigationLink {
-                        AccountView()
-                    } label: {
-                        Label("Account", systemImage: "person.fill")
-                    }
-                    
-                    NavigationLink {
                         FriendView(user: auth.user!)
                     } label: {
                         Label("Profile", systemImage: "figure.table.tennis")
                     }
                     
+                    NavigationLink {
+                        AccountView()
+                    } label: {
+                        Label("Account", systemImage: "person.fill")
+                    }
+                                        
                     
                     Divider()
                     
