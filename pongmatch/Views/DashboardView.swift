@@ -20,6 +20,15 @@ struct DashboardView : View {
         let game: Game
     }
     @State private var presentableScoreboard: PresentableGame?
+    
+    // Keep explicit navigation paths so we know when a tab is at root
+    @State private var homePath = NavigationPath()
+    @State private var communityPath = NavigationPath()
+    
+    // If any tab’s stack is not at root, hide the tab bar (and bottom accessory)
+    private var shouldHideTabBar: Bool {
+        !homePath.isEmpty || !communityPath.isEmpty
+    }
         
     var body: some View {
         TabView {
@@ -29,7 +38,7 @@ struct DashboardView : View {
                 }
             } else {
                 Tab("", systemImage: "house") {
-                    NavigationStack {
+                    NavigationStack(path: $homePath) {
                         HomeView { game in
                             scoreboardGame = game
                             presentableScoreboard = PresentableGame(game: game)
@@ -38,7 +47,7 @@ struct DashboardView : View {
                 }
                 
                 Tab("", systemImage: "person.3") {
-                    NavigationStack {
+                    NavigationStack(path: $communityPath) {
                         Community()
                     }
                 }
@@ -50,11 +59,17 @@ struct DashboardView : View {
                 }*/
             }
         }
+        // Only show the bottom accessory when we are at the root of the current tab
         .tabViewBottomAccessory {
-            CurrentGameView().onTapGesture {
-                presentableScoreboard = PresentableGame(game: SyncedScore.shared.score.game)
+            Group {
+                if !shouldHideTabBar {
+                    CurrentGameView().onTapGesture {
+                        presentableScoreboard = PresentableGame(game: SyncedScore.shared.score.game)
+                    }
+                }
             }
         }
+        .toolbar(shouldHideTabBar ? .hidden : .visible, for: .tabBar)
         .tabBarMinimizeBehavior(.onScrollDown)
         .task {
             Task {
@@ -65,14 +80,7 @@ struct DashboardView : View {
                 try await auth.fetchMe()
             }
         }
-        .fullScreenCover(item: $presentableScoreboard, onDismiss: {
-            // If you want to clear the game after dismissal, do it here
-            // scoreboardGame = nil
-            // Reset orientation to portrait after ScoreboardView is fully dismissed
-            //DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-              //  OrientationManager.shared.set(.portrait)
-            //}
-        }) { item in
+        .fullScreenCover(item: $presentableScoreboard) { item in
             ScoreboardView(score: Score(game: item.game))
         }
     }

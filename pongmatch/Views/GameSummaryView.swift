@@ -21,6 +21,8 @@ struct GameSummaryView : View {
     
     @State private var player1Details:Api.PlayerDetails? = nil
     @State private var player2Details:Api.PlayerDetails? = nil
+    
+    @State private var showScoreboard = false
 
     
     var body: some View {
@@ -127,8 +129,8 @@ struct GameSummaryView : View {
                 VStack(spacing: 18) {
                     if game.status == .planned {
                         HStack {
-                            NavigationLink {
-                                ScoreboardView(score: Score(game: game))
+                            Button {
+                                showScoreboard.toggle()
                             } label: {
                                 Label("Scoreboard", systemImage: "square.split.2x1")
                             }
@@ -155,80 +157,6 @@ struct GameSummaryView : View {
             }
         }
         .toolbar {
-            if game.status == .planned {
-                ToolbarItem(placement: .bottomBar) {
-                    Button{
-                        showUploadResultsSheet = true
-                    } label :{
-                        Label("Upload results", systemImage: "arrow.up.circle.fill")
-                    }
-                }
-            }
-            
-            if game.status == .planned && publicScoreboardCode == nil {
-                ToolbarItem(placement: .bottomBar) {
-                    Button {
-                        getPublicScoreboardCode()
-                    } label: {
-                        Label("Public Code", systemImage: "lock.circle.dotted")
-                    }
-                }
-            }
-            
-            if game.status == .planned && game.date > Date() {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        calendarManager.requestAccess { granted in
-                            guard granted else {
-                                return
-                            }
-                            try? calendarManager.addEvent(
-                                title: "Ping Pong Match",
-                                startDate: game.date,
-                                endDate: game.date.addingTimeInterval(900) // 15 min
-                            )
-                        }
-                    } label: {
-                        Label("Add to calendar", systemImage: "calendar.badge.plus")
-                    }
-                }
-            }
-            
-            if game.status == .waitingOpponent && game.player2.id == auth.user.id {
-                ToolbarItem(placement: .bottomBar){
-                    Button {
-                        Task { await acceptChallenge.run {
-                            game = try await auth.api.declineChallenge(game)
-                            dismiss()
-                        }}
-                    }
-                    label: {
-                        HStack {
-                            if acceptChallenge.loading { ProgressView() }
-                            Label("Decline Challenge", systemImage: "xmark")
-                        }
-                    }
-                    .buttonStyle(.borderless)
-                }
-                
-                ToolbarItem(placement: .bottomBar){
-                    Button {
-                        Task { await acceptChallenge.run {
-                            game = try await auth.api.acceptChallenge(game)
-                            dismiss()
-                        }}
-                    }
-                    label: {
-                        HStack {
-                            if acceptChallenge.loading { ProgressView() }
-                            Label("Accept Challenge", systemImage: "checkmark")
-                        }
-                    }
-                    .buttonStyle(.glassProminent)
-                }
-                
-
-            }
             
             ToolbarItem(placement: .topBarTrailing){
                 Menu {
@@ -259,12 +187,106 @@ struct GameSummaryView : View {
             }
             
         }
+        .safeAreaInset(edge: .bottom) {
+            GlassEffectContainer {
+                HStack {
+                    if game.status == .planned {
+                        Button{
+                            showUploadResultsSheet = true
+                        } label :{
+                            Image(systemName: "icloud.and.arrow.up")
+                                .frame(width: 20.0, height: 20.0)
+                                .font(.system(size: 22))
+                                .padding()
+                                .glassEffect(.regular.interactive())
+                                .glassEffectUnion(id: "1", namespace: namespace)
+                        }
+
+                    }
+                    
+                    if game.status == .planned && publicScoreboardCode == nil {
+                        Button {
+                            getPublicScoreboardCode()
+                        } label: {
+                            Image(systemName: "lock.circle.dotted")
+                                .frame(width: 20.0, height: 20.0)
+                                .font(.system(size: 22))
+                                .padding()
+                                .glassEffect(.regular.interactive())
+                                .glassEffectUnion(id: "1", namespace: namespace)
+                        }
+                    }
+                    
+                    if game.status == .planned && game.date > Date() {
+                        Button {
+                            calendarManager.requestAccess { granted in
+                                guard granted else {
+                                    return
+                                }
+                                try? calendarManager.addEvent(
+                                    title: "Ping Pong Match",
+                                    startDate: game.date,
+                                    endDate: game.date.addingTimeInterval(900) // 15 min
+                                )
+                            }
+                        } label: {
+                            Image(systemName: "calendar.badge.plus")
+                                .frame(width: 20.0, height: 20.0)
+                                .font(.system(size: 22))
+                                .padding()
+                                .glassEffect(.regular.interactive())
+                                .glassEffectUnion(id: "1", namespace: namespace)
+                        }
+                    }
+                    
+                    if game.status == .waitingOpponent && game.player2.id == auth.user.id {
+                        Button {
+                            Task { await acceptChallenge.run {
+                                game = try await auth.api.declineChallenge(game)
+                                dismiss()
+                            }}
+                        }
+                        label: {
+                            HStack {
+                                if acceptChallenge.loading { ProgressView() }
+                                Image(systemName: "xmark")
+                            }
+                        }
+                        .foregroundStyle(.red)
+                        .padding()
+                        .glassEffect(.regular.interactive())
+                        
+                        
+                        Button {
+                            Task { await acceptChallenge.run {
+                                game = try await auth.api.acceptChallenge(game)
+                                dismiss()
+                            }}
+                        }
+                        label: {
+                            HStack {
+                                if acceptChallenge.loading { ProgressView() }
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                        .bold()
+                        .padding()
+                        .buttonStyle(.glassProminent)
+                        .glassEffect(.regular.tint(.primary).interactive())
+                    }
+                }
+            }
+            .padding(.bottom, 24)
+        }
         .task {
             if game.isFinished() && game.ranking_type == .competitive {
                 Task {
                     (player1Details, player2Details) = try await auth.api.playersDetails(game: game)
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showScoreboard) {
+            ScoreboardView(score: Score(game: game))
         }
         .sheet(isPresented: $showUploadResultsSheet) {
             Task {
