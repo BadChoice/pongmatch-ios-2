@@ -72,23 +72,21 @@ struct ScoreboardSelectionView : View {
                             )
                         )
                     } label:{
-                        Label("START", systemImage: "play.fill")
+                        Text("START")
+                            .bold()
                             .padding()
                             .frame(minWidth: 0, maxWidth: .infinity)
                             .background(Color.accentColor)
                             .clipShape(.capsule)
                             .foregroundStyle(.white)
                     }
-                    Text("Start a match with the selected values")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
                 }
             } else if selectedMode == .otp {
                 OneTimeCodeView() { game in
                     onSelect(game)
                 }
+                Spacer()
             }
-            Spacer()
         }
         .padding()
         .sheet(isPresented: $searchingPlayer2) {
@@ -112,7 +110,7 @@ private struct OneTimeCodeView : View {
     var onSelect: (Game) -> Void = { _ in }
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment:.center, spacing: 16) {
             HStack(spacing: 12) {
                 ForEach(0..<6, id: \ .self) { i in
                     ZStack {
@@ -172,7 +170,7 @@ private struct OneTimeCodeView : View {
                     .font(.caption)
                     .padding(.horizontal)
             }
-            Text("Enter the one time code to start it with the digital scoreboard")
+            Text("Enter the one time code to start it with the digital scoreboard.\nYou can find it in the game details view.")
                 .font(.footnote)
                 .foregroundStyle(.secondary)
         }

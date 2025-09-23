@@ -159,7 +159,15 @@ struct ScoreboardView : View {
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
-                        Button("Stop Scoreboard") {
+                        Button("Watch Sync", systemImage: "applewatch") {
+
+                        }
+                        
+                        Button("External buttons", systemImage: "button.horizontal.top.press") {
+                            
+                        }
+                                                
+                        Button("Stop Scoreboard", systemImage: "stop.fill") {
                             dismiss()
                             syncedScore.clear()
                         }

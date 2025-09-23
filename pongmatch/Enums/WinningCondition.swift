@@ -1,5 +1,5 @@
 enum WinningCondition : String, Codable, CaseIterable, CustomStringConvertible {
-    case single = "single"
+    case single  = "single"
     case bestof3 = "bestof3"
     case bestof5 = "bestof5"
     case bestof7 = "bestof7"
@@ -46,11 +46,10 @@ enum WinningCondition : String, Codable, CaseIterable, CustomStringConvertible {
     var help: String {
         let base = "First to \(setsToWin) set\(setsToWin == 1 ? "" : "s") wins."
         let estimate = "Estimated \(estimatedPlayingMinutes) min."
-        switch self {
-        case .single:
-            return "Play a single game. \(base) \(estimate)"
-        case .bestof3, .bestof5, .bestof7:
-            return "\(description): \(base) \(estimate)"
+        
+        return switch self {
+        case .single: "Play a single game. \(base) \(estimate)"
+        case .bestof3, .bestof5, .bestof7: "\(description): \(base) \(estimate)"
         }
     }
     

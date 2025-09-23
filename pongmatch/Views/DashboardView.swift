@@ -145,9 +145,17 @@ struct HomeView : View {
                     NavigationLink {
                         FriendView(user: auth.user!)
                     } label: {
-                        Label("Profile", systemImage: "person.fill")
+                        Label("Profile", systemImage: "figure.table.tennis")
                     }
                     
+                    
+                    Divider()
+                    
+                    NavigationLink {
+                        FeedbackView()
+                    } label: {
+                        Label("How it works", systemImage: "questionmark.circle")
+                    }
                     
                     ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
                         Label("Share", systemImage: "square.and.arrow.up")
