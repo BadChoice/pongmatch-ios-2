@@ -17,7 +17,7 @@ struct DashboardView : View {
     // Identifiable wrapper so we can use .fullScreenCover(item:)
     private struct PresentableGame: Identifiable {
         let id = UUID()
-        let game: Game
+        let score: Score
     }
     @State private var presentableScoreboard: PresentableGame?
     
@@ -41,7 +41,7 @@ struct DashboardView : View {
                     NavigationStack(path: $homePath) {
                         HomeView { game in
                             scoreboardGame = game
-                            presentableScoreboard = PresentableGame(game: game)
+                            presentableScoreboard = PresentableGame(score:Score(game: game))
                         }
                     }
                 }
@@ -64,7 +64,7 @@ struct DashboardView : View {
             Group {
                 if !shouldHideTabBar {
                     CurrentGameView().onTapGesture {
-                        presentableScoreboard = PresentableGame(game: SyncedScore.shared.score.game)
+                        presentableScoreboard = PresentableGame(score:SyncedScore.shared.score)
                     }
                 }
             }
@@ -81,7 +81,7 @@ struct DashboardView : View {
             }
         }
         .fullScreenCover(item: $presentableScoreboard) { item in
-            ScoreboardView(score: Score(game: item.game))
+            ScoreboardView(score: item.score)
         }
     }
 }

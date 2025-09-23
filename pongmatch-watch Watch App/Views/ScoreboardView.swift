@@ -143,7 +143,7 @@ struct ScoreboardView: View {
                         
                     }
                 }
-                VStack{
+                VStack {
                     Button("Reset") {
                         showResetConfirmation = true
                     }.alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {

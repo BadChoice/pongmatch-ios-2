@@ -22,20 +22,24 @@ struct CurrentGameView : View {
                 AvatarView(user: score.game.player2)
                     .frame(width: 24, height:24)
                 
-                if let results = score.game.results, results.count > 0 {
-                    Spacer().frame(width:20)
-                    HStack {
-                        ForEach(results.indices, id: \.self) { idx in
-                            let result = results[idx]
-                            VStack{
-                                Text("\(result[0])")
-                                Text("\(result[1])")
-                            }
+                Spacer().frame(width:20)
+                
+                HStack {
+                    ForEach(score.sets.indices, id: \.self) { index in
+                        let set = score.sets[index]
+                        VStack {
+                            Text("\(set.forPlayer(.player1))").bold(set.forPlayer(.player1) > set.forPlayer(.player2))
+                            Text("\(set.forPlayer(.player2))").bold(set.forPlayer(.player1) < set.forPlayer(.player2))
                         }
                     }
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                    VStack {
+                        Text("\(score.score.player1)").bold(score.score.player1 > score.score.player2)
+                        Text("\(score.score.player2)").bold(score.score.player1 < score.score.player2)
+                    }
                 }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                                
                 
                 Spacer()
                 
