@@ -9,6 +9,16 @@ enum InitialScore : String, Codable, CaseIterable, CustomStringConvertible {
         }
     }
     
+    // A short help text explaining what the selected option means.
+    var help: String {
+        switch self {
+        case .standard:
+            return "Both players start at 0–0."
+        case .fair:
+            return "Adjusts the starting points to help balance the match between players of different skill levels."
+        }
+    }
+    
     static var title:String {
         "Initial Score"
     }

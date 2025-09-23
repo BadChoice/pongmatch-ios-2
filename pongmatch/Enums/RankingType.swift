@@ -9,6 +9,16 @@ enum RankingType : String, Codable, CaseIterable, CustomStringConvertible {
         }
     }
     
+    // A short help text explaining how this affects ranking.
+    var help: String {
+        switch self {
+        case .competitive:
+            return "Competitive matches affect your ranking and statistics."
+        case .friendly:
+            return "Friendly matches are casual and do not affect your ranking."
+        }
+    }
+    
     static var title:String {
         "Ranking type"
     }

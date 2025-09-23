@@ -42,6 +42,18 @@ enum WinningCondition : String, Codable, CaseIterable, CustomStringConvertible {
         }
     }
     
+    // A short help text explaining the selected condition.
+    var help: String {
+        let base = "First to \(setsToWin) set\(setsToWin == 1 ? "" : "s") wins."
+        let estimate = "Estimated \(estimatedPlayingMinutes) min."
+        switch self {
+        case .single:
+            return "Play a single game. \(base) \(estimate)"
+        case .bestof3, .bestof5, .bestof7:
+            return "\(description): \(base) \(estimate)"
+        }
+    }
+    
     static var title:String {
         "Winning condition"
     }
