@@ -1,4 +1,5 @@
 import SwiftUI
+internal import RevoFoundation
 
 struct FinishGameView: View {
 
@@ -10,84 +11,127 @@ struct FinishGameView: View {
     let game: Game
                 
     var body: some View {
-        VStack(spacing: 20) {
-            
-            Label("GAME FINISHED", systemImage: "flag.pattern.checkered")
-                .font(.largeTitle)
-                .padding(.top, 4)
-            
-            HStack(spacing: 25) {
-                Label(game.ranking_type.description, systemImage: RankingType.icon)
-                Label(game.winning_condition.description, systemImage: WinningCondition.icon)
-            }
-            .font(.footnote)
-            .foregroundColor(.secondary)
-            
-            HStack {
-                CompactUserView(user: game.player1, winner: game.winner()?.id == game.player1.id)
-                    .frame(minWidth: 0, maxWidth: .infinity)
+        ScrollView {
+            VStack(spacing: 20) {
                 
-                FinalResult(game.finalResult)
-                    .frame(minWidth: 0, maxWidth: .infinity)
+                Label("GAME FINISHED", systemImage: "flag.pattern.checkered")
+                    .font(.largeTitle)
+                    .padding(.top, 4)
                 
-                CompactUserView(user: game.player2, winner: game.winner()?.id == game.player2.id)
-                    .frame(minWidth: 0, maxWidth: .infinity)
+                HStack(spacing: 25) {
+                    Label(game.ranking_type.description, systemImage: RankingType.icon)
+                    Label(game.winning_condition.description, systemImage: WinningCondition.icon)
+                }
+                .font(.footnote)
+                .foregroundColor(.secondary)
+                
+                HStack {
+                    Spacer()
+                    CompactUserView(user: game.player1, winner: game.winner()?.id == game.player1.id)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                    
+                    FinalResult(game.finalResult)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                    
+                    CompactUserView(user: game.player2, winner: game.winner()?.id == game.player2.id)
+                        .frame(minWidth: 0, maxWidth: .infinity)
+                    Spacer()
+                }
+                
+                if let results = game.results {
+                    WinLossBar(
+                        me:game.player1,
+                        friend: game.player2,
+                        wins: results.sum { $0[0] },
+                        losses: results.sum { $0[1] },
+                        label: "Points ratio"
+                    )
+                    .padding(.horizontal)
+                }
+                
+                HorizontalSetsScoreView(game: game)
+                
+                
+                Spacer()
+                
+                
+                
+                
             }
-            
-            Spacer()
-            
-            HorizontalSetsScoreView(game: game)
-            
-            Spacer()
-
-            
-            Button {
-                SyncedScore.shared.clear()
-                dismiss()
-            } label: {
-                Text("Continue")
-            }
-            .disabled(uploadGame.loading)
-            
-            if !game.hasAnUnknownPlayer() {
+            .padding(.horizontal, 100)
+        }
+        .toolbar {
+            ToolbarItem(placement: .bottomBar) {
                 Button {
-                    Task {
-                        if (await uploadGame.run {
-                            let newGame = try await auth.api.store(game: game)
-                            let _ = try await auth.api.uploadResults(newGame, results: game.results)
-                        }) {
-                            SyncedScore.shared.clear()
-                            dismiss()
-                        }
-                    }
-                } label: {
-                    if uploadGame.loading {
-                        ProgressView()
-                    } else {
-                        Label("Upload game", systemImage: "square.and.arrow.up")
-                            .frame(minWidth: 0, maxWidth: .infinity)
-                            .padding()
-                            .background(Color.accentColor)
-                            .foregroundStyle(.white)
-                            .clipShape(.capsule)
-                            .bold()
-                    }
+                    discardGame()
+                }
+                label: {
+                    Label("Discard", systemImage: "xmark")
+                        .foregroundColor(.red)
                 }
                 .disabled(uploadGame.loading)
-                
-                if let errorMessage = uploadGame.errorMessage {
-                    Text(errorMessage)
-                        .foregroundColor(.red)
-                        .font(.caption)
-                        .padding(.horizontal)
+            }
+            
+            if !game.hasAnUnknownPlayer() {
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        uploadGameResultsAndDismiss()
+                    } label: {
+                        if uploadGame.loading {
+                            ProgressView()
+                        } else {
+                            Label("Upload game", systemImage: "checkmark")
+                        }
+                    }
+                    .buttonStyle(.glassProminent)
+                    .disabled(uploadGame.loading)
+                    
+                    if let errorMessage = uploadGame.errorMessage {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.caption)
+                            .padding(.horizontal)
+                    }
                 }
             }
         }
+        .interactiveDismissDisabled(true)
         .padding()
+    }
+    
+    private func discardGame(){
+        if !game.hasAnUnknownPlayer() {
+            
+        }
+        ///!game.hasAnUnknownPlayer() => ask if sure if both players are ok and game ranked
+        
+        SyncedScore.shared.clear()
+        dismiss()
+    }
+    
+    private func uploadGameResultsAndDismiss(){
+        Task {
+            if (await uploadGame.run {
+                if game.id == nil {
+                    let newGame = try await auth.api.store(game: game)
+                    let _ = try await auth.api.uploadResults(newGame, results: game.results)
+                } else {
+                    let _ = try await auth.api.uploadResults(game, results: game.results)
+                }
+            }) {
+                SyncedScore.shared.clear()
+                dismiss()
+            }
+        }
     }
 }
 
-#Preview {
+#Preview(traits: . landscapeLeft){
     FinishGameView(game: Game.fake())
+        .environmentObject(AuthViewModel())
+}
+
+#Preview(traits: . landscapeLeft){
+    FinishGameView(game: Game.fake(player1: User.me(), player2: User.me()))
         .environmentObject(AuthViewModel())
 }
