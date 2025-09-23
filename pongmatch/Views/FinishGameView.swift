@@ -135,6 +135,8 @@ struct FinishGameView: View {
                     let _ = try await auth.api.uploadResults(game, results: game.results)
                 }
             }) {
+                // Refresh games so HomeView updates immediately
+                try? await auth.loadGames()
                 SyncedScore.shared.clear()
                 dismiss()
             }

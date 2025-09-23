@@ -26,33 +26,6 @@ struct GameSummaryView : View {
     var body: some View {
         ScrollView {
             VStack {
-                VStack(spacing: 10) {
-                    VStack(alignment: .leading) {
-                        HStack{
-                            Image(systemName: "calendar")
-                            Text(game.date.displayForHumans)
-                            Spacer()
-                            Label(game.status.description, systemImage: game.status.icon)
-                        }
-                    }
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                    
-                    HStack() {
-                        /* Label("Standard", systemImage:"bird.fill") */
-                        Label(game.ranking_type.description, systemImage: RankingType.icon)
-                        Spacer()
-                        Label(game.winning_condition.description, systemImage: WinningCondition.icon)
-                        
-                    }
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                }
-                .padding()
-                
-                Divider()
-                    .padding(.vertical, 4)
-                
                 HStack {
                     NavigationLink {
                         FriendView(user: game.player1)
@@ -76,6 +49,39 @@ struct GameSummaryView : View {
                 }
                 .foregroundStyle(.primary)
                 .padding(.vertical, 14)
+                .overlay(alignment:.top) {
+                    Label(game.status.description, systemImage: game.status.icon)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(.black)
+                        .foregroundStyle(.white)
+                        .clipShape(.capsule)
+                        .font(.subheadline.bold())
+                        .offset(x:0, y:-12)
+                }
+                .overlay(alignment:.bottom) {
+                    Label(game.date.displayForHumans, systemImage: "calendar")
+                        .font(Font.caption.bold())
+                        .foregroundStyle(.secondary)
+                        .offset(x:0, y:-10)
+                }
+                
+                Divider()
+                
+                VStack(spacing: 10) {
+                    HStack {
+                                                
+                        /* Label("Standard", systemImage:"bird.fill") */
+                        Label(game.ranking_type.description, systemImage: RankingType.icon)
+                        Spacer()
+                        Label(game.winning_condition.description, systemImage: WinningCondition.icon)
+                    }
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    
+                }
+                .padding(.horizontal, 40)
+                .padding(.vertical, 8)
                 
                 Divider()
                 
@@ -84,9 +90,8 @@ struct GameSummaryView : View {
                         .lineLimit(2, reservesSpace: true)
                         .font(.footnote)
                         .foregroundStyle(.secondary)
-                        .padding(.vertical, 4)
-                    
-                    Divider().padding(.bottom)
+                        .padding(.top, 16)
+                    Divider()
                 }
                 
                 earnedPoints
@@ -99,7 +104,7 @@ struct GameSummaryView : View {
                         losses: results.sum { $0[1] },
                         label: "Points ratio"
                     )
-                    .padding(.horizontal)
+                    .padding()
                         
                     
                     VStack(alignment: .leading) {
@@ -137,23 +142,21 @@ struct GameSummaryView : View {
                     
                     if game.status == .waitingOpponent && game.player2.id == auth.user.id {
                         VStack(alignment: .center) {
-                            Text("YOU HAVE BEEN CHALLENGED")
+                            Text("YOU HAVE BEEN CHALLENGED!")
                                 .multilineTextAlignment(.center)
-                                .font(.largeTitle)
-                        }
+                                .font(.largeTitle.bold())
+                        }.padding(.top, 48)
                         
                         Spacer()
                     }
-                    
                     publicScoreboardCodeView
-                    
                 }
                 Spacer()
             }
         }
         .toolbar {
             if game.status == .planned {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .bottomBar) {
                     Button{
                         showUploadResultsSheet = true
                     } label :{
@@ -163,7 +166,7 @@ struct GameSummaryView : View {
             }
             
             if game.status == .planned && publicScoreboardCode == nil {
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItem(placement: .bottomBar) {
                     Button {
                         getPublicScoreboardCode()
                     } label: {
@@ -192,24 +195,11 @@ struct GameSummaryView : View {
             }
             
             if game.status == .waitingOpponent && game.player2.id == auth.user.id {
-                ToolbarItem(placement: .primaryAction){
-                    Button {
-                        Task { await acceptChallenge.run {
-                            game = try await auth.api.acceptChallenge(game)
-                        } }
-                    }
-                    label: {
-                        HStack {
-                            if acceptChallenge.loading { ProgressView() }
-                            Label("Accept Challenge", systemImage: "checkmark")
-                        }
-                    }
-                }
-                
-                ToolbarItem(placement: .topBarTrailing){
+                ToolbarItem(placement: .bottomBar){
                     Button {
                         Task { await acceptChallenge.run {
                             game = try await auth.api.declineChallenge(game)
+                            dismiss()
                         }}
                     }
                     label: {
@@ -217,9 +207,27 @@ struct GameSummaryView : View {
                             if acceptChallenge.loading { ProgressView() }
                             Label("Decline Challenge", systemImage: "xmark")
                         }
-                        .foregroundStyle(.red)
                     }
+                    .buttonStyle(.borderless)
                 }
+                
+                ToolbarItem(placement: .bottomBar){
+                    Button {
+                        Task { await acceptChallenge.run {
+                            game = try await auth.api.acceptChallenge(game)
+                            dismiss()
+                        }}
+                    }
+                    label: {
+                        HStack {
+                            if acceptChallenge.loading { ProgressView() }
+                            Label("Accept Challenge", systemImage: "checkmark")
+                        }
+                    }
+                    .buttonStyle(.glassProminent)
+                }
+                
+
             }
             
             ToolbarItem(placement: .topBarTrailing){
@@ -259,6 +267,12 @@ struct GameSummaryView : View {
             }
         }
         .sheet(isPresented: $showUploadResultsSheet) {
+            Task {
+                try? await auth.loadGames()
+                dismiss()
+            }
+        }
+        content: {
             UploadResultsView(game: $game)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)

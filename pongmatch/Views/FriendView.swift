@@ -77,7 +77,7 @@ struct FriendView : View {
                     Text("Upcoming").tag(0)
                     Text("Recent").tag(1)
                     if auth.user.id != user.id {
-                        Text("1 VS 1").tag(2)
+                        Text("Head to Head").tag(2)
                     }
                 }
                 .pickerStyle(.segmented)
