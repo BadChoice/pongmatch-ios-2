@@ -12,10 +12,10 @@ struct FinishGameView: View {
                 
     var body: some View {
         ScrollView {
-            VStack(spacing: 14) {
+            VStack(spacing: 16) {
                 Label("GAME FINISHED", systemImage: "flag.pattern.checkered")
                     .font(.largeTitle)
-                    .padding(.top, 4)
+                    .padding(.vertical, 8)
                 
                 HStack(spacing: 25) {
                     Label(game.ranking_type.description, systemImage: RankingType.icon)
@@ -102,7 +102,7 @@ struct FinishGameView: View {
         //.toolbarBackground(.regularMaterial, for: .bottomBar)
         //.toolbarBackgroundVisibility(.visible, for: .bottomBar)
         .interactiveDismissDisabled(true)
-        .padding(.top) // Adjust padding to avoid excessive bottom padding
+        .padding(.top, 28) // Adjust padding to avoid excessive bottom padding
     }
     
     private func discardGame(){
