@@ -7,6 +7,7 @@ struct FinishGameView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var uploadGame = ApiAction()
+    @State private var showDiscardConfirmation = false
     
     let game: Game
                 
@@ -103,13 +104,22 @@ struct FinishGameView: View {
         //.toolbarBackgroundVisibility(.visible, for: .bottomBar)
         .interactiveDismissDisabled(true)
         .padding(.top, 28) // Adjust padding to avoid excessive bottom padding
+        .alert("Discard this game?", isPresented: $showDiscardConfirmation) {
+            Button("Discard", role: .destructive) {
+                SyncedScore.shared.clear()
+                dismiss()
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Both players are known and the game can be ranked. Are you sure you want to discard it?")
+        }
     }
     
     private func discardGame(){
         if !game.hasAnUnknownPlayer() {
-            
+            showDiscardConfirmation = true
+            return
         }
-        ///!game.hasAnUnknownPlayer() => ask if sure if both players are ok and game ranked
         
         SyncedScore.shared.clear()
         dismiss()
