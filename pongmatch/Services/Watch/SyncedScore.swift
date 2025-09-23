@@ -50,6 +50,7 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
     #endif
     
     func clear(){
+        score = nil
         guard WCSession.isSupported() else { return }
         var context = WCSession.default.receivedApplicationContext
         context.removeValue(forKey: "score") // remove the key

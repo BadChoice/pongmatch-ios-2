@@ -42,6 +42,7 @@ struct FinishGameView: View {
 
             
             Button {
+                SyncedScore.shared.clear()
                 dismiss()
             } label: {
                 Text("Continue")
@@ -55,6 +56,7 @@ struct FinishGameView: View {
                             let newGame = try await auth.api.store(game: game)
                             let _ = try await auth.api.uploadResults(newGame, results: game.results)
                         }) {
+                            SyncedScore.shared.clear()
                             dismiss()
                         }
                     }
