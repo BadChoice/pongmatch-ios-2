@@ -12,8 +12,7 @@ struct FinishGameView: View {
                 
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
-                
+            VStack(spacing: 14) {
                 Label("GAME FINISHED", systemImage: "flag.pattern.checkered")
                     .font(.largeTitle)
                     .padding(.top, 4)
@@ -38,6 +37,8 @@ struct FinishGameView: View {
                     Spacer()
                 }
                 
+                Divider().padding(.vertical)
+                
                 if let results = game.results {
                     WinLossBar(
                         me:game.player1,
@@ -49,28 +50,38 @@ struct FinishGameView: View {
                     .padding(.horizontal)
                 }
                 
+                Spacer().frame(height: 10)
+                
                 HorizontalSetsScoreView(game: game)
+                    .padding(.horizontal, 14)
                 
+                if let errorMessage = uploadGame.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                        .padding(.horizontal)
+                }
                 
-                Spacer()
-                
-                
-                
-                
+                Spacer(minLength: 20) // Adjust height to match toolbar height
             }
-            .padding(.horizontal, 100)
+            .padding(.horizontal, 130)
         }
+        .scrollEdgeEffectStyle(.soft, for: .bottom)
+        //.ignoresSafeArea(edges: .bottom)
         .toolbar {
             ToolbarItem(placement: .bottomBar) {
                 Button {
                     discardGame()
                 }
                 label: {
-                    Label("Discard", systemImage: "xmark")
+                    Label("Discard",
+                          systemImage: game.hasAnUnknownPlayer() ? "checkmark" : "xmark")
                         .foregroundColor(.red)
                 }
                 .disabled(uploadGame.loading)
             }
+            
+            ToolbarSpacer(.flexible)
             
             if !game.hasAnUnknownPlayer() {
                 ToolbarItem(placement: .bottomBar) {
@@ -85,18 +96,13 @@ struct FinishGameView: View {
                     }
                     .buttonStyle(.glassProminent)
                     .disabled(uploadGame.loading)
-                    
-                    if let errorMessage = uploadGame.errorMessage {
-                        Text(errorMessage)
-                            .foregroundColor(.red)
-                            .font(.caption)
-                            .padding(.horizontal)
-                    }
                 }
             }
         }
+        //.toolbarBackground(.regularMaterial, for: .bottomBar)
+        //.toolbarBackgroundVisibility(.visible, for: .bottomBar)
         .interactiveDismissDisabled(true)
-        .padding()
+        .padding(.top) // Adjust padding to avoid excessive bottom padding
     }
     
     private func discardGame(){
