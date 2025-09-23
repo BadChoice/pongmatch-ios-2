@@ -47,7 +47,7 @@ struct User : Codable {
         User(
             id:1,
             name:"Jordi Puigdellívol",
-            username:"badchoide",
+            username:"badchoice",
             email:"jordi+pongmatch@gloobus.net",
             ranking:1500,
             avatar:"http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png",

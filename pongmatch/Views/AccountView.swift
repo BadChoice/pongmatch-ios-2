@@ -70,37 +70,72 @@ struct AccountView : View {
                 }
             }
             Section(header: Text("Personal Info")) {
-                TextField("Name", text: $name)
-                Picker("Language", selection: $language) {
-                    ForEach(Language.allCases, id: \ .self) { lang in
-                        Text(lang.description)
-                    }
+                LabeledContent("Name") {
+                    TextField("Name", text: $name)
+                        .multilineTextAlignment(.trailing)
+                        .textContentType(.name)
+                        .autocorrectionDisabled(false)
                 }
-                TextField("Phone", text: $phone)
-                    .keyboardType(.phonePad)
-                TextField("Address", text: $address)
+                LabeledContent("Language") {
+                    Picker("", selection: $language) {
+                        ForEach(Language.allCases, id: \.self) { lang in
+                            Text(lang.description).tag(lang)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                }
+                LabeledContent("Phone") {
+                    TextField("Phone", text: $phone)
+                        .keyboardType(.phonePad)
+                        .textContentType(.telephoneNumber)
+                        .multilineTextAlignment(.trailing)
+                }
+                LabeledContent("Address") {
+                    TextField("Address", text: $address)
+                        .textContentType(.fullStreetAddress)
+                        .multilineTextAlignment(.trailing)
+                }
             }
             Section(header: Text("Challenge Acceptance")) {
-                Picker("Accept Challenges From", selection: $acceptChallengesFrom) {
-                    ForEach(AcceptChallengeRequestFrom.allCases, id: \ .self) { option in
-                        Text(option.rawValue.capitalized)
+                VStack {
+                    Picker("Accept Challenges From", selection: $acceptChallengesFrom) {
+                        ForEach(AcceptChallengeRequestFrom.allCases, id: \.self) { option in
+                            Text(option.rawValue.capitalized)
+                        }
                     }
+                    .pickerStyle(SegmentedPickerStyle())
+                    
+                    Text("Select who can challenge you to a match. You will still have the option to accept or decline it.")
+                        .padding(.vertical, 4)
+                        .font(Font.caption)
+                        .foregroundStyle(.secondary)
                 }
-                .pickerStyle(SegmentedPickerStyle())
+                
             }
             Section {
                 if saving {
                     ProgressView()
                 } else {
-                    Button("Save") {
-                        Task { await saveProfile() }
+                    HStack {
+                        Spacer()
+                        Button {
+                            Task { await saveProfile() }
+                        } label: {
+                            HStack{
+                                if saving { ProgressView() }
+                                Text("Save")
+                            }
+                        }
+                        Spacer()
                     }
                 }
                 
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
-                        .font(.caption)                    
+                        .font(.caption)
                 }
             }
         }.onAppear {
