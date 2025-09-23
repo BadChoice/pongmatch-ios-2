@@ -4,21 +4,14 @@ struct CompactGameView: View {
     let game:Game
     
     var body: some View {
-        VStack (alignment: .leading){
-            HStack {
-                Label(game.date.displayForHumans, systemImage: "calendar")
-                    .font(.caption)
-                Spacer()
-                Label(game.status.description, systemImage: game.status.icon)
-                    .font(.caption)
-            }
-            
+        VStack {
             HStack() {
                 /* Label("Standard", systemImage:"bird.fill") */
-                Label(game.ranking_type.description, systemImage: RankingType.icon)
-                Spacer()
+                
                 Label(game.winning_condition.description, systemImage: WinningCondition.icon)
-                    
+                Spacer()
+                Label(game.ranking_type.description, systemImage: RankingType.icon)
+                
             }
             .font(.footnote)
             .foregroundColor(.secondary)
@@ -36,6 +29,30 @@ struct CompactGameView: View {
                 
                 CompactUserView(user: game.player2, winner: game.winner()?.id == game.player2.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
+            }
+            .overlay(alignment:.top){
+                Group{
+                    if game.status != .planned {
+                        Label(game.status.description, systemImage: game.status.icon)
+                    } else {
+                        Text(game.date.compactDisplay)
+                    }
+                }
+                .font(.caption2.bold())
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(.secondary.opacity(0.2))
+                .foregroundStyle(.primary)
+                .clipShape(.capsule)
+            }
+            
+            .overlay(alignment:.bottom){
+                if game.status != .planned {
+                    Text(game.date.compactDisplay)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .offset(y:-16)
+                }
             }
         }
         .padding()
