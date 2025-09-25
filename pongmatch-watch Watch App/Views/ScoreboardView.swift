@@ -160,6 +160,8 @@ struct ScoreboardView: View {
                     }.alert("Are you sure you want to finish?", isPresented: $showFinishConfirmation) {
                         Button("Cancel", role: .cancel) {}
                         Button("Finish", role: .destructive) {
+                            SyncedScore.shared.clear()
+                            SyncedScore.shared.sync()
                             dismiss()
                         }
                     }

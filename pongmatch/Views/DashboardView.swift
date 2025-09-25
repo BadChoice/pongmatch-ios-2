@@ -217,14 +217,14 @@ struct GamesHomeView : View {
         VStack(spacing: 0) {
             if !watchGames.games.isEmpty {
                 VStack(alignment: .leading){
-                    Text("Watch finished games").font(.headline)
+                    Label("Finished games on  watch", systemImage: "applewatch").font(.headline)
                     GamesScrollview(games:watchGames.games)
                 }.padding()
             }
             
             let currentGames = games.filter { $0.status == .ongoing }
             VStack(alignment: .leading){
-                Text("Current Games").font(.headline)
+                Label("Current Games", systemImage: GameStatus.ongoing.icon).font(.headline)
                 GamesScrollview(games:currentGames)
             }.padding()
             
@@ -239,13 +239,13 @@ struct GamesHomeView : View {
             let upcoming = games.filter { $0.status == .planned }
             if upcoming.count > 0 {
                 VStack(alignment: .leading){
-                    Text("Next Games").font(.headline)
+                    Label("Next Games", systemImage: GameStatus.planned.icon).font(.headline)
                     GamesScrollview(games:upcoming)
                 }.padding()
             }
             
             VStack(alignment: .leading){
-                Text("Finished Games").font(.headline)
+                Label("Finished Games", systemImage: GameStatus.finished.icon).font(.headline)
                 GamesScrollview(games:games.filter { $0.isFinished()
                 })
             }.padding()

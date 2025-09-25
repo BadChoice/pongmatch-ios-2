@@ -12,6 +12,8 @@ struct ContentView: View {
     @ObservedObject var syncedScoreboard = SyncedScore.shared
     @StateObject private var path = NavigationManager()
     
+    var auth = IPhoneSync()
+    
     var body: some View {
         NavigationStack(path: $path.path) {
             VStack {

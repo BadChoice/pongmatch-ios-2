@@ -21,8 +21,8 @@ class WatchFinishedGames: ObservableObject, WatchUserInfoDelegate {
         }
     }
         
-    private func fromUserInfo(_ context: [String: Any]) -> Game? {
-        guard let data = context["game"] as? Data else {
+    private func fromUserInfo(_ userInfo: [String: Any]) -> Game? {
+        guard let data = userInfo["game"] as? Data else {
             return nil
         }
         guard let score = try? JSONDecoder().decode(Game.self, from: data) else {

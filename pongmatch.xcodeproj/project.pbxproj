@@ -122,7 +122,6 @@
 				Models/User.swift,
 				Services/Images.swift,
 				Services/Score.swift,
-				Services/SharedStorage.swift,
 				Services/Storage.swift,
 				Services/Watch/SyncedScore.swift,
 				Services/Watch/WatchFinishedGames.swift,
