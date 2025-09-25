@@ -15,6 +15,8 @@ struct LoginView: View {
     @State private var password:String = ""
     @State private var registering: Bool = false
     
+    @State private var showScoreboard:Bool = false
+    
     @FocusState private var focusedField: Field?
     private enum Field { case email, password }
     
@@ -118,10 +120,17 @@ struct LoginView: View {
             }
 
             Spacer().frame(height: 40)
-            NavigationLink {
-                ScoreboardView(score: Score(game: Game.anonimus()))
+            
+            Divider().padding(.bottom, 40)
+            
+            Button {
+                showScoreboard.toggle()
             } label: {
                 Label("Scoreboard", systemImage: "square.split.2x1")
+                    .padding()
+                    .foregroundStyle(.white)
+                    .bold()
+                    .glassEffect(.regular.tint(Color.accentColor).interactive())
             }
             
             Spacer()
@@ -130,6 +139,9 @@ struct LoginView: View {
             RegisterView()
                 //.presentationDetents([.medium, .large]) // Bottom sheet style
                 .presentationDragIndicator(.visible)
+        }
+        .fullScreenCover(isPresented: $showScoreboard) {
+            ScoreboardView(score: Score(game: Game.anonimus()))
         }
         .onAppear {
             focusedField = .email

@@ -8,14 +8,17 @@ struct SharedStorage {
     }
     
     var defaults:UserDefaults?{
-        UserDefaults(suiteName: Pongmatch.sharedStorageGroupId)
+        if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Pongmatch.sharedStorageGroupId) {
+            print("Container path: \(containerURL.path)")
+        }
+        
+        return UserDefaults(suiteName: Pongmatch.sharedStorageGroupId)
     }
     
     func saveAuth(_ user:User){
         guard let defaults else { return }
         guard let data = try? JSONEncoder().encode(user) else { return }
         defaults.set(data, forKey: Keys.auth.rawValue)
-        defaults.synchronize() // optional, usually not needed anymore
     }
     
     func getAuth() -> User? {
@@ -25,6 +28,23 @@ struct SharedStorage {
     }
     
     
+    func addFinished(game:Game, sets:[Score.Result]){
+        guard let defaults else { return }
+        
+        var games = getFinishedOnWatch()
+        games.append(game)
+        
+        guard let data = try? JSONEncoder().encode(games) else { return }
+        defaults.set(data, forKey: Keys.finishedOnWatch.rawValue)
+        
+    }
+    
+    func getFinishedOnWatch() -> [Game]{
+        guard let defaults else { return [] }
+        guard let data = defaults.data(forKey: Keys.finishedOnWatch.rawValue) else { return [] }
+        return (try? JSONDecoder().decode([Game].self, from: data)) ?? []
+    }
+        
 }
 
 

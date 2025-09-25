@@ -212,7 +212,8 @@ struct GamesHomeView : View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if let watchGames:[Game] = Storage().get(.gamesFinishedOnWatch) {
+            let watchGames = SharedStorage().getFinishedOnWatch()
+            if !watchGames.isEmpty {
                 VStack(alignment: .leading){
                     Text("Watch finished games").font(.headline)
                     GamesScrollview(games:watchGames)

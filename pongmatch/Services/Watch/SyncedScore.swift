@@ -36,19 +36,7 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
             }
         }
     }
-    
-    #if os(watchOS)
-    func finishedOnWatch() {
-        guard let data = try? JSONEncoder().encode(score) else {
-            return
-        }
-    
-        //WCSession.default.transferUserInfo(["upload_score": data])  // Background transfer
-        WCSession.default.transferUserInfo(["ping": "hello"])
-
-    }
-    #endif
-    
+        
     func clear(){
         score = nil
         guard WCSession.isSupported() else { return }
@@ -68,18 +56,7 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
             }
         }
     }
-    
-    //Receive userinfo
-    func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any]) {
-        guard let data = userInfo["upload_score"] as? Data else { return }
-        guard let score = try? JSONDecoder().decode(Score.self, from: data) else { return }
         
-        var gamesToUpload:[Score] = Storage().get(.gamesFinishedOnWatch) ?? []
-        gamesToUpload.append(score)
-        Storage().save(.gamesFinishedOnWatch, value: gamesToUpload)
-    }
-
-    
     private func fromContext(_ context: [String: Any]) -> Score? {
         guard let data = context["score"] as? Data else {
             return nil

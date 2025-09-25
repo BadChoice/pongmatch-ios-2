@@ -30,7 +30,7 @@ class AuthViewModel : ObservableObject {
             api = Api(token)
             Storage().save(.apiToken, value: token)
             try await fetchMe()
-            
+            SharedStorage().saveAuth(user)
             withAnimation { isAuthenticated = true }
             
         } catch {
