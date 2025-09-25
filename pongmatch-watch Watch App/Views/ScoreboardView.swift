@@ -97,7 +97,7 @@ struct ScoreboardView: View {
                     
                     // BUTTONS
                     HStack(spacing: 24) {
-                        if syncedScore.score.history.count == 0 {
+                        /*if syncedScore.score.history.count == 0 {
                             Image(systemName: "arrow.left.arrow.right")
                             .onTapGesture{
                                 path.popToRoot()
@@ -105,7 +105,7 @@ struct ScoreboardView: View {
                                     playersSwapped.toggle()
                                 }*/
                             }
-                        }
+                        }*/
                         
                         if syncedScore.score.history.count > 0 {
                             Image(systemName: "arrow.uturn.backward").onTapGesture {
@@ -205,7 +205,9 @@ private struct ScoreView : View {
                 }
                 .foregroundStyle(.white)
             } else {
-                Image(systemName: "circle.fill").font(.system(size: 8)).foregroundStyle(.primary)
+                Image(systemName: "circle.fill")
+                    .font(.system(size: 8))
+                    .foregroundStyle(.clear)
             }
         }
     }

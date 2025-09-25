@@ -28,7 +28,7 @@ struct ScoreboardSelectionView : View {
                     information: nil,
                     date: Date(),
                     status: .ongoing,
-                    player1: User.unknown(),
+                    player1: SharedStorage().getAuth() ?? User.unknown(),
                     player2: User.unknown()
                 )
             ))

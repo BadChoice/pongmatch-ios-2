@@ -8,7 +8,9 @@ struct Pongmatch {
     #endif
     
     static let appStoreId = "6752864484"
-    static let appStoreUrl = "https://apps.apple.com/app/id\(appStoreId)"    
+    static let appStoreUrl = "https://apps.apple.com/app/id\(appStoreId)"
+    
+    static let sharedStorageGroupId = "group.io.codepassion.pongmatch"
     
     static var forgotPasswordUrl: URL {
         URL(string: url + "forgot-password")!
