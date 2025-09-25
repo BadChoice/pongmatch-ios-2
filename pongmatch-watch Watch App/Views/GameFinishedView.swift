@@ -5,16 +5,12 @@ struct GameFinishedView : View {
     @ObservedObject private var syncedScore = SyncedScore.shared
     @Environment(\.dismiss) private var dismiss
     
+    let game:Game
     var onContinue: (() -> Void)? = nil
-    
-    var game:Game {
-        syncedScore.score.game
-    }
     
     var body: some View {
         ScrollView {
-            VStack {
-                
+            VStack {                
                 Label("Game finished", systemImage: "flag.checkered")
                     .padding()
                 
@@ -64,17 +60,17 @@ struct GameFinishedView : View {
                     Divider().padding()
                 }
                 
-                //if !syncedScore.score.game.hasAnUnknownPlayer(){
-                    Button("Upload results") {
+                if !game.hasAnUnknownPlayer(){
+                    Button("Send to iPhone", systemImage: "iphone") {
                         SyncGames.gameFinished(
                             syncedScore.score.game,
                             sets: syncedScore.score.sets
                         )
                         onContinue?()
                     }
-                //}
+                }
                 
-                Button("Continue") {
+                Button("Discard game", systemImage: "trash") {
                     onContinue?()
                 }
             }
@@ -83,6 +79,5 @@ struct GameFinishedView : View {
 }
 
 #Preview {
-    SyncedScore.shared.score = Score(game: Game.fake())
-    return GameFinishedView()
+    return GameFinishedView(game:Game.fake())
 }

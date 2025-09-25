@@ -173,7 +173,7 @@ struct ScoreboardView: View {
                 syncedScore.sync()
             }
         }.sheet(isPresented: $showGameFinished) {
-            GameFinishedView() {
+            GameFinishedView(game: syncedScore.score.game) {
                 showGameFinished = false // Dismiss the sheet
                 syncedScore.clear()
                 syncedScore.sync()

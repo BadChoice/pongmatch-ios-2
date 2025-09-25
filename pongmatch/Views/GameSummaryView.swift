@@ -11,6 +11,7 @@ struct GameSummaryView : View {
     @State private var acceptChallenge = ApiAction()
     @State private var fetchPublicScoreboardCode = ApiAction()
     @State private var fetchPlayersDetails = ApiAction()
+    @State private var uploadWatchResults = ApiAction()
     
     @State private var showUploadResultsSheet = false
     @State private var publicScoreboardCode: String? = nil
@@ -239,31 +240,40 @@ struct GameSummaryView : View {
                         }
                     }
                     
-                    if game.status == .finished && game.needsId {
-                        
+                    if game.status == .finished && game.needsId{
                         Button {
-                            //TODO: Delete game
+                            WatchFinishedGames.shared.remove(game: game)
+                            dismiss()
                         }
                         label: {
-                            HStack {
-                                //if acceptChallenge.loading { ProgressView() }
-                                Image(systemName: "trash")
-                            }
+                            Image(systemName: "trash")
                         }
                         .padding()
                         .glassEffect(.regular.interactive())
                         
-                        Button {
-                            //TODO: Upload results
-                        }
-                        label: {
-                            HStack {
-                                //if acceptChallenge.loading { ProgressView() }
-                                Image(systemName: "icloud.and.arrow.up.fill")
+                        if !game.hasAnUnknownPlayer() {
+                            Button {
+                                Task {
+                                    let didUpload = await uploadWatchResults.run {
+                                        let newGame = try await auth.api.store(game: game)
+                                        let _ = try await auth.api.uploadResults(newGame, results:game.results)
+                                        WatchFinishedGames.shared.remove(game: game)
+                                    }
+                                    if didUpload {
+                                        dismiss()
+                                    }
+                                }
                             }
+                            label: {
+                                HStack {
+                                    if uploadWatchResults.loading { ProgressView() }
+                                    else { Image(systemName: "icloud.and.arrow.up.fill") }
+                                }
+                            }
+                            .padding()
+                            .buttonStyle(.glassProminent)
+                            .glassEffect(.regular.tint(.primary).interactive())
                         }
-                        .padding()
-                        .glassEffect(.regular.interactive())
                     }
                     
                     if game.status == .waitingOpponent && game.player2.id == auth.user.id {
@@ -276,7 +286,7 @@ struct GameSummaryView : View {
                         label: {
                             HStack {
                                 if acceptChallenge.loading { ProgressView() }
-                                Image(systemName: "xmark")
+                                else { Image(systemName: "xmark") }
                             }
                         }
                         .foregroundStyle(.red)
@@ -293,7 +303,7 @@ struct GameSummaryView : View {
                         label: {
                             HStack {
                                 if acceptChallenge.loading { ProgressView() }
-                                Image(systemName: "checkmark")
+                                else { Image(systemName: "checkmark") }
                             }
                         }
                         .bold()

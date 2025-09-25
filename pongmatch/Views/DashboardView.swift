@@ -206,7 +206,7 @@ struct HomeView : View {
 struct GamesHomeView : View {
     
     @EnvironmentObject private var auth: AuthViewModel
-    @ObservedObject private var watchGames = WatchFinishedGames()
+    @ObservedObject private var watchGames = WatchFinishedGames.shared
     @Binding var refreshID: UUID
 
     var games: [Game]  {

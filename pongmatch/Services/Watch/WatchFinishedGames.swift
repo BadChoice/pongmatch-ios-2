@@ -4,6 +4,8 @@ import SwiftUI
 
 class WatchFinishedGames: ObservableObject, WatchUserInfoDelegate {
     
+    static let shared:WatchFinishedGames = WatchFinishedGames()
+    
     @Published var games:[Game] = Storage().getGames(.gamesFinishedOnWatch)
     
     init() {
@@ -17,7 +19,7 @@ class WatchFinishedGames: ObservableObject, WatchUserInfoDelegate {
             withAnimation {
                 self.games.append(game)
             }
-            Storage().saveGames(.gamesFinishedOnWatch, games: self.games)
+            persis()
         }
     }
         
@@ -31,5 +33,17 @@ class WatchFinishedGames: ObservableObject, WatchUserInfoDelegate {
         
         return score
     }
+    
+    func remove(game:Game) {
+        games = games.filter {
+            $0.id != game.id
+        }
+        persis()
+    }
+    
+    private func persis(){
+        Storage().saveGames(.gamesFinishedOnWatch, games: self.games)
+    }
+    
         
 }
