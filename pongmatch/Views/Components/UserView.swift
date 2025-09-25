@@ -16,12 +16,12 @@ struct UserView : View {
             AvatarView(user:user, winner:winner)
                 .frame(width: 48)
             
-            VStack(alignment: .leading, spacing:4){
+            VStack(alignment: .leading, spacing:4) {
                 Text(user.name)
                     .lineLimit(1, reservesSpace: true)
                     .font(.headline)
-        
-                HStack{
+                
+                HStack {
                     if user.id != User.unknown().id {
                         Text("\(user.ranking)")
                             .font(.system(size:12, weight: .bold))
@@ -31,6 +31,10 @@ struct UserView : View {
                             .background(Color.accentColor)
                             .clipShape(.capsule)
                     }
+                    else {
+                        Text("")
+                    }
+                    
                     if showUsername {
                         Text("@" + user.username)
                             .font(.caption2)
@@ -88,9 +92,12 @@ struct CompactUserView : View {
         UserView(user: User.me(), winner: false)
         UserView(user: User.me(), winner: true)
         UserView(user: User.me(), winner: true, showUsername: true)
+        UserView(user: User.unknown(), winner: false)
+        UserView(user: User.unknown(), winner: false, showUsername: true)
         Divider()
         CompactUserView(user: User.me())
         CompactUserView(user: User.me(), winner:true)
         CompactUserView(user: User.me(), winner:true, showUsername: true)
+        CompactUserView(user: User.unknown(), winner:true, showUsername: true)
     }
 }

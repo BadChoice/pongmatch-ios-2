@@ -25,8 +25,8 @@ struct CurrentGameView : View {
                 Spacer().frame(width:20)
                 
                 HStack {
-                    ForEach(score.sets.indices, id: \.self) { index in
-                        let set = score.sets[index]
+                    let setsSnapshot = score.sets   //To avoid crash when reiterating
+                    ForEach(Array(setsSnapshot.enumerated()), id: \.offset) { _, set in
                         VStack {
                             Text("\(set.forPlayer(.player1))").bold(set.forPlayer(.player1) > set.forPlayer(.player2))
                             Text("\(set.forPlayer(.player2))").bold(set.forPlayer(.player1) < set.forPlayer(.player2))
