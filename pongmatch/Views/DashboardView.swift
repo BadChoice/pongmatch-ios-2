@@ -3,11 +3,19 @@ internal import RevoFoundation
 
 struct DashboardView : View {
     
+    enum TabSelection : Int {
+        case home       = 1
+        case community  = 2
+        case search     = 3
+    }
+    
     @EnvironmentObject private var auth: AuthViewModel
     @EnvironmentObject private var nav: NavigationManager
     
     @State var isLoadingUser:Bool = true
     @State var search: String = ""
+    @State var activeTab: TabSelection = .home
+    
     @State private var scoreboardGame: Game? {
         didSet {
             print("Setting scoreboard game to \(String(describing: scoreboardGame))")
@@ -31,13 +39,13 @@ struct DashboardView : View {
     }
         
     var body: some View {
-        TabView {
+        TabView(selection:$activeTab) {
             if isLoadingUser {
-                Tab {
+                Tab("", systemImage: "hourglass", value:.home) {
                     ProgressView()
                 }
-            } else {
-                Tab("", systemImage: "house") {
+            } else{
+                Tab("Home", systemImage: "house", value:.home) {
                     NavigationStack(path: $homePath) {
                         HomeView { game in
                             scoreboardGame = game
@@ -46,17 +54,19 @@ struct DashboardView : View {
                     }
                 }
                 
-                Tab("", systemImage: "person.3") {
+                Tab("Community", systemImage: "person.3", value:.community) {
                     NavigationStack(path: $communityPath) {
                         Community()
                     }
                 }
                 
-                /*Tab("Search", systemImage: "magnifyingglass", role: .search) {
-                    NavigationStack{
-                        Text("Searching...")
-                    }.searchable(text:$search)
-                }*/
+                if [.community, .search].contains(activeTab) {
+                    Tab("Search", systemImage: "magnifyingglass", value:.search, role: .search) {
+                        NavigationStack{
+                            Text("Searching...")
+                        }.searchable(text:$search)
+                    }
+                }
             }
         }
         // Only show the bottom accessory when we are at the root of the current tab
@@ -97,30 +107,30 @@ struct HomeView : View {
     var onStartScoreboard: (Game) -> Void
     
     var body: some View {
-            ScrollView{
-                VStack(spacing: 20) {
-                    UserHeaderView(user: auth.user ?? User.unknown())
+        ScrollView{
+            VStack(spacing: 20) {
+                UserHeaderView(user: auth.user ?? User.unknown())
+                
+                Divider()
+                
+                HStack {
+                    Button("Scoreboard", systemImage: "square.split.2x1"){
+                        showScoreboardSelectionModal = true
+                    }
+                    .padding()
+                    .foregroundStyle(.white)
+                    .bold()
+                    .glassEffect(.regular.tint(Color.accentColor).interactive())
                     
-                    Divider()
-                    
-                    HStack {
-                        Button("Scoreboard", systemImage: "square.split.2x1"){
-                            showScoreboardSelectionModal = true
-                        }
-                        .padding()
-                        .foregroundStyle(.white)
-                        .bold()
-                        .glassEffect(.regular.tint(Color.accentColor).interactive())
-                        
-                    }.padding()
-                    
-                    Divider()
-                    
-                    GamesHomeView(refreshID: $refreshId)
-                    
-                    Spacer()
-                }
+                }.padding()
+                
+                Divider()
+                
+                GamesHomeView(refreshID: $refreshId)
+                
+                Spacer()
             }
+        }
         .refreshable {
             refreshId = UUID()
         }
@@ -137,7 +147,9 @@ struct HomeView : View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     NavigationLink {
-                        FriendView(user: auth.user!)
+                        if let user = auth.user {w
+                            FriendView(user: user)
+                        }
                     } label: {
                         Label("Profile", systemImage: "figure.table.tennis")
                     }
