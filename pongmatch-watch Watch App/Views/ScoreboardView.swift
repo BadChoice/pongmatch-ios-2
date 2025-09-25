@@ -175,6 +175,8 @@ struct ScoreboardView: View {
         }.sheet(isPresented: $showGameFinished) {
             GameFinishedView() {
                 showGameFinished = false // Dismiss the sheet
+                syncedScore.clear()
+                syncedScore.sync()
             }
         }.onChange(of: showGameFinished){ _, _ in
             path.popToRoot()
