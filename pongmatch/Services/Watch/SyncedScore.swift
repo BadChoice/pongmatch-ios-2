@@ -1,32 +1,27 @@
 import Foundation
 import Combine
-import WatchConnectivity
 import SwiftUI
 
-class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
+class SyncedScore: NSObject, ObservableObject, WatchContextDelegate {
     static let shared = SyncedScore()
     
     @Published var score:Score!
     
     override private init() {
         super.init()
-        if WCSession.isSupported() {
-            WCSession.default.delegate = self
-            WCSession.default.activate()
-        }
+        WatchManager.shared.contextDelegate = self
     }
     
     func retrieve() -> Score? {
-        fromContext(WCSession.default.receivedApplicationContext)
+        fromContext(WatchManager.shared.getContext())
     }
     
     // Send to other side
     func sync() {
-        guard WCSession.isSupported() else { return }
         guard let data = try? JSONEncoder().encode(score) else {
             return
         }
-        try? WCSession.default.updateApplicationContext(["score" : data])
+        WatchManager.shared.updateContext(["score" : data])
     }
     
     func replace(score:Score){
@@ -39,15 +34,11 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
         
     func clear(){
         score = nil
-        guard WCSession.isSupported() else { return }
-        var context = WCSession.default.receivedApplicationContext
-        context.removeValue(forKey: "score") // remove the key
-        try? WCSession.default.updateApplicationContext(context)
+        WatchManager.shared.removeFromContext("score")
     }
     
     
-    // Receive app context from other side (synced scoreboard)
-    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+    func onContextReceived(applicationContext: [String : Any]) {
         guard let score = fromContext(applicationContext) else { return }
         
         DispatchQueue.main.async {
@@ -67,20 +58,5 @@ class SyncedScore: NSObject, ObservableObject, WCSessionDelegate {
         
         return score
     }
-    
-    // MARK: - Session delegate
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
         
-    }
-    
-    
-    #if os(iOS)
-    func sessionDidBecomeInactive(_ session: WCSession) {
-        
-    }
-    
-    func sessionDidDeactivate(_ session: WCSession) {
-        
-    }
-    #endif
 }
