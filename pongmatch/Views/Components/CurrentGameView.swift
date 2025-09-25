@@ -45,7 +45,8 @@ struct CurrentGameView : View {
                 
                 Image(systemName: "play.fill")
                     .foregroundStyle(.primary)
-            }        
+            }
+            .contentShape(Rectangle())
             .padding(.horizontal)
             .foregroundStyle(.primary)
         }
