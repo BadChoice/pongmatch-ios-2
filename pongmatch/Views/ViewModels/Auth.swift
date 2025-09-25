@@ -30,7 +30,6 @@ class AuthViewModel : ObservableObject {
             api = Api(token)
             Storage().save(.apiToken, value: token)
             try await fetchMe()
-            WatchManager.shared.sendUserInfo(["auth_user" : try! user.encode()])
             withAnimation { isAuthenticated = true }
             
         } catch {
@@ -92,6 +91,7 @@ class AuthViewModel : ObservableObject {
     
     func fetchMe() async throws {
         user = try await api.me()
+        WatchManager.shared.sendUserInfo(["auth_user" : try! user.encode()])
     }
     
     func friends() async throws -> [User] {
