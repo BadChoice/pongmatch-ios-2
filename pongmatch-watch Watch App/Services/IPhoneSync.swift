@@ -2,6 +2,10 @@ import Foundation
 
 class IPhoneSync : WatchUserInfoDelegate {
     
+    init () {
+        WatchManager.shared.userInfoDelegate = self
+    }
+    
     func onUserInfoReceived(userInfo: [String : Any]) {
         guard let data = userInfo["auth_user"] as? Data else {
             return
