@@ -22,7 +22,7 @@ struct ScoreboardSelectionView : View {
         NavigationLink("Start") {
             ScoreboardView(score: Score(game:
                 Game(
-                    id: nil,
+                    id: -1,
                     ranking_type: rankingType,
                     winning_condition: winningCondition,
                     information: nil,

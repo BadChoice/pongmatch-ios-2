@@ -17,12 +17,10 @@ class Storage {
     
     func save(_ key:Keys, value:String?) {
         defaults.set(value, forKey: key.rawValue)
-        defaults.synchronize()
     }
     
     func save(_ key:Keys, value:Bool) {
         defaults.set(value, forKey: key.rawValue)
-        defaults.synchronize()
     }
     
     func get(_ key:Keys) -> String? {
@@ -33,5 +31,14 @@ class Storage {
         defaults.bool(forKey: key.rawValue)
     }
 
+    func saveGames(_ key:Keys, games:[Game]){
+        guard let data = try? JSONEncoder().encode(games) else { return }
+        defaults.set(data, forKey: key.rawValue)
+    }
+    
+    func getGames(_ key:Keys) -> [Game] {
+        guard let data = defaults.data(forKey: key.rawValue) else { return [] }
+        return (try? JSONDecoder().decode([Game].self, from: data)) ?? []
+    }
     
 }

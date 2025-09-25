@@ -99,6 +99,7 @@ struct HomeView : View {
     @EnvironmentObject private var nav: NavigationManager
     
     @ObservedObject private var syncedScore = SyncedScore.shared
+    
     @State private var showScoreboardSelectionModal = false
     @State private var refreshId = UUID()
     
@@ -203,7 +204,9 @@ struct HomeView : View {
 
 
 struct GamesHomeView : View {
+    
     @EnvironmentObject private var auth: AuthViewModel
+    @ObservedObject private var watchGames = WatchFinishedGames()
     @Binding var refreshID: UUID
 
     var games: [Game]  {
@@ -212,11 +215,10 @@ struct GamesHomeView : View {
     
     var body: some View {
         VStack(spacing: 0) {
-            let watchGames = SharedStorage().getFinishedOnWatch()
-            if !watchGames.isEmpty {
+            if !watchGames.games.isEmpty {
                 VStack(alignment: .leading){
                     Text("Watch finished games").font(.headline)
-                    GamesScrollview(games:watchGames)
+                    GamesScrollview(games:watchGames.games)
                 }.padding()
             }
             

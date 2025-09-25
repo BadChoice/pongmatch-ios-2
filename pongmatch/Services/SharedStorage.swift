@@ -4,7 +4,6 @@ struct SharedStorage {
             
     enum Keys:String {
         case auth = "auth"
-        case finishedOnWatch = "finished_on_watch"
     }
     
     var defaults:UserDefaults?{
@@ -26,25 +25,6 @@ struct SharedStorage {
         guard let data = defaults.data(forKey: Keys.auth.rawValue) else { return nil }
         return try? JSONDecoder().decode(User.self, from: data)
     }
-    
-    
-    func addFinished(game:Game, sets:[Score.Result]){
-        guard let defaults else { return }
-        
-        var games = getFinishedOnWatch()
-        games.append(game)
-        
-        guard let data = try? JSONEncoder().encode(games) else { return }
-        defaults.set(data, forKey: Keys.finishedOnWatch.rawValue)
-        
-    }
-    
-    func getFinishedOnWatch() -> [Game]{
-        guard let defaults else { return [] }
-        guard let data = defaults.data(forKey: Keys.finishedOnWatch.rawValue) else { return [] }
-        return (try? JSONDecoder().decode([Game].self, from: data)) ?? []
-    }
-        
 }
 
 

@@ -2,13 +2,12 @@ import Foundation
 import Combine
 import SwiftUI
 
-class SyncedScore: NSObject, ObservableObject, WatchContextDelegate {
+class SyncedScore:  ObservableObject, WatchContextDelegate {
     static let shared = SyncedScore()
     
     @Published var score:Score!
     
-    override private init() {
-        super.init()
+    init() {
         WatchManager.shared.contextDelegate = self
     }
     

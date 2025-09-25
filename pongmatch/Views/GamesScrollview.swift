@@ -19,11 +19,11 @@ struct GamesScrollview : View {
                     ForEach(games, id:\.id) { game in
                         NavigationLink {
                             GameSummaryView(game: game)
-                                .navigationTransition(.zoom(sourceID: "zoom_game_\(game.id!)", in: namespace))
+                                .navigationTransition(.zoom(sourceID: "zoom_game_\(game.id)", in: namespace))
                         } label: {
                             CompactGameView(game: game)
                                 .foregroundStyle(.primary)
-                                .matchedTransitionSource(id: "zoom_game_\(game.id!)", in: namespace)
+                                .matchedTransitionSource(id: "zoom_game_\(game.id)", in: namespace)
                         }
                     }
                 }.scrollTargetLayout()

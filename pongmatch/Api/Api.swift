@@ -327,7 +327,7 @@ class Api {
     
     func uploadResults(_ game:Game, results:[[Int]]? = nil) async throws -> Game {
         
-        guard let id = game.id else {
+        guard !game.needsId else {
             throw ApiClient.Errors.other("Game ID is nil")
         }
         
@@ -346,7 +346,7 @@ class Api {
         }
         
         do {
-            let gameResponse:GameResponse = try await client.call(method: .post, url: "games/\(id)/results", json:ResultsRequest(
+            let gameResponse:GameResponse = try await client.call(method: .post, url: "games/\(game.id)/results", json:ResultsRequest(
                 results: resultsToUpload
             ))
             return gameResponse.data
@@ -358,7 +358,7 @@ class Api {
     }
     
     func acceptChallenge(_ game:Game) async throws -> Game {
-        guard let id = game.id else {
+        guard !game.needsId else {
             throw ApiClient.Errors.other("Game ID is nil")
         }
         
@@ -367,7 +367,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await client.call(method: .post, url: "games/\(id)/accept")
+            let response:Response = try await client.call(method: .post, url: "games/\(game.id)/accept")
             return response.data
         } catch {
             print(error)
@@ -376,7 +376,7 @@ class Api {
     }
     
     func declineChallenge(_ game:Game) async throws -> Game {
-        guard let id = game.id else {
+        guard !game.needsId else {
             throw ApiClient.Errors.other("Game ID is nil")
         }
         
@@ -385,7 +385,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await client.call(method: .post, url: "games/\(id)/decline")
+            let response:Response = try await client.call(method: .post, url: "games/\(game.id)/decline")
             return response.data
         } catch {
             print(error)
@@ -408,7 +408,7 @@ class Api {
     }
     
     func getPublicScoreboardCode(_ game:Game) async throws -> String {
-        guard let id = game.id else {
+        guard !game.needsId else {
             throw ApiClient.Errors.other("Game ID is nil")
         }
         
@@ -417,7 +417,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await client.call(method: .get, url: "games/\(id)/publicScoreboardCode")
+            let response:Response = try await client.call(method: .get, url: "games/\(game.id)/publicScoreboardCode")
             return response.code
         } catch {
             print(error)
@@ -431,7 +431,7 @@ class Api {
     }
     
     func playersDetails(game:Game) async throws -> (player1:PlayerDetails?, player2:PlayerDetails?) {
-        guard let id = game.id else {
+        guard !game.needsId else {
             throw ApiClient.Errors.other("Game ID is nil")
         }
         
@@ -441,7 +441,7 @@ class Api {
         }
         
         do{
-            let response:Response = try await client.call(method: .get, url: "games/\(id)/playersDetails")
+            let response:Response = try await client.call(method: .get, url: "games/\(game.id)/playersDetails")
             return (response.player1, response.player2)
         } catch {
             print(error)
@@ -450,7 +450,7 @@ class Api {
     }
     
     func delete(game:Game) async throws {
-        guard let id = game.id else {
+        guard !game.needsId else {
             throw ApiClient.Errors.other("Game ID is nil")
         }
         
@@ -458,7 +458,7 @@ class Api {
         }
         
         do{
-            let _:Response = try await client.call(method: .delete, url: "games/\(id)")
+            let _:Response = try await client.call(method: .delete, url: "games/\(game.id)")
         } catch {
             print(error)
             throw error

@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 class Game : Codable {
-    let id:Int?
+    let id:Int
     
     //initial_score
     let ranking_type:RankingType
@@ -19,7 +19,7 @@ class Game : Codable {
     
     
     init(id: Int? = nil, ranking_type: RankingType, winning_condition: WinningCondition, information: String? = nil, date: Date = Date(), status: GameStatus, results: [[Int]]? = nil, player1: User, player2: User) {
-        self.id = id
+        self.id = id ?? Int.random(in: 1...9999) * -1
         self.ranking_type = ranking_type
         self.winning_condition = winning_condition
         self.information = information
@@ -28,6 +28,10 @@ class Game : Codable {
         self.results = results
         self.player1 = player1
         self.player2 = player2
+    }
+    
+    var needsId: Bool {
+        id < 1
     }
     
     var finalResult:[Int]? {
@@ -69,7 +73,7 @@ class Game : Codable {
     
     static func anonimus() -> Game {
         Game(
-            id: -1,
+            id: Int.random(in: 1...9999) * -1,
             ranking_type: .friendly,
             winning_condition: .bestof3,
             information: nil,
@@ -81,9 +85,9 @@ class Game : Codable {
         )
     }
     
-    static func fake(id:Int = -1, status:GameStatus = .planned, player1:User = User.me(), player2:User = User.unknown()) -> Game {
+    static func fake(id:Int? = nil, status:GameStatus = .planned, player1:User = User.me(), player2:User = User.unknown()) -> Game {
         Game(
-            id: -1,
+            id: id ?? Int.random(in: 1...9999) * -1,
             ranking_type: .competitive,
             winning_condition: .bestof3,
             information: "A fake game",

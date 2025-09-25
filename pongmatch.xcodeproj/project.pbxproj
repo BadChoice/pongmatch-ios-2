@@ -125,6 +125,7 @@
 				Services/SharedStorage.swift,
 				Services/Storage.swift,
 				Services/Watch/SyncedScore.swift,
+				Services/Watch/WatchFinishedGames.swift,
 				Services/Watch/WatchManager.swift,
 				Views/Components/AvatarView.swift,
 				Views/ViewModels/NavigationManager.swift,

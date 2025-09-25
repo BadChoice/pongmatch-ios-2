@@ -239,6 +239,33 @@ struct GameSummaryView : View {
                         }
                     }
                     
+                    if game.status == .finished && game.needsId {
+                        
+                        Button {
+                            //TODO: Delete game
+                        }
+                        label: {
+                            HStack {
+                                //if acceptChallenge.loading { ProgressView() }
+                                Image(systemName: "trash")
+                            }
+                        }
+                        .padding()
+                        .glassEffect(.regular.interactive())
+                        
+                        Button {
+                            //TODO: Upload results
+                        }
+                        label: {
+                            HStack {
+                                //if acceptChallenge.loading { ProgressView() }
+                                Image(systemName: "icloud.and.arrow.up.fill")
+                            }
+                        }
+                        .padding()
+                        .glassEffect(.regular.interactive())
+                    }
+                    
                     if game.status == .waitingOpponent && game.player2.id == auth.user.id {
                         Button {
                             Task { await acceptChallenge.run {

@@ -64,15 +64,15 @@ struct GameFinishedView : View {
                     Divider().padding()
                 }
                 
-                if !syncedScore.score.game.hasAnUnknownPlayer(){
+                //if !syncedScore.score.game.hasAnUnknownPlayer(){
                     Button("Upload results") {
-                        SharedStorage().addFinished(
-                            game: syncedScore.score.game,
-                            sets:syncedScore.score.sets
+                        SyncGames.gameFinished(
+                            syncedScore.score.game,
+                            sets: syncedScore.score.sets
                         )
                         onContinue?()
                     }
-                }
+                //}
                 
                 Button("Continue") {
                     onContinue?()
