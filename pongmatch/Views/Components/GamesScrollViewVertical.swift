@@ -28,12 +28,8 @@ struct GamesScrollViewVertical : View {
                         Divider()
                     }
                 }
-                //.background(.white)
-                //.cornerRadius(12)
-                //.padding(24)
-                
             }
-        }//.background(Color(.systemGroupedBackground))
+        }
     }
 }
 
@@ -49,7 +45,24 @@ struct GameRowView : View {
             
             CompactUserView(user:game.player2)
                 .frame(maxWidth: .infinity)
-        }.padding()
+        }
+        .overlay(alignment: .top){
+            Label(game.status.description, systemImage:game.status.icon)
+                .font(.caption2.bold())
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(.secondary.opacity(0.2))
+                .foregroundStyle(.primary)
+                .clipShape(.capsule)
+                .offset()
+        }
+        
+        .overlay(alignment: .bottom){
+            Text(game.date.compactDisplay)
+                .foregroundStyle(.secondary)
+                .font(.caption2)
+                .offset(y:-6)
+        }
     }
 }
 
