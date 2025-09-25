@@ -4,29 +4,22 @@ struct SearchUsersView : View {
     @EnvironmentObject private var auth: AuthViewModel
     
     @State private var searchText: String = ""
-    @State private var users: [User] = []
+    @State private var users: [User]?
     @State private var isSearching: Bool = false
     @State private var errorMessage: String?
     
-    // Per-user loading states for follow/unfollow and friendship fetch
-    @State private var loadingFriendship: Set<Int> = []
-    @State private var mutatingFollow: Set<Int> = []
-    
     @FocusState private var isSearchFocused: Bool
     
-    init(_ users: [User]? = nil) {
-        self.users = users ?? []
+    init(_ users:[User]? = nil) {
+        self.users = users
+        //print(users)
+        //print(self.users)
     }
     
     var body: some View {
         NavigationStack {
-            VStack(alignment: .leading) {
-                Text("Search Players")
-                    .font(.title2)
-                    .bold()
-                    .padding(.bottom)
-                
-                if isSearching && users.isEmpty && !searchText.isEmpty {
+            List {
+                if isSearching && (users?.isEmpty ?? true) && !searchText.isEmpty {
                     ProgressView("Searching…")
                         .padding()
                 }
@@ -37,32 +30,37 @@ struct SearchUsersView : View {
                         .padding(.horizontal)
                 }
                 
-                VStack(spacing: 10) {
+                if (users?.isEmpty ?? true) {
+                    ContentUnavailableView {
+                        Label("No players", systemImage: "person.3.fill")
+                    } description: {
+                        Text("Search for other players and follow them to start a game!")
+                            .padding(.top)
+                    }
+                }
+                        
+                if let users {
                     ForEach(users, id: \.id) { user in
                         NavigationLink {
                             FriendView(user: user)
                         } label: {
                             HStack {
-                                UserView(user: user)
+                                UserView(user: user, showUsername: true)
                                 Spacer()
                                 friendshipView(for: user)
                             }
-                            .foregroundStyle(.primary)
-                            .task {
-                                await ensureFriendship(for: user)
-                            }
                         }
-                        Divider()
                     }
                 }
-                Spacer()
             }
+            .navigationTitle("Search Players")
         }
-        .padding()
+        .listRowSeparator(.visible, edges: .all)
+        .foregroundStyle(.primary)
         .focused($isSearchFocused)
         .onAppear { isSearchFocused = true }
         .navigationTitle("Search Users")
-        .searchable(text: $searchText, prompt: "Search users")
+        .searchable(text: $searchText, prompt: "Search players")
         .onChange(of: searchText) { _, newValue in
             debounceSearch(with: newValue)
         }        
@@ -93,14 +91,7 @@ private extension SearchUsersView {
         isSearching = true
         errorMessage = nil
         do {
-            var found = try await api.users(search: text)
-            let friendshipById = Dictionary(uniqueKeysWithValues: users.compactMap { ($0.id, $0.friendship) })
-            for i in found.indices {
-                if found[i].friendship == nil, let known = friendshipById[found[i].id] {
-                    found[i].friendship = known
-                }
-            }
-            users = found
+            users = try await api.users(search: text)
         } catch {
             errorMessage = "\(error)"
         }
@@ -109,63 +100,18 @@ private extension SearchUsersView {
     
     @ViewBuilder
     func friendshipView(for user: User) -> some View {
-        let isLoadingFriendship = loadingFriendship.contains(user.id)
-        let isMutating = mutatingFollow.contains(user.id)
         let friendship = user.friendship
-        
-        HStack(spacing: 8) {
-            // Status label
-            Group {
-                if isLoadingFriendship {
-                    ProgressView().frame(width: 20, height: 20)
-                }
+        if let friendship {
+            HStack {
+                Image(systemName: "heart.fill")
+                Text(friendship.isFollowed ? "Following" : "Follow")
             }
-            
-            // Follow/Unfollow button
-            if let friendship {
-                Button {
-
-                } label: {
-                    HStack {
-                        if isMutating {
-                            ProgressView().tint(.white)
-                        }
-                        Label(
-                            friendship.isFollowed ? "Following" : "Follow", systemImage: "heart.fill"
-                        ).font(.caption)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(friendship.isFollowed ? Color.accentColor : Color.gray.opacity(0.15))
-                    .foregroundStyle(friendship.isFollowed ? .white : .primary)
-                    .cornerRadius(8)
-                }
-                .disabled(isMutating)
-                .animation(.default, value: friendship.isFollowed)
-            }
-        }
-    }
-    
-    func ensureFriendship(for user: User) async {
-        guard let api = auth.api else { return }
-        guard users.first(where: { $0.id == user.id })?.friendship == nil else { return }
-        guard loadingFriendship.insert(user.id).inserted else { return }
-        defer { loadingFriendship.remove(user.id) }
-        
-        do {
-            let status = try await api.friendShipStatus(user)
-            updateUser(user.id) { $0.friendship = status }
-        } catch {
-            // Soft-fail: leave friendship nil
-        }
-    }
-    
-
-    func updateUser(_ id: Int, mutate: (inout User) -> Void) {
-        if let idx = users.firstIndex(where: { $0.id == id }) {
-            var copy = users[idx]
-            mutate(&copy)
-            users[idx] = copy
+            .font(.caption)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(friendship.isFollowed ? Color.gray.opacity(0.15) : Color.accentColor)
+            .foregroundStyle(friendship.isFollowed ? .primary : Color.white)
+            .cornerRadius(8)
         }
     }
 }
@@ -179,10 +125,6 @@ private var searchTask: Task<Void, Never>?
     auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
     
     
-    return NavigationStack {
-        VStack{}.sheet(isPresented:$showingSheet) {
-            SearchUsersView([User.me()])
-                
-        }
-    }.environmentObject(auth)
+    return SearchUsersView([User.me(), User.me(), User.me(), User.me()])
+            .environmentObject(auth)
 }

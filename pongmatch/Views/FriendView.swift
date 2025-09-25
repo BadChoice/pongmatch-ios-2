@@ -44,10 +44,20 @@ struct FriendView : View {
                             NavigationLink{
                                 CreateGameView(opponent: user)
                             } label: {
-                                Label ("Challenge", systemImage: "figure.boxing") .font(.caption)
+                                Label ("Challenge", systemImage: "figure.boxing")
+                                    .font(.caption)
+                                    .padding(6)
+                                    .background(Color.accentColor)
+                                    .foregroundStyle(.white)
+                                    .cornerRadius(8)
                             }
                         }
-                        FollowButton(user: user, isFollowed: $isFollowed)
+                        
+                        FollowButton(
+                            user: user,
+                            isFollowed: $isFollowed,
+                            followsMe:user.friendship?.followsMe ?? false
+                        )
                     }
                     
                     Divider()
@@ -177,6 +187,7 @@ struct FollowButton : View {
     @EnvironmentObject private var auth: AuthViewModel
     let user:User
     @Binding var isFollowed:Bool
+    var followsMe:Bool
     
     var body: some View {
         
@@ -186,14 +197,15 @@ struct FollowButton : View {
                 withAnimation { isFollowed.toggle()}
             }
         } label: {
-            Label(isFollowed ? "Following" : "Follow",
+            Label(
+                isFollowed ? "Following" : (followsMe ? "Follow Back" : "Follow"),
                   systemImage: "heart.fill")
                 
         }
         .font(.caption)
         .padding(6)
-        .background(isFollowed ? Color.accentColor : .clear)
-        .foregroundStyle(isFollowed ? .white : .blue)
+        .background(isFollowed ? Color.gray.opacity(0.15) : Color.accentColor)
+        .foregroundStyle(isFollowed ? .primary : Color.white)        
         .cornerRadius(8)
     }
 

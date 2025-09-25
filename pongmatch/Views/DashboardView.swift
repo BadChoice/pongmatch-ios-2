@@ -62,9 +62,7 @@ struct DashboardView : View {
                 
                 if [.community, .search].contains(activeTab) {
                     Tab("Search", systemImage: "magnifyingglass", value:.search, role: .search) {
-                        NavigationStack{
-                            Text("Searching...")
-                        }.searchable(text:$search)
+                        SearchFriendsView()
                     }
                 }
             }

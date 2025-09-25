@@ -4,10 +4,7 @@ internal import RevoFoundation
 struct Community : View {
     
     @EnvironmentObject private var auth: AuthViewModel
-    
-    @State private var searchText: String = ""
-    @State private var searchResults: [User] = []
-    
+        
     @State var friends:[User] = []
     @State var loading:Bool = false
     
@@ -28,12 +25,12 @@ struct Community : View {
     }
     
     var body: some View {
-        let users = searchText.isEmpty ? friends : searchResults
+        let users = friends
         List {
             if loading {
                 ProgressView()
             } else {
-                if searchText.isEmpty && !users.isEmpty {
+                if !users.isEmpty {
                     Section {
                         PodiumView(users: topUsers)
                             .padding(.vertical)
@@ -44,9 +41,9 @@ struct Community : View {
                 Section {
                     if users.isEmpty {
                         ContentUnavailableView {
-                            Label(searchText.isEmpty ? "No friends" : "No results", systemImage: searchText.isEmpty ? "person.3" : "magnifyingglass")
+                            Label("No friends", systemImage: "person.3")
                         } description: {
-                            Text(searchText.isEmpty ? "Add some friends to start playing!" : "Try searching for another name.")
+                            Text("Add some friends to start playing!")
                         } actions:{
                             Button("Add Friend") {
                                 searchingUsers = true
@@ -69,7 +66,6 @@ struct Community : View {
                 .presentationDetents([.large])
                 .presentationDragIndicator(.visible)                
         }
-        .searchable(text: $searchText, placement: .toolbar, prompt: "Search for friends")
         .task {
             Task {
                 friends = ((try? await auth.friends()) ?? [])
@@ -86,14 +82,6 @@ struct Community : View {
                 ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
-            }
-        }
-        .onChange(of: searchText) { _, newValue in
-            loading = true
-            Task {
-                try? await Task.sleep(nanoseconds: 200_000_000) // 0.2s delay
-                searchResults = ((try? await auth.searchFriends(newValue)) ?? [])
-                loading = false
             }
         }
     }
