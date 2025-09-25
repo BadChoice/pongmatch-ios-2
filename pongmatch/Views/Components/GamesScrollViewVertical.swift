@@ -10,7 +10,7 @@ struct GamesScrollViewVertical : View {
     let games:[Game]
     
     var body: some View {
-        ScrollView(.vertical) {
+        Group {
             if games.isEmpty {
                 Text("No games")
                     .foregroundStyle(.secondary)
@@ -21,19 +21,35 @@ struct GamesScrollViewVertical : View {
                             GameSummaryView(game: game)
                                 .navigationTransition(.zoom(sourceID: "zoom_game_\(game.id)", in: namespace))
                         } label: {
-                            CompactGameView(game: game)
+                            GameRowView(game: game)
                                 .foregroundStyle(.primary)
                                 .matchedTransitionSource(id: "zoom_game_\(game.id)", in: namespace)
                         }
+                        Divider()
                     }
-                }.scrollTargetLayout()
+                }
+                //.background(.white)
+                //.cornerRadius(12)
+                //.padding(24)
+                
             }
-        }
-        //.scrollTargetBehavior(.paging)
-        .scrollTargetBehavior(.viewAligned)
-        //.safeAreaPadding(.horizontal, 20.0)
-        .scrollIndicators(.hidden)
-        .padding(.bottom)
+        }//.background(Color(.systemGroupedBackground))
+    }
+}
+
+struct GameRowView : View {
+    let game:Game
+    
+    var body: some View {
+        HStack{
+            CompactUserView(user:game.player1)
+                .frame(maxWidth: .infinity)
+            
+            FinalResult(game.finalResult)
+            
+            CompactUserView(user:game.player2)
+                .frame(maxWidth: .infinity)
+        }.padding()
     }
 }
 
