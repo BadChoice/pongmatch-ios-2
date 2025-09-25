@@ -147,7 +147,7 @@ struct HomeView : View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
                     NavigationLink {
-                        if let user = auth.user {w
+                        if let user = auth.user {
                             FriendView(user: user)
                         }
                     } label: {
