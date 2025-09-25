@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct GamesScrollview : View {
+struct GamesScrollView : View {
     
     @EnvironmentObject private var auth: AuthViewModel
     @EnvironmentObject private var nav: NavigationManager
@@ -38,7 +38,7 @@ struct GamesScrollview : View {
 }
 
 #Preview {
-    GamesScrollview(games: [
+    GamesScrollView(games: [
         Game.fake(id: 1),
         Game.fake(id: 2),
         Game.fake(id: 3),

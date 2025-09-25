@@ -218,21 +218,21 @@ struct GamesHomeView : View {
             if !watchGames.games.isEmpty {
                 VStack(alignment: .leading){
                     Label("Finished games on  watch", systemImage: "applewatch").font(.headline)
-                    GamesScrollview(games:watchGames.games)
+                    GamesScrollView(games:watchGames.games)
                 }.padding()
             }
             
             let currentGames = games.filter { $0.status == .ongoing }
             VStack(alignment: .leading){
                 Label("Current Games", systemImage: GameStatus.ongoing.icon).font(.headline)
-                GamesScrollview(games:currentGames)
+                GamesScrollView(games:currentGames)
             }.padding()
             
             let challenges = games.filter { $0.status == .waitingOpponent }
             if challenges.count > 0 {
                 VStack(alignment: .leading){
                     Text("You have been challenged!").font(.headline)
-                    GamesScrollview(games:challenges)
+                    GamesScrollView(games:challenges)
                 }.padding()
             }
             
@@ -240,13 +240,13 @@ struct GamesHomeView : View {
             if upcoming.count > 0 {
                 VStack(alignment: .leading){
                     Label("Next Games", systemImage: GameStatus.planned.icon).font(.headline)
-                    GamesScrollview(games:upcoming)
+                    GamesScrollView(games:upcoming)
                 }.padding()
             }
             
             VStack(alignment: .leading){
                 Label("Finished Games", systemImage: GameStatus.finished.icon).font(.headline)
-                GamesScrollview(games:games.filter { $0.isFinished()
+                GamesScrollView(games:games.filter { $0.isFinished()
                 })
             }.padding()
         }

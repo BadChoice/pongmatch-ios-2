@@ -105,7 +105,7 @@ struct FriendView : View {
                         } else if games.isEmpty {
                             Text("\(user.name) hasn't played any matches yet")
                         } else {
-                            GamesScrollview(games: games.filter { !$0.isFinished() })
+                            GamesScrollViewVertical(games: games.filter { !$0.isFinished() })
                         }
                     case 1:
                         if fetchGames.loading {
@@ -117,7 +117,7 @@ struct FriendView : View {
                         } else if games.isEmpty {
                             Text("\(user.name) hasn't played any matches yet")
                         } else {
-                            GamesScrollview(games: games.filter { $0.isFinished() })
+                            GamesScrollViewVertical(games: games.filter { $0.isFinished() })
                         }
                     case 2:
                         if fetchOneVsOne.loading {
@@ -138,7 +138,7 @@ struct FriendView : View {
                                     label: nil,
                                 ).padding(.horizontal, 4)
                             }
-                            GamesScrollview(games: oneVsOne?.games ?? [])
+                            GamesScrollViewVertical(games: oneVsOne?.games ?? [])
                         }
                     default:
                         EmptyView()
