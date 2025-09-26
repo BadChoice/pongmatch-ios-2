@@ -168,6 +168,12 @@ struct HomeView : View {
                         Label("How it works", systemImage: "questionmark.circle")
                     }
                     
+                    NavigationLink {
+                        BuyMeACoffeeView()
+                    } label: {
+                        Label("Buy me a Coffee", systemImage: "cup.and.saucer.fill")
+                    }
+                    
                     ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
                         Label("Share", systemImage: "square.and.arrow.up")
                     }
