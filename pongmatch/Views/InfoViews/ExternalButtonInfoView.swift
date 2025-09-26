@@ -83,8 +83,14 @@ struct ExternalButtonInfoView: View {
             .padding(.vertical, 24)
             .padding(.horizontal, 20)
         }
+        // Let content extend under the navigation bar for a full-bleed hero,
+        // matching the Apple Watch sync screen behavior.
         .navigationTitle("External Button Control")
         .navigationBarTitleDisplayMode(.inline)
+        // Make the navigation bar overlay the scroll view (transparent background).
+        //.toolbarBackground(.hidden, for: .navigationBar)
+        //.toolbarBorderHidden(true, for: .navigationBar)
+        .background(Color(.systemBackground)) // Ensure correct background behind the nav bar
     }
 
     // MARK: - Subviews
@@ -256,6 +262,7 @@ struct ExternalButtonInfoView: View {
                 HStack(alignment: .top, spacing: 10) {
                     Image(systemName: "gamecontroller")
                         .foregroundStyle(.secondary)
+                        .frame(width:24)
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Mini Gamepad")
                             .font(.subheadline.weight(.semibold))
@@ -268,9 +275,12 @@ struct ExternalButtonInfoView: View {
                     }
                 }
 
+                Spacer().frame(height: 8)
+                
                 HStack(alignment: .top, spacing: 10) {
                     Image(systemName: "camera.circle")
                         .foregroundStyle(.secondary)
+                        .frame(width:24)
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Bluetooth shutter remote")
                             .font(.subheadline.weight(.semibold))
@@ -377,6 +387,5 @@ private struct MappingRow: View {
 #Preview {
     NavigationStack {
         ExternalButtonInfoView()
-            .padding()
     }
 }
