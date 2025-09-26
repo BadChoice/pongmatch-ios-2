@@ -1,49 +1,17 @@
 import SwiftUI
+import StoreKit
 
 struct BuyMeACoffeeView: View {
-    struct TipOption: Identifiable, Hashable {
-        enum Size: String, CaseIterable {
-            case small, medium, large, extraLarge
+    @StateObject private var store = CoffeeTipStore()
 
-            var title: String {
-                switch self {
-                case .small: return "Small"
-                case .medium: return "Medium"
-                case .large: return "Large"
-                case .extraLarge: return "Extra Large"
-                }
-            }
-
-            // Used to subtly scale the cup icon for each size
-            var iconScale: CGFloat {
-                switch self {
-                case .small: return 1.0
-                case .medium: return 1.15
-                case .large: return 1.3
-                case .extraLarge: return 1.45
-                }
-            }
-        }
-
-        let id = UUID()
-        let size: Size
-        let price: Decimal
-
-        static let defaultOptions: [TipOption] = [
-            .init(size: .small, price: 3),
-            .init(size: .medium, price: 5),
-            .init(size: .large, price: 8),
-            .init(size: .extraLarge, price: 12)
-        ]
-    }
-
-    // Customize options and handle selection with onTip
-    let options: [TipOption]
-    var onTip: (TipOption) -> Void
+    // Customize which options to show
+    let options: [InAppPurchaseProducts]
+    // Called after a successful purchase of an option
+    var onTip: (InAppPurchaseProducts) -> Void
 
     init(
-        options: [TipOption] = TipOption.defaultOptions,
-        onTip: @escaping (TipOption) -> Void = { _ in }
+        options: [InAppPurchaseProducts] = InAppPurchaseProducts.allCases,
+        onTip: @escaping (InAppPurchaseProducts) -> Void = { _ in }
     ) {
         self.options = options
         self.onTip = onTip
@@ -62,6 +30,10 @@ struct BuyMeACoffeeView: View {
         .background(Color(.systemBackground))
         .navigationTitle("Buy Me a Coffee")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            // Ensure products are loaded (init already triggers, but safe to refresh here)
+            await store.reloadProducts()
+        }
     }
 
     private var header: some View {
@@ -94,9 +66,19 @@ struct BuyMeACoffeeView: View {
         let columns = [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)]
 
         return LazyVGrid(columns: columns, spacing: 14) {
-            ForEach(options) { option in
-                OptionCard(option: option) {
-                    onTip(option) // Tap triggers the buy/tip process immediately
+            ForEach(options, id: \.self) { option in
+                OptionCard(
+                    option: option,
+                    priceText: store.displayPrice(for: option),
+                    isLoading: store.isLoading || store.displayPrice(for: option) == nil,
+                    isPurchasing: store.purchaseInFlight == option
+                ) {
+                    Task {
+                        let success = await store.purchase(option)
+                        if success {
+                            onTip(option)
+                        }
+                    }
                 }
             }
         }
@@ -116,17 +98,13 @@ struct BuyMeACoffeeView: View {
         .multilineTextAlignment(.center)
         .padding(.top, 8)
     }
-
-    private func formattedCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = .current
-        return formatter.string(from: NSDecimalNumber(decimal: amount)) ?? "$\(amount)"
-    }
 }
 
 private struct OptionCard: View {
-    let option: BuyMeACoffeeView.TipOption
+    let option: InAppPurchaseProducts
+    let priceText: String?
+    let isLoading: Bool
+    let isPurchasing: Bool
     let action: () -> Void
 
     var body: some View {
@@ -134,15 +112,15 @@ private struct OptionCard: View {
             VStack(spacing: 10) {
                 Image(systemName: "cup.and.saucer.fill")
                     .font(.system(size: 26, weight: .semibold))
-                    .scaleEffect(option.size.iconScale)
+                    .scaleEffect(option.iconScale)
                     .foregroundStyle(Color.brown)
                     .padding(.top, 10)
 
-                Text(option.size.title)
+                Text(option.description)
                     .font(.headline)
                     .foregroundStyle(.primary)
 
-                Text(formattedCurrency(option.price))
+                Text(priceText ?? (isLoading ? "Loading…" : "—"))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 10)
@@ -160,14 +138,16 @@ private struct OptionCard: View {
             .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         }
         .buttonStyle(PressableCardStyle())
-        .accessibilityLabel("\(option.size.title) coffee, \(formattedCurrency(option.price)). Tap to tip.")
-    }
-
-    private func formattedCurrency(_ amount: Decimal) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.locale = .current
-        return formatter.string(from: NSDecimalNumber(decimal: amount)) ?? "$\(amount)"
+        .disabled(isLoading || isPurchasing || priceText == nil)
+        .overlay(alignment: .topTrailing) {
+            if isPurchasing {
+                ProgressView()
+                    .progressViewStyle(.circular)
+                    .scaleEffect(0.8)
+                    .padding(10)
+            }
+        }
+        .accessibilityLabel("\(option.description) coffee, \(priceText ?? "price loading"). Tap to tip.")
     }
 }
 
@@ -181,27 +161,10 @@ private struct PressableCardStyle: ButtonStyle {
 }
 
 #Preview {
-    Group {
-        NavigationStack {
-            BuyMeACoffeeView { option in
-                print("Tip now: \(option.size.title) - \(option.price)")
-            }
-            .navigationTitle("Support")
+    NavigationStack {
+        BuyMeACoffeeView { option in
+            print("Tipped: \(option.description)")
         }
-
-        NavigationStack {
-            BuyMeACoffeeView(
-                options: [
-                    .init(size: .small, price: 2),
-                    .init(size: .medium, price: 4),
-                    .init(size: .large, price: 7),
-                    .init(size: .extraLarge, price: 10)
-                ]
-            ) { option in
-                print("Tip now: \(option.size.title) - \(option.price)")
-            }
-            .preferredColorScheme(.light)
-            .navigationTitle("Support")
-        }
+        .navigationTitle("Support")
     }
 }

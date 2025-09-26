@@ -1,11 +1,12 @@
+import SwiftUI
 
-enum InAppPurchaseProducts : String, CaseIterable, CustomStringConvertible {
+enum InAppPurchaseProducts: String, CaseIterable, CustomStringConvertible {
     case smallCoffee = "io.codepassion.pongmatch.inapp_purchase_small_coffee"
     case mediumCoffee = "io.codepassion.pongmatch.inapp_purchase_medium_coffee"
     case largeCoffee = "io.codepassion.pongmatch.inapp_purchase_large_coffee"
     case extraLargeCoffee = "io.codepassion.pongmatch.inapp_purchase_extra_large_coffee"
-    
-    var description : String {
+
+    var description: String {
         switch self {
         case .smallCoffee: "Small"
         case .mediumCoffee: "Medium"
@@ -13,8 +14,8 @@ enum InAppPurchaseProducts : String, CaseIterable, CustomStringConvertible {
         case .extraLargeCoffee: "Extra Large"
         }
     }
-    
-    var iconScale: Double {
+
+    var iconScale: CGFloat {
         switch self {
         case .smallCoffee: 1.0
         case .mediumCoffee: 1.15

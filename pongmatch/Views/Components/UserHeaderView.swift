@@ -3,21 +3,51 @@ import SwiftUI
 struct UserHeaderView : View {
     let user:User
     let globalRanking: Int?
+    let showDetails:Bool
     
-    init(user: User, globalRanking: Int? = nil) {
+    init(user: User, showDetails:Bool = true, globalRanking: Int? = nil) {
         self.user = user
         self.globalRanking = globalRanking
+        self.showDetails = showDetails
     }
     
     var body: some View {
         VStack {
             UserView(user: user)
             VStack(spacing:8) {
+                
                 if let lastPlayed = user.last_match_date {
-                    Text("Last played \(lastPlayed.displayForHumans)")
-                        .font(.caption2)
-                        .padding(.vertical, 2)
+                    HStack(spacing: 2){
+                        Text("Last played ")
+                        Text("\(lastPlayed.displayForHumans)").bold()
+                    }
+                    .font(.caption)
+                    .padding(.top, 6)
+                    .foregroundStyle(.secondary)
+                }
+                
+                if showDetails {
+                    
+                    if let deepDetails = user.deepDetails {
+                        HStack(spacing: 2) {
+                            Text("\(deepDetails.followers)").bold()
+                            Text("followers")
+                            Text(" · ")
+                            Text("\(deepDetails.following)").bold()
+                            Text("following")
+                        }
+                        .font(.caption)
                         .foregroundStyle(.secondary)
+                    }
+                    
+                    if let acceptChallengesFrom = user.accept_challenge_requests_from {
+                        HStack(spacing: 2) {
+                            Text("Accept challenges from:")
+                            Text("\(acceptChallengesFrom.description)").bold()
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
                 }
                 
                 HStack{
@@ -27,7 +57,10 @@ struct UserHeaderView : View {
                     Text("LOST").frame(width:80)
                 }
                 .foregroundStyle(.gray)
-                .padding(.top, 2)
+                .padding(.top, 12)
+                
+                
+                
                 HStack{
                     Text("\(user.games_won ?? 0)").frame(width:80)
                     Text("\(user.ranking)").frame(width:80)

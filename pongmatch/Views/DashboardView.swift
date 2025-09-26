@@ -108,7 +108,11 @@ struct HomeView : View {
     var body: some View {
         ScrollView{
             VStack(spacing: 20) {
-                UserHeaderView(user: auth.user ?? User.unknown())
+                NavigationLink {
+                    FriendView(user: auth.user)
+                } label: {
+                    UserHeaderView(user: auth.user ?? User.unknown(), showDetails: false)
+                }
                 
                 Divider()
                 

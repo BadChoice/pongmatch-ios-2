@@ -3,10 +3,10 @@ import SwiftUI
 struct FriendView : View {
     @EnvironmentObject private var auth: AuthViewModel
     
-    let user:User
+    @State var user:User
     
     @State private var selectedSegment = 0
-    @State private var deepDetails:UserDeepDetails? = nil
+    //@State private var deepDetails:UserDeepDetails? = nil
     
     @State var isFollowed:Bool
     @State var fetchGames = ApiAction()
@@ -23,18 +23,8 @@ struct FriendView : View {
     var body: some View {
         ScrollView{
             VStack(spacing:24){
-                UserHeaderView(user: user, globalRanking: deepDetails?.global_ranking)
-                
-                if let deepDetails {
-                    HStack{
-                        Text("\(deepDetails.followers) followers")
-                        Text(" · ")
-                        Text("\(deepDetails.following) following")
-                    }
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
-                }
-                
+                UserHeaderView(user: user, globalRanking: user.deepDetails?.global_ranking)
+                                
                 Divider()
                 
                 if user.id != auth.user.id {
@@ -148,6 +138,7 @@ struct FriendView : View {
                 
                 Spacer()
             }
+            
         }.task {
             fetchDetails()
             fetchFriendGames()
@@ -159,7 +150,7 @@ struct FriendView : View {
         Task {
             let deepDetails = try? await auth.api.deepDetails(user)
             withAnimation {
-                self.deepDetails = deepDetails
+                self.user.deepDetails = deepDetails
             }
         }
     }
