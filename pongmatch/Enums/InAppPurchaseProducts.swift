@@ -1,5 +1,5 @@
 
-enum InAppPurchaseProducts : String, CustomStringConvertible {
+enum InAppPurchaseProducts : String, CaseIterable, CustomStringConvertible {
     case smallCoffee = "io.codepassion.pongmatch.inapp_purchase_small_coffee"
     case mediumCoffee = "io.codepassion.pongmatch.inapp_purchase_medium_coffee"
     case largeCoffee = "io.codepassion.pongmatch.inapp_purchase_large_coffee"
