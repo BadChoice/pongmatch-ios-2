@@ -112,6 +112,7 @@
 				Assets.xcassets,
 				Enums/AcceptChallengeRequestFrom.swift,
 				Enums/GameStatus.swift,
+				Enums/InAppPurchaseProducts.swift,
 				Enums/InitialScore.swift,
 				Enums/Language.swift,
 				Enums/RankingType.swift,
