@@ -15,7 +15,7 @@ struct GamesScrollViewVertical : View {
                 Text("No games")
                     .foregroundStyle(.secondary)
             } else {
-                LazyVStack {
+                LazyVStack(spacing:16) {
                     ForEach(games, id:\.id) { game in
                         NavigationLink {
                             GameSummaryView(game: game)
@@ -25,7 +25,6 @@ struct GamesScrollViewVertical : View {
                                 .foregroundStyle(.primary)
                                 .matchedTransitionSource(id: "zoom_game_\(game.id)", in: namespace)
                         }
-                        Divider()
                     }
                 }
             }
@@ -63,6 +62,10 @@ struct GameRowView : View {
                 .font(.caption2)
                 .offset(y:-6)
         }
+        .padding(10)
+        .background(Color(.systemGroupedBackground))
+        .cornerRadius(24)
+        //.padding()
     }
 }
 
