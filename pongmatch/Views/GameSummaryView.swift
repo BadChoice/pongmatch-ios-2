@@ -163,7 +163,7 @@ struct GameSummaryView : View {
                 Menu {
                     if game.status == .waitingOpponent {
                         Button("Edit game", systemImage: "pencil") {
-                            
+                            //TODO
                         }
                         
                         Button("Delete", systemImage: "trash", role: .destructive) {
@@ -179,7 +179,7 @@ struct GameSummaryView : View {
                     
                     if game.status == .finished {
                         Button("Dispute result", systemImage: "flag") {
-                            
+                            //TODO
                         }
                     }
                 } label: {
