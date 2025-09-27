@@ -35,4 +35,37 @@ struct Images {
             return nil
         }
     }
+    
+    // New: Download and also expose HTTP status code so callers can detect 404s
+    static func downloadWithStatus(_ url: URL?) async -> (image: UIImage?, statusCode: Int?) {
+        guard let url = url else { return (nil, nil) }
+        let urlString = url.absoluteString as NSString
+        
+        // Check cache first
+        if let cachedImage = imageCache.object(forKey: urlString) {
+            return (cachedImage, 200)
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            let http = response as? HTTPURLResponse
+            let status = http?.statusCode
+            
+            // If it's not 200, don't attempt to build/cache the image
+            guard status == 200 else {
+                return (nil, status)
+            }
+            
+            guard let image = UIImage(data: data) else {
+                return (nil, status)
+            }
+            
+            imageCache.setObject(image, forKey: urlString)
+            return (image, status)
+        } catch {
+            print("Failed to download image from \(url): \(error)")
+            return (nil, nil)
+        }
+    }
 }
+

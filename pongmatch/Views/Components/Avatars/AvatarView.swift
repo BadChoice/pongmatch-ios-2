@@ -3,25 +3,35 @@ import SwiftUI
 struct AvatarView: View {
     
     @State private var image: UIImage?
+    @State private var is404: Bool = false
+    
     let url: String?
     let name: String?
+    let email: String?
     let winner: Bool
     
     init(user: User, winner: Bool = false) {
         self.url = user.avatar
         self.name = user.initials
+        self.email = user.email
         self.winner = winner
     }
     
-    init(url: String?, name: String?, winner: Bool = false) {
+    init(url: String?, name: String?, email: String? = nil, winner: Bool = false) {
         self.url = url
         self.name = name
+        self.email = email
         self.winner = winner
     }
     
     var body: some View {
         GeometryReader { geo in
-            if let image {
+            if url == nil {
+                // No custom avatar URL -> use Gravatar
+                GravatarView(email: email)
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipShape(Circle())
+            } else if let image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
@@ -31,7 +41,8 @@ struct AvatarView: View {
                 ZStack {
                     Circle()
                         .fill(.gray)
-                    if let name {
+                    // Only show initials if we specifically detected a 404
+                    if is404, let name {
                         Text(name.prefix(2).uppercased())
                             .font(.system(size: geo.size.width * 0.4, weight: .bold))
                             .minimumScaleFactor(0.5)
@@ -55,15 +66,22 @@ struct AvatarView: View {
         }
         .id(url) // keep identity keyed to the avatar URL
         .task(id: url) {
-            // Always clear the previous image when the URL changes or becomes nil
-            await MainActor.run { image = nil }
+            // Reset state whenever the URL changes
+            await MainActor.run {
+                image = nil
+                is404 = false
+            }
             
             guard let resolvedURL = Images.avatar(url) else { return }
             
-            // Load (or fetch from cache) the new image
-            if let downloadedImage = await Images.download(resolvedURL) {
-                await MainActor.run {
+            // Load (or fetch from cache) the new image, capturing status code
+            let result = await Images.downloadWithStatus(resolvedURL)
+            await MainActor.run {
+                if let downloadedImage = result.image {
                     image = downloadedImage
+                } else if result.statusCode == 404 {
+                    // Explicitly mark 404 so we render initials
+                    is404 = true
                 }
             }
         }
@@ -92,30 +110,31 @@ struct WinnerIconView : View {
 }
 
 #Preview {
-    AvatarView(
-        url: "http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png",
-        name: "Jordi Puigdellívol"
-    )
+    VStack {
+        
+        AvatarView(
+            url: "http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png",
+            name: "Jordi Puigdellívol",
+            email: "jordi+pongmatch@gloobus.net"
+        )
+        
+        AvatarView(
+            url: nil,
+            name: "Jordi Puigdellívol",
+            email: "jordi+pongmatch@gloobus.net"
+        )
+        
+        AvatarView(
+            url: "http://google.com/not found.png",
+            name: "Jordi Puigdellívol",
+            email: "jordi+pongmatch@gloobus.net"
+        )
+        
+        AvatarView(
+            user: User.me(),
+            winner: true
+        )
+    }
 }
 
-#Preview {
-    AvatarView(
-        url: nil,
-        name: "Jordi Puigdellívol"
-    )
-}
-
-#Preview {
-    AvatarView(
-        url: "http://google.com/not found.png",
-        name: "Jordi Puigdellívol"
-    )
-}
-
-#Preview {
-    AvatarView(
-        user: User.me(),
-        winner: true
-    )
-}
 

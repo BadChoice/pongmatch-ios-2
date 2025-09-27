@@ -129,6 +129,8 @@
 				Services/Watch/WatchFinishedGames.swift,
 				Services/Watch/WatchManager.swift,
 				Views/Components/Avatars/AvatarView.swift,
+				Views/Components/Avatars/DicebearAvatarView.swift,
+				Views/Components/Avatars/GravatarView.swift,
 				Views/ViewModels/NavigationManager.swift,
 			);
 			target = EAE787172E6C748000FB8998 /* pongmatch-watch Watch App */;

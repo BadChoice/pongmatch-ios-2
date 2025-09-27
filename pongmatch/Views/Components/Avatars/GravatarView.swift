@@ -1,7 +1,7 @@
 import SwiftUI
 import CryptoKit
 
-struct GravatarAvatarView: View {
+struct GravatarView: View {
     enum DefaultImage: String {
         case mp
         case identicon
@@ -120,16 +120,16 @@ struct GravatarAvatarView: View {
 
 #Preview("Gravatar") {
     VStack(spacing: 16) {
-        GravatarAvatarView(email: "jordi+pongmatch@gloobus.net", size: 96, defaultImage: .mp)
+        GravatarView(email: "jordi+pongmatch@gloobus.net", size: 96, defaultImage: .mp)
             .frame(width: 96)
         
-        GravatarAvatarView(user: User.me(), size: 96, defaultImage: .identicon)
+        GravatarView(user: User.me(), size: 96, defaultImage: .identicon)
             .frame(width: 96)
         
-        GravatarAvatarView(email:"jordi@gloobus.net", size: 96, defaultImage: .identicon)
+        GravatarView(email:"jordi@gloobus.net", size: 96, defaultImage: .identicon)
             .frame(width: 96)
         
-        GravatarAvatarView(email: "no-gravatar@example.com", size: 96, defaultImage: .identicon)
+        GravatarView(email: "no-gravatar@example.com", size: 96, defaultImage: .identicon)
             .frame(width: 96)
     }
     .padding()
