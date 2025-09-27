@@ -11,7 +11,7 @@ struct UploadResultsView: View {
     @State private var errorMessage: String?
     
     @State private var setResults: [[Int]] = [[0,0]]
-        
+            
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Enter Set Results")
@@ -39,8 +39,15 @@ struct UploadResultsView: View {
                         HStack(spacing: 8){
                             ForEach(setResults.indices, id: \ .self) { idx in
                                 VStack(alignment: .trailing){
+                                    let isValid = Score.Result(
+                                        player1:setResults[idx][0],
+                                        player2: setResults[idx][1]
+                                    ).isValid()
+                                    
                                     Text("Set \(idx + 1)")
                                         .font(.subheadline)
+                                        .foregroundStyle(isValid ? .black : .red)
+                                        .bold(!isValid)
                                     
                                     Stepper(value: $setResults[idx][0], in: 0...99) {
                                         Text("\(setResults[idx][0])")
@@ -82,6 +89,7 @@ struct UploadResultsView: View {
                     Label("Upload results", systemImage: "arrow.up.circle.fill")
                 }
             }
+            .disabled(!areResultsValid || uploading)
             .frame(maxWidth: .infinity)
             .padding()
             .background(Color.accentColor)
@@ -96,6 +104,12 @@ struct UploadResultsView: View {
             }
         }
         .padding()
+    }
+    
+    var areResultsValid: Bool {
+        setResults.allSatisfy {
+            Score.Result(player1: $0[0], player2: $0[1]).isValid()
+        }
     }
     
     private func uploadResults() async {

@@ -25,7 +25,7 @@ struct pongmatchTests {
     }
     
     @Test func can_do_login_fail() async throws {
-        await #expect(throws: Api.Errors.self) {
+        await #expect(throws: ApiClient.Errors.self) {
             let _ = try await Api.login(
                 email: "jordi@gloobus.net",
                 password: "invalid_password",

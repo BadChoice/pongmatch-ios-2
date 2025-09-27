@@ -128,7 +128,7 @@ struct FinishGameView: View {
     private func uploadGameResultsAndDismiss(){
         Task {
             if (await uploadGame.run {
-                if game.id == nil {
+                if game.needsId {
                     let newGame = try await auth.api.store(game: game)
                     let _ = try await auth.api.uploadResults(newGame, results: game.results)
                 } else {

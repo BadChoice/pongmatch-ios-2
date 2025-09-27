@@ -167,7 +167,7 @@ struct HomeView : View {
                     Divider()
                     
                     NavigationLink {
-                        FeedbackView()
+                        HowItWorksView()
                     } label: {
                         Label("How it works", systemImage: "questionmark.circle")
                     }
