@@ -5,7 +5,7 @@ struct AvatarView: View {
     @State private var image: UIImage?
     let url: String?
     let name: String?
-    let winner:Bool
+    let winner: Bool
     
     init(user: User, winner: Bool = false) {
         self.url = user.avatar
@@ -13,7 +13,7 @@ struct AvatarView: View {
         self.winner = winner
     }
     
-    init(url: String?, name: String?, winner:Bool = false) {
+    init(url: String?, name: String?, winner: Bool = false) {
         self.url = url
         self.name = name
         self.winner = winner
@@ -33,7 +33,7 @@ struct AvatarView: View {
                         .fill(.gray)
                     if let name {
                         Text(name.prefix(2).uppercased())
-                            .font(.system(size: geo.size.width * 0.4, weight: .bold)) // 👈 scales font to fit
+                            .font(.system(size: geo.size.width * 0.4, weight: .bold))
                             .minimumScaleFactor(0.5)
                             .foregroundColor(.white)
                             .lineLimit(1)
@@ -47,19 +47,23 @@ struct AvatarView: View {
                    .frame(width: geo.size.width, height: geo.size.height)
             }
         }
-        .aspectRatio(1, contentMode: .fit) // Ensures it stays square
+        .aspectRatio(1, contentMode: .fit)
         .overlay {
             if winner {
                 WinnerIconView()
             }
         }
-        .id(url)
+        .id(url) // keep identity keyed to the avatar URL
         .task(id: url) {
-            Task.detached {
-                if let url = await Images.avatar(url), let downloadedImage = await Images.download(url) {
-                    await MainActor.run {
-                        image = downloadedImage
-                    }
+            // Always clear the previous image when the URL changes or becomes nil
+            await MainActor.run { image = nil }
+            
+            guard let resolvedURL = Images.avatar(url) else { return }
+            
+            // Load (or fetch from cache) the new image
+            if let downloadedImage = await Images.download(resolvedURL) {
+                await MainActor.run {
+                    image = downloadedImage
                 }
             }
         }
@@ -110,7 +114,6 @@ struct WinnerIconView : View {
 #Preview {
     AvatarView(
         user: User.me(),
-        winner:true
+        winner: true
     )
 }
-
