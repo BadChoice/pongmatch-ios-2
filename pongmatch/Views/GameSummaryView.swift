@@ -17,6 +17,7 @@ struct GameSummaryView : View {
     @State private var publicScoreboardCode: String? = nil
     
     @State private var deleteGame = ApiAction()
+    @State private var showDeleteConfirmation = false
     
     @StateObject private var calendarManager = CalendarManager()
     
@@ -167,14 +168,9 @@ struct GameSummaryView : View {
                         }
                         
                         Button("Delete", systemImage: "trash", role: .destructive) {
-                            Task {
-                                if (await deleteGame.run {
-                                    try await auth.api.delete(game: game)
-                                }) {
-                                    dismiss()
-                                }
-                            }
-                        }.disabled(deleteGame.loading)
+                            showDeleteConfirmation = true
+                        }
+                        .disabled(deleteGame.loading)
                     }
                     
                     if game.status == .finished {
@@ -335,6 +331,20 @@ struct GameSummaryView : View {
             UploadResultsView(game: $game)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
+        }
+        .alert("Delete game?", isPresented: $showDeleteConfirmation) {
+            Button("Delete", role: .destructive) {
+                Task {
+                    if (await deleteGame.run {
+                        try await auth.api.delete(game: game)
+                    }) {
+                        dismiss()
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This action cannot be undone.")
         }
     }
     
