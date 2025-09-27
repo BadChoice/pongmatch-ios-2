@@ -53,8 +53,9 @@ class ApiClient {
         ]
     }
     
-    func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:]) async throws -> T {
-        try await Self.call(method: method, url: url, params: params, headers: headers)
+    func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
+        let finalHeaders = self.headers.merging(headers) { _, new in new }
+        return try await Self.call(method: method, url: url, params: params, headers: finalHeaders)
     }
     
     func call<T:Codable,Z:Encodable>(method:HttpRequest.Method, url:String, json:Z) async throws -> T {
@@ -65,7 +66,7 @@ class ApiClient {
     static func call<T:Decodable>(method:HttpRequest.Method, url:String, params:[String:Codable] = [:], headers:[String:String] = [:]) async throws -> T {
                 
         try await withCheckedThrowingContinuation { continuation in
-            print("Calling API: \(method) \(url) \(params)")
+            print("Calling API: \(method) \(Pongmatch.url)api/\(url) \(headers) \(params)")
                         
             Http.call(method, url:Pongmatch.url + "api/" + url, params: params, headers:headers) { response in
                 do {
@@ -78,7 +79,7 @@ class ApiClient {
     }
     
     static func call<T:Codable,Z:Encodable>(method:HttpRequest.Method, url:String, json:Z, headers:[String:String] = [:]) async throws -> T {
-        try print("Calling API: \(method) \(url) \(json.jsonString())")
+        try print("Calling API: \(method) \(Pongmatch.url)api/\(url)  \(headers) \(json.jsonString())")
         
         let finalHeaders = headers.merging(["Content-Type": "application/json"]) { _, new in new }
         return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<T, Error>) -> Void in

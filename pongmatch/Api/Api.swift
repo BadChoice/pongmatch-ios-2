@@ -102,7 +102,9 @@ class Api {
                 "phone_prefix": phonePrefix ?? "",
                 "phone": phone ?? "",
                 "address": address ?? "",
-                "accept_challenges_from": acceptChallengesFrom.rawValue,
+                "accept_challenge_requests_from": acceptChallengesFrom.rawValue,
+            ], headers:[
+                "Content-Type" : "application/x-www-form-urlencoded"
             ])
             
             return response.data

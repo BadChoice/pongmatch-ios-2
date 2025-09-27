@@ -74,8 +74,8 @@ struct FriendView : View {
                 }
                 
                 Picker("Match Type", selection: $selectedSegment) {
-                    Text("Upcoming").tag(0)
-                    Text("Recent").tag(1)
+                    Text("Recent").tag(0)
+                    Text("Upcoming").tag(1)
                     if auth.user.id != user.id {
                         Text("Head to Head").tag(2)
                     }
@@ -95,7 +95,7 @@ struct FriendView : View {
                         } else if games.isEmpty {
                             Text("\(user.name) hasn't played any matches yet")
                         } else {
-                            GamesScrollViewVertical(games: games.filter { !$0.isFinished() })
+                            GamesScrollViewVertical(games: games.filter { $0.isFinished() })
                         }
                     case 1:
                         if fetchGames.loading {
@@ -107,8 +107,9 @@ struct FriendView : View {
                         } else if games.isEmpty {
                             Text("\(user.name) hasn't played any matches yet")
                         } else {
-                            GamesScrollViewVertical(games: games.filter { $0.isFinished() })
+                            GamesScrollViewVertical(games: games.filter { !$0.isFinished() })
                         }
+
                     case 2:
                         if fetchOneVsOne.loading {
                             ProgressView()

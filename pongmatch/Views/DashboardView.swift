@@ -233,32 +233,36 @@ struct GamesHomeView : View {
             }
             
             let currentGames = games.filter { $0.status == .ongoing }
-            VStack(alignment: .leading){
-                Label("Current Games", systemImage: GameStatus.ongoing.icon).font(.headline)
-                GamesScrollView(games:currentGames)
-            }.padding()
+            if !currentGames.isEmpty {
+                VStack(alignment: .leading){
+                    Label("Current Games", systemImage: GameStatus.ongoing.icon).font(.headline)
+                    GamesScrollView(games:currentGames)
+                }.padding()
+            }
             
             let challenges = games.filter { $0.status == .waitingOpponent }
-            if challenges.count > 0 {
+            if !challenges.isEmpty {
                 VStack(alignment: .leading){
-                    Text("You have been challenged!").font(.headline)
+                    Label("Pending acceptance", systemImage:"clock").font(.headline)
                     GamesScrollView(games:challenges)
                 }.padding()
             }
             
             let upcoming = games.filter { $0.status == .planned }
-            if upcoming.count > 0 {
+            if !upcoming.isEmpty {
                 VStack(alignment: .leading){
-                    Label("Next Games", systemImage: GameStatus.planned.icon).font(.headline)
+                    Label("Upcoming", systemImage: GameStatus.planned.icon).font(.headline)
                     GamesScrollView(games:upcoming)
                 }.padding()
             }
             
-            VStack(alignment: .leading){
-                Label("Finished Games", systemImage: GameStatus.finished.icon).font(.headline)
-                GamesScrollView(games:games.filter { $0.isFinished()
-                })
-            }.padding()
+            let finished = games.filter { $0.isFinished() }
+            if !finished.isEmpty {
+                VStack(alignment: .leading){
+                    Label("Finished Games", systemImage: GameStatus.finished.icon).font(.headline)
+                    GamesScrollView(games: finished)
+                }.padding()
+            }
         }
         .task {
             Task {

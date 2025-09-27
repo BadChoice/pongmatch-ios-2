@@ -28,6 +28,15 @@ struct UserHeaderView : View {
                 
                 if showDetails {
                     
+                    if let address = user.address {
+                        HStack(spacing: 2) {
+                            Label(address, systemImage: "mappin.and.ellipse")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                    }
+                    
                     if let deepDetails = user.deepDetails {
                         HStack(spacing: 2) {
                             Text("\(deepDetails.followers)").bold()

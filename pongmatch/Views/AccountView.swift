@@ -14,10 +14,8 @@ struct AccountView : View {
     @State private var showImagePicker = false
     @State private var inputImage: UIImage? = nil
     
-    @State private var saving = false
-    @State private var savingAvatar = false
-    
-    @State private var errorMessage: String? = nil
+    @State private var savingAvatar = ApiAction()
+    @State private var savingProfile = ApiAction()
     
     var body: some View {
         Form {
@@ -44,7 +42,7 @@ struct AccountView : View {
                                 .resizable()
                                 .frame(width: 100, height: 100)
                         }
-                        if savingAvatar {
+                        if savingAvatar.loading {
                             ProgressView()
                         }
                         
@@ -115,24 +113,21 @@ struct AccountView : View {
                 
             }
             Section {
-                if saving {
-                    ProgressView()
-                } else {
-                    HStack {
-                        Spacer()
-                        Button {
-                            Task { await saveProfile() }
-                        } label: {
-                            HStack{
-                                if saving { ProgressView() }
-                                Text("Save")
-                            }
+                HStack {
+                    Spacer()
+                    Button {
+                        Task { await saveProfile() }
+                    } label: {
+                        HStack {
+                            if savingProfile.loading { ProgressView() }
+                            Text("Save")
                         }
-                        Spacer()
                     }
+                    .disabled(savingProfile.loading)
+                    Spacer()
                 }
                 
-                if let errorMessage = errorMessage {
+                if let errorMessage = savingProfile.errorMessage {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
@@ -151,13 +146,8 @@ struct AccountView : View {
             if let newImage = newImage {
                 avatarImage = Image(uiImage: newImage)
                 Task {
-                    savingAvatar = true
-                    defer { savingAvatar = false }
-                    do{
-                        let newUser = try await auth.api.uploadAvatar(newImage)
-                        auth.user = newUser
-                    } catch {
-                        
+                    await savingAvatar.run {
+                        auth.user = try await auth.api.uploadAvatar(newImage)
                     }
                 }
             }
@@ -168,10 +158,8 @@ struct AccountView : View {
     }
     
     private func saveProfile() async{
-        saving = true
-        defer { saving = false  }
-        do {
-            let updatedUser = try await auth.api.updateProfile(
+        let saved = await savingProfile.run {
+            auth.user = try await auth.api.updateProfile(
                 name: name,
                 language: language,
                 timeZone: TimeZone.current.identifier,
@@ -180,10 +168,10 @@ struct AccountView : View {
                 address: address,
                 acceptChallengesFrom: acceptChallengesFrom
             )
-            auth.user = updatedUser
+        }
+        
+        if saved {
             dismiss()
-        } catch {
-            errorMessage = "Failed to save profile: \(error)"
         }
     }
 }

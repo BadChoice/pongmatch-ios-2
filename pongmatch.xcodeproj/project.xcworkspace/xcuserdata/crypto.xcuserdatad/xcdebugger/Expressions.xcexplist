@@ -10,5 +10,19 @@
             </PersistentString>
          </PersistentStrings>
       </ContextState>
+      <ContextState
+         contextName = "HttpRequest.generate():HttpRequest.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "buildBody()">
+            </PersistentString>
+            <PersistentString
+               value = "request.httpBody">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AccountView.saveProfile():AccountView.swift">
+      </ContextState>
    </ContextStates>
 </VariablesViewState>

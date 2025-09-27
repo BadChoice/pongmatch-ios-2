@@ -412,6 +412,11 @@ struct GameSummaryView : View {
             .font(.largeTitle.bold())
             .tracking(2)
             
+            Text("Use this code to start this match scoreboard in another device.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                
+            
             Divider().padding(.vertical)
         }
     }
