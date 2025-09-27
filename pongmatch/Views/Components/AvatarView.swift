@@ -70,6 +70,7 @@ struct AvatarView: View {
     }
 }
 
+
 struct WinnerIconView : View {
     var body: some View {
         GeometryReader { geo in
@@ -117,3 +118,4 @@ struct WinnerIconView : View {
         winner: true
     )
 }
+
