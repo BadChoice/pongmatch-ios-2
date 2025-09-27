@@ -63,6 +63,7 @@ struct HowItWorksView: View {
                 communityCard
                 comingSoonCard
                 supportCard
+                shareCard // Final section: share the app
 
                 Spacer(minLength: 8)
 
@@ -158,6 +159,7 @@ struct HowItWorksView: View {
             .accessibilityElement(children: .contain)
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -199,6 +201,7 @@ struct HowItWorksView: View {
             )
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -235,6 +238,7 @@ struct HowItWorksView: View {
             )
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -278,6 +282,7 @@ struct HowItWorksView: View {
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -319,6 +324,7 @@ struct HowItWorksView: View {
             )
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -350,6 +356,7 @@ struct HowItWorksView: View {
             )
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -390,6 +397,7 @@ struct HowItWorksView: View {
                 .foregroundStyle(.secondary)
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -463,6 +471,7 @@ struct HowItWorksView: View {
                 .foregroundStyle(.secondary)
         }
         .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemBackground))
@@ -473,6 +482,43 @@ struct HowItWorksView: View {
                 .opacity(0.5)
         )
         .accessibilityLabel("Support development. Buy me a Coffee.")
+    }
+
+    // MARK: Share
+
+    private var shareCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Share Pongmatch")
+                .font(.headline)
+
+            ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
+                LinkRow(
+                    symbol: "square.and.arrow.up",
+                    title: "Share App Store link",
+                    detail: "Invite friends on iOS to download the app."
+                )
+            }
+
+            Link(destination: URL(string: Pongmatch.url)!) {
+                LinkRow(
+                    symbol: "link",
+                    title: "Open website",
+                    detail: "Share with friends on Android or desktop: \(Pongmatch.url)"
+                )
+            }
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color(.separator), lineWidth: 0.5)
+                .opacity(0.5)
+        )
+        .accessibilityLabel("Share Pongmatch")
     }
 }
 
