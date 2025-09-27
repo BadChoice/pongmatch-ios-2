@@ -3,7 +3,6 @@ import SwiftUI
 struct AvatarView: View {
     
     @State private var image: UIImage?
-    @State private var is404: Bool = false
     
     let url: String?
     let name: String?
@@ -26,12 +25,7 @@ struct AvatarView: View {
     
     var body: some View {
         GeometryReader { geo in
-            if url == nil {
-                // No custom avatar URL -> use Gravatar
-                GravatarView(email: email)
-                    .frame(width: geo.size.width, height: geo.size.height)
-                    .clipShape(Circle())
-            } else if let image {
+            if let image {
                 Image(uiImage: image)
                     .resizable()
                     .scaledToFill()
@@ -41,8 +35,7 @@ struct AvatarView: View {
                 ZStack {
                     Circle()
                         .fill(.gray)
-                    // Only show initials if we specifically detected a 404
-                    if is404, let name {
+                    if let name {
                         Text(name.prefix(2).uppercased())
                             .font(.system(size: geo.size.width * 0.4, weight: .bold))
                             .minimumScaleFactor(0.5)
@@ -64,27 +57,34 @@ struct AvatarView: View {
                 WinnerIconView()
             }
         }
-        .id(url) // keep identity keyed to the avatar URL
-        .task(id: url) {
-            // Reset state whenever the URL changes
+        // Keep identity keyed to both avatar URL and email (so we refetch if email changes)
+        .id(identityKey)
+        .task(id: identityKey) {
+            // Reset state whenever the URL or email changes
             await MainActor.run {
                 image = nil
-                is404 = false
             }
             
-            guard let resolvedURL = Images.avatar(url) else { return }
+            // 1) Try custom avatar URL if present
+            if let customURL = Images.avatar(url) {
+                if let downloadedImage = await Images.download(customURL) {
+                    await MainActor.run { image = downloadedImage }
+                    return
+                }
+            }
             
-            // Load (or fetch from cache) the new image, capturing status code
-            let result = await Images.downloadWithStatus(resolvedURL)
-            await MainActor.run {
-                if let downloadedImage = result.image {
+            // 2) Try Gravatar with d=404 so we can detect absence
+            if let downloadedImage = await Gravatar.fetch(email: email) {
+                await MainActor.run {
                     image = downloadedImage
-                } else if result.statusCode == 404 {
-                    // Explicitly mark 404 so we render initials
-                    is404 = true
                 }
             }
         }
+    }
+    
+    // Combine url+email to force refresh when either changes
+    private var identityKey: String {
+        "\(url ?? "nil")|\(email ?? "nil")"
     }
 }
 
@@ -121,7 +121,7 @@ struct WinnerIconView : View {
         AvatarView(
             url: nil,
             name: "Jordi Puigdellívol",
-            email: "jordi+pongmatch@gloobus.net"
+            email: "jordi@gloobus.net"
         )
         
         AvatarView(
@@ -136,5 +136,3 @@ struct WinnerIconView : View {
         )
     }
 }
-
-
