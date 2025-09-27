@@ -422,23 +422,6 @@ struct HowItWorksView: View {
                 title: "Leagues",
                 detail: "Season‑style competitions with fixtures and tables."
             )
-
-            Divider().padding(.vertical, 4)
-
-            // Keep a secondary link here as well for discoverability
-            NavigationLink {
-                BuyMeACoffeeView()
-            } label: {
-                LinkRow(
-                    symbol: "cup.and.saucer.fill",
-                    title: "Buy me a Coffee",
-                    detail: "Support development and help bring these features sooner."
-                )
-            }
-
-            Text("These features are in active development and will roll out in upcoming versions.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
         }
         .padding(16)
         .background(
@@ -545,6 +528,7 @@ private struct LinkRow: View {
                 Text(detail)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
