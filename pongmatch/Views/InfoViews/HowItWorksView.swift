@@ -11,48 +11,31 @@ struct HowItWorksView: View {
         let symbol: String
     }
 
-    private let steps: [Step] = [
+    // A short, scannable quick-start
+    private let quickSteps: [Step] = [
         .init(
             number: 1,
             title: "Create or select players",
-            detail: "Add friends or play a quick match anonymously. You can start a match anytime.",
+            detail: "Start with friends or a quick anonymous match.",
             symbol: "person.crop.circle.badge.plus"
         ),
         .init(
             number: 2,
-            title: "Start a match and keep score",
-            detail: "Tap the player panels to add points. Undo/redo keeps scoring accurate.",
-            symbol: "plus.circle"
+            title: "Choose rules & match type",
+            detail: "Pick winning condition and Ranked or Friendly.",
+            symbol: "slider.horizontal.3"
         ),
         .init(
             number: 3,
-            title: "Use Apple Watch or external buttons",
-            detail: "Keep score hands‑free from your wrist or with a small Bluetooth remote.",
-            symbol: "applewatch"
+            title: "Keep score as you play",
+            detail: "Tap the player panels, or use Apple Watch/external buttons.",
+            symbol: "plus.circle"
         ),
         .init(
             number: 4,
-            title: "Mirror the live scoreboard",
-            detail: "AirPlay to a TV or share your screen so everyone can follow along.",
-            symbol: "airplayvideo"
-        ),
-        .init(
-            number: 5,
-            title: "Finish and save the result",
-            detail: "End the match to store the score, sets and winner in your history.",
+            title: "Finish and save",
+            detail: "End the match to store the result, sets and winner.",
             symbol: "checkmark.seal"
-        ),
-        .init(
-            number: 6,
-            title: "Review stats and head‑to‑head",
-            detail: "Track progress, compare with friends and see who leads each rivalry.",
-            symbol: "chart.line.uptrend.xyaxis"
-        ),
-        .init(
-            number: 7,
-            title: "Organize tournaments & leagues",
-            detail: "Coming soon: create brackets, round‑robins and longer leagues to crown a champion.",
-            symbol: "trophy"
         )
     ]
 
@@ -66,19 +49,20 @@ struct HowItWorksView: View {
                         .font(.title).bold()
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Text("Keep score easily, track your progress, compare with friends, and soon—run tournaments and leagues.")
+                    Text("A quick guide to playing, scoring, tracking your progress, and what’s coming next.")
                         .font(.callout)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                stepsCard
-                liveScoreboardCard
-                friendsAndHeadToHeadCard
-                statsCard
-                controlsCard
-                supportCard      // Prominent CTA
-                comingSoonCard   // Still includes a smaller link
+                quickStartCard
+                beforeYouPlayCard
+                duringMatchCard
+                handsFreeControlsCard
+                afterMatchCard
+                communityCard
+                comingSoonCard
+                supportCard
 
                 Spacer(minLength: 8)
 
@@ -156,14 +140,22 @@ struct HowItWorksView: View {
         .accessibilityLabel("Score matches, see stats and play with friends")
     }
 
-    private var stepsCard: some View {
+    // MARK: Quick start
+
+    private var quickStartCard: some View {
         VStack(alignment: .leading, spacing: 16) {
-            ForEach(steps) { step in
-                StepRow(step: step)
-                if step.number != steps.count {
-                    Divider().padding(.leading, 44)
+            Text("Quick start")
+                .font(.headline)
+
+            VStack(alignment: .leading, spacing: 16) {
+                ForEach(quickSteps) { step in
+                    StepRow(step: step)
+                    if step.number != quickSteps.count {
+                        Divider().padding(.leading, 44)
+                    }
                 }
             }
+            .accessibilityElement(children: .contain)
         }
         .padding(16)
         .background(
@@ -175,18 +167,60 @@ struct HowItWorksView: View {
                 .strokeBorder(Color(.separator), lineWidth: 0.5)
                 .opacity(0.5)
         )
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Getting started")
+        .accessibilityLabel("Quick start")
     }
 
-    private var liveScoreboardCard: some View {
+    // MARK: Before you play
+
+    private var beforeYouPlayCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Live and easy scoreboard")
+            Text("Before you play")
+                .font(.headline)
+
+            FeatureRow(
+                symbol: "slider.horizontal.3",
+                title: "Pick rules & match type",
+                detail: "Choose the winning condition and whether the match is Ranked or Friendly."
+            )
+            FeatureRow(
+                symbol: "rosette",
+                title: "Ranked matches",
+                detail: "Affect your global ELO. Use for competitive games that should impact standings."
+            )
+            FeatureRow(
+                symbol: "person.2.circle",
+                title: "Friendly matches",
+                detail: "Do not affect ELO. Perfect for practice or casual play."
+            )
+            FeatureRow(
+                symbol: "checkmark.seal",
+                title: "Fair and transparent",
+                detail: "The scoreboard enforces rules consistently. Undo/redo keeps scoring accurate."
+            )
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color(.separator), lineWidth: 0.5)
+                .opacity(0.5)
+        )
+        .accessibilityLabel("Before you play")
+    }
+
+    // MARK: During the match
+
+    private var duringMatchCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("During the match")
                 .font(.headline)
 
             FeatureRow(
                 symbol: "rectangle.fill.on.rectangle.fill",
-                title: "Big, clear score",
+                title: "Big, clear scoreboard",
                 detail: "Tap to add points. Match point and server indicators keep things clear."
             )
             FeatureRow(
@@ -210,81 +244,10 @@ struct HowItWorksView: View {
                 .strokeBorder(Color(.separator), lineWidth: 0.5)
                 .opacity(0.5)
         )
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Live and easy scoreboard")
+        .accessibilityLabel("During the match")
     }
 
-    private var friendsAndHeadToHeadCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Friends & head‑to‑head")
-                .font(.headline)
-
-            FeatureRow(
-                symbol: "person.2",
-                title: "Add friends",
-                detail: "Track matches with friends and see everyone’s progress."
-            )
-            FeatureRow(
-                symbol: "chart.line.uptrend.xyaxis",
-                title: "Head‑to‑head",
-                detail: "See who leads each rivalry and how it evolves over time."
-            )
-            FeatureRow(
-                symbol: "rosette",
-                title: "Leaderboards",
-                detail: "Compare win rate and streaks across your group."
-            )
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(Color(.separator), lineWidth: 0.5)
-                .opacity(0.5)
-        )
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Friends and head‑to‑head")
-    }
-
-    private var statsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Stats & insights")
-                .font(.headline)
-
-            FeatureRow(
-                symbol: "percent",
-                title: "Win rate",
-                detail: "Track your performance across sets and matches."
-            )
-            FeatureRow(
-                symbol: "flame",
-                title: "Streaks",
-                detail: "See hot streaks and momentum over time."
-            )
-            FeatureRow(
-                symbol: "square.grid.2x2",
-                title: "Per‑set breakdown",
-                detail: "Analyze sets and games to understand trends."
-            )
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(Color(.separator), lineWidth: 0.5)
-                .opacity(0.5)
-        )
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Stats and insights")
-    }
-
-    private var controlsCard: some View {
+    private var handsFreeControlsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Hands‑free controls")
                 .font(.headline)
@@ -324,11 +287,123 @@ struct HowItWorksView: View {
                 .strokeBorder(Color(.separator), lineWidth: 0.5)
                 .opacity(0.5)
         )
-        .accessibilityElement(children: .contain)
         .accessibilityLabel("Hands‑free controls")
     }
 
-    // Prominent support card with a large CTA button
+    // MARK: After the match
+
+    private var afterMatchCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("After the match")
+                .font(.headline)
+
+            FeatureRow(
+                symbol: "checkmark.seal",
+                title: "Save the result",
+                detail: "Finish the match to store the score, sets and winner."
+            )
+            FeatureRow(
+                symbol: "chart.line.uptrend.xyaxis",
+                title: "Stats & insights",
+                detail: "Track win rate, streaks, and per‑set breakdowns to understand your progress."
+            )
+            FeatureRow(
+                symbol: "person.2",
+                title: "Head‑to‑head",
+                detail: "See who leads each rivalry and how it evolves over time."
+            )
+            FeatureRow(
+                symbol: "chart.bar.fill",
+                title: "ELO basics",
+                detail: "Beating higher‑rated players gains more points; losing to lower‑rated players costs more. Only ranked matches change ELO."
+            )
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color(.separator), lineWidth: 0.5)
+                .opacity(0.5)
+        )
+        .accessibilityLabel("After the match")
+    }
+
+    // MARK: Community
+
+    private var communityCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Community & progress")
+                .font(.headline)
+
+            FeatureRow(
+                symbol: "person.crop.circle.badge.plus",
+                title: "Follow other players",
+                detail: "Add friends to see their progress and compare results."
+            )
+            FeatureRow(
+                symbol: "rosette",
+                title: "Leaderboards",
+                detail: "Compare rankings, win rate and streaks across your group."
+            )
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color(.separator), lineWidth: 0.5)
+                .opacity(0.5)
+        )
+        .accessibilityLabel("Community and progress")
+    }
+
+    // MARK: Coming soon
+
+    private var comingSoonCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("What’s next (coming soon)")
+                .font(.headline)
+
+            FeatureRow(
+                symbol: "trophy",
+                title: "Tournaments & leagues",
+                detail: "Brackets, round‑robins and long‑form leagues to crown a champion."
+            )
+            FeatureRow(
+                symbol: "circle.grid.3x3",
+                title: "Round‑robins",
+                detail: "Everyone plays everyone for fair standings."
+            )
+            FeatureRow(
+                symbol: "calendar",
+                title: "Leagues",
+                detail: "Season‑style competitions with fixtures and tables."
+            )
+
+            Text("These features are in active development and will roll out in upcoming versions.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color(.separator), lineWidth: 0.5)
+                .opacity(0.5)
+        )
+        .accessibilityLabel("What’s next, coming soon")
+    }
+
+    // MARK: Support
+
     private var supportCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Support development")
@@ -397,44 +472,7 @@ struct HowItWorksView: View {
                 .strokeBorder(Color(.separator), lineWidth: 0.5)
                 .opacity(0.5)
         )
-        .accessibilityElement(children: .contain)
         .accessibilityLabel("Support development. Buy me a Coffee.")
-    }
-
-    private var comingSoonCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Clear, explicit title
-            Text("What’s next (coming soon)")
-                .font(.headline)
-
-            FeatureRow(
-                symbol: "trophy",
-                title: "Tournaments & leagues",
-                detail: "Brackets, round‑robins and long‑form leagues to crown a champion."
-            )
-            FeatureRow(
-                symbol: "circle.grid.3x3",
-                title: "Round‑robins",
-                detail: "Everyone plays everyone for fair standings."
-            )
-            FeatureRow(
-                symbol: "calendar",
-                title: "Leagues",
-                detail: "Season‑style competitions with fixtures and tables."
-            )
-        }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(Color(.secondarySystemBackground))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(Color(.separator), lineWidth: 0.5)
-                .opacity(0.5)
-        )
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("What’s next, coming soon")
     }
 }
 
