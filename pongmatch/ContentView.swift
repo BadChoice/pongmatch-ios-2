@@ -9,18 +9,11 @@ import SwiftUI
 import SwiftData
 
 
-/**
- [ ] Push notifications
- [ ] Follow / Unfollow users
- [ ] Finish and upload game from watch.
- [ ] Return avatar full url in UserResource $user->avatarUrl()
- [ ] TODO: send notification to User as he has a new follower
- */
-
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
     @StateObject private var auth = AuthViewModel()
+    @State private var showWhatsNew = false
     
     var body: some View {
         Group {
@@ -31,6 +24,17 @@ struct ContentView: View {
             }
         }
         .environmentObject(auth)
+        .task {
+            if WhatsNewManager.shouldShow() {
+                showWhatsNew = true
+            }
+        }
+        .sheet(isPresented: $showWhatsNew) {
+            WhatsNewView {
+                WhatsNewManager.markShown()
+                showWhatsNew = false
+            }        
+        }
     }
 }
 
