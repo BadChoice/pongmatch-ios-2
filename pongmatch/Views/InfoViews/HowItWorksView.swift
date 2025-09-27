@@ -27,8 +27,8 @@ struct HowItWorksView: View {
         ),
         .init(
             number: 3,
-            title: "Keep score as you play",
-            detail: "Tap the player panels, or use Apple Watch/external buttons.",
+            title: "Track live or upload results",
+            detail: "Keep score in real time (phone, Apple Watch, or external buttons) — or just enter the final score afterward.",
             symbol: "plus.circle"
         ),
         .init(
