@@ -77,7 +77,8 @@ struct HowItWorksView: View {
                 friendsAndHeadToHeadCard
                 statsCard
                 controlsCard
-                comingSoonCard
+                supportCard      // Prominent CTA
+                comingSoonCard   // Still includes a smaller link
 
                 Spacer(minLength: 8)
 
@@ -327,15 +328,89 @@ struct HowItWorksView: View {
         .accessibilityLabel("Hands‑free controls")
     }
 
+    // Prominent support card with a large CTA button
+    private var supportCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Support development")
+                .font(.headline)
+
+            Text("Enjoying the app? Tips help keep it fast, clean, and bring tournaments & leagues sooner.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            NavigationLink {
+                BuyMeACoffeeView()
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "cup.and.saucer.fill")
+                        .font(.headline.weight(.semibold))
+                        .accessibilityHidden(true)
+                    Text("Buy me a Coffee")
+                        .font(.headline)
+                        .bold()
+                    Spacer(minLength: 8)
+                    Image(systemName: "chevron.right")
+                        .font(.subheadline.weight(.semibold))
+                        .opacity(0.9)
+                        .accessibilityHidden(true)
+                }
+                .padding(.vertical, 14)
+                .padding(.horizontal, 14)
+                .frame(maxWidth: .infinity)
+                .foregroundStyle(.white)
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.brown.opacity(0.95),
+                                    Color.orange.opacity(0.9)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .overlay(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.08), .clear],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                )
+                .shadow(color: Color.black.opacity(0.10), radius: 10, x: 0, y: 6)
+                .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            }
+            .accessibilityIdentifier("howItWorks.buyCoffeeCTA")
+
+            Text("100% of your tip goes to development. Thank you! ❤️")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(Color(.separator), lineWidth: 0.5)
+                .opacity(0.5)
+        )
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("Support development. Buy me a Coffee.")
+    }
+
     private var comingSoonCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Tournaments & leagues")
+            // Clear, explicit title
+            Text("What’s next (coming soon)")
                 .font(.headline)
 
             FeatureRow(
                 symbol: "trophy",
-                title: "Brackets & finals",
-                detail: "Knockout brackets that crown a champion."
+                title: "Tournaments & leagues",
+                detail: "Brackets, round‑robins and long‑form leagues to crown a champion."
             )
             FeatureRow(
                 symbol: "circle.grid.3x3",
@@ -345,8 +420,21 @@ struct HowItWorksView: View {
             FeatureRow(
                 symbol: "calendar",
                 title: "Leagues",
-                detail: "Long‑form competitions with tables and fixtures."
+                detail: "Season‑style competitions with fixtures and tables."
             )
+
+            Divider().padding(.vertical, 4)
+
+            // Keep a secondary link here as well for discoverability
+            NavigationLink {
+                BuyMeACoffeeView()
+            } label: {
+                LinkRow(
+                    symbol: "cup.and.saucer.fill",
+                    title: "Buy me a Coffee",
+                    detail: "Support development and help bring these features sooner."
+                )
+            }
 
             Text("These features are in active development and will roll out in upcoming versions.")
                 .font(.footnote)
@@ -363,7 +451,7 @@ struct HowItWorksView: View {
                 .opacity(0.5)
         )
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Tournaments and leagues")
+        .accessibilityLabel("What’s next, coming soon")
     }
 }
 
