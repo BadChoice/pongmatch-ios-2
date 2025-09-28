@@ -809,6 +809,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -859,6 +860,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -1082,7 +1084,7 @@
 				INFOPLIST_FILE = "pongmatch-watch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Track match activity";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = io.codepassion.pongmatch;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
@@ -1121,7 +1123,7 @@
 				INFOPLIST_FILE = "pongmatch-watch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
-				INFOPLIST_KEY_NSHealthShareUsageDescription = "Track match activity";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = io.codepassion.pongmatch;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
