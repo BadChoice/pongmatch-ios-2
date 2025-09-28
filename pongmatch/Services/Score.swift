@@ -66,11 +66,15 @@ class Score: Codable {
     init(game:Game) {
         self.game = game
         self.firstServer = Player(rawValue: .random(in: 0...1))!
+        self.score = initialScore()
     }
     
     var player1:User { game.player1 }
     var player2:User { game.player2 }
     
+    private func initialScore() -> Result {
+        game.initial_score.initialResult(for: game.player1, player2: game.player2)
+    }
     
     func player(_ player:Player) -> User {
         player == .player1 ? player1 : player2
@@ -160,7 +164,7 @@ class Score: Codable {
             return gameFinished()
         }
         
-        score       = Result()
+        score       = initialScore()
         firstServer = Player(rawValue:(firstServer.rawValue + 1) % 2)!
         history     = []
     }
@@ -187,7 +191,7 @@ class Score: Codable {
     
     func reset(){
         sets = []
-        score = Result()
+        score = initialScore()
         history = []
         redoHistory = []
         firstServer = Player(rawValue: Int.random(in: 0...1))!

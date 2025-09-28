@@ -49,7 +49,7 @@ struct User : Codable {
             name:"Jordi Puigdellívol",
             username:"badchoice",
             email:"jordi+pongmatch@gloobus.net",
-            ranking:1500,
+            ranking:1510,
             avatar:"http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png",
             language: .english,
             games_won: 102,
@@ -60,6 +60,26 @@ struct User : Codable {
             phone: nil,
             address: nil,
             accept_challenge_requests_from: .everybody,
+        )
+    }
+    
+    static func opponent() -> User {
+        User(
+            id:1,
+            name:"Gerard Miralles",
+            username:"gmirall",
+            email:"gerard@revo.works",
+            ranking:1505,
+            avatar:nil,
+            language: .english,
+            games_won: 80,
+            games_lost: 31,
+            last_match_date: Date(),
+            friendship: FriendshipStatus(isFollowed: true, followsMe: true),
+            phone_prefix: nil,
+            phone: nil,
+            address: nil,
+            accept_challenge_requests_from: .followers,
         )
     }
     

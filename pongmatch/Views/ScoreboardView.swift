@@ -39,7 +39,7 @@ struct ScoreboardView : View {
                         // Header
                         Spacer().frame(height:20)
                         HStack(spacing: 25) {
-                            /* Label("Standard", systemImage:"bird.fill") */
+                            Label(syncedScore.score.game.initial_score.description, systemImage: InitialScore.icon)
                             Label(syncedScore.score.game.ranking_type.description, systemImage: RankingType.icon)
                             Label(syncedScore.score.game.winning_condition.description, systemImage: WinningCondition.icon)
                         }

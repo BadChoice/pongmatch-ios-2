@@ -64,6 +64,7 @@ struct ScoreboardSelectionView : View {
                     Button {
                         onSelect(
                             Game(
+                                initial_score: initialScore,
                                 ranking_type: rankingType,
                                 winning_condition: winCondition,
                                 status: .ongoing,

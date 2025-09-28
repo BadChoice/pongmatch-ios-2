@@ -9,6 +9,13 @@ enum RankingType : String, Codable, CaseIterable, CustomStringConvertible {
         }
     }
     
+    var icon:String{
+        switch self {
+        case .competitive: "trophy.fill"
+        case .friendly: "hand.wave"
+        }
+    }
+    
     // A short help text explaining how this affects ranking.
     var help: String {
         switch self {

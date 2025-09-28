@@ -74,8 +74,10 @@ struct GameSummaryView : View {
                 
                 VStack(spacing: 10) {
                     HStack {
-                                                
-                        /* Label("Standard", systemImage:"bird.fill") */
+  
+                        Label(game.initial_score.description, systemImage: InitialScore.icon)
+                        Spacer()
+
                         Label(game.ranking_type.description, systemImage: RankingType.icon)
                         Spacer()
                         Label(game.winning_condition.description, systemImage: WinningCondition.icon)
@@ -134,7 +136,7 @@ struct GameSummaryView : View {
                             Button {
                                 showScoreboard.toggle()
                             } label: {
-                                Label("Scoreboard", systemImage: "square.split.2x1")
+                                Label("Start Scoreboard", systemImage: "square.split.2x1")
                             }
                             .padding()
                             .foregroundStyle(.white)
@@ -155,6 +157,13 @@ struct GameSummaryView : View {
                     }
                     publicScoreboardCodeView
                 }
+                
+                
+                if game.status == .planned && game.ranking_type == .competitive {
+                    ExpectedEloResults(game: game)
+                        .padding()
+                }
+                
                 Spacer()
             }
         }
@@ -163,9 +172,9 @@ struct GameSummaryView : View {
             ToolbarItem(placement: .topBarTrailing){
                 Menu {
                     if game.status == .waitingOpponent {
-                        Button("Edit game", systemImage: "pencil") {
+                        /*Button("Edit game", systemImage: "pencil") {
                             //TODO
-                        }
+                        }*/
                         
                         Button("Delete", systemImage: "trash", role: .destructive) {
                             showDeleteConfirmation = true
@@ -173,11 +182,11 @@ struct GameSummaryView : View {
                         .disabled(deleteGame.loading)
                     }
                     
-                    if game.status == .finished {
+                    /*if game.status == .finished {
                         Button("Dispute result", systemImage: "flag") {
                             //TODO
                         }
-                    }
+                    }*/
                 } label: {
                     Image(systemName: "ellipsis")
                 }

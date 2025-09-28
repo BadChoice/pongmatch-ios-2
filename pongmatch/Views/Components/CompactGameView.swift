@@ -6,8 +6,7 @@ struct CompactGameView: View {
     var body: some View {
         VStack {
             HStack() {
-                /* Label("Standard", systemImage:"bird.fill") */
-                
+                //Label(game.initial_score.description, systemImage: InitialScore.icon)
                 Label(game.winning_condition.description, systemImage: WinningCondition.icon)
                 Spacer()
                 Label(game.ranking_type.description, systemImage: RankingType.icon)

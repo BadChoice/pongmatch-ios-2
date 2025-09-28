@@ -42,6 +42,15 @@ enum WinningCondition : String, Codable, CaseIterable, CustomStringConvertible {
         }
     }
     
+    var icon:String {
+        switch self {
+        case .single: "1.circle.fill"
+        case .bestof3: "3.circle.fill"
+        case .bestof5: "5.circle.fill"
+        case .bestof7: "7.circle.fill"
+        }
+    }
+    
     // A short help text explaining the selected condition.
     var help: String {
         let base = "First to \(setsToWin) set\(setsToWin == 1 ? "" : "s") wins."
