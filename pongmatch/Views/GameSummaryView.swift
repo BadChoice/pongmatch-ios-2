@@ -136,7 +136,7 @@ struct GameSummaryView : View {
                             Button {
                                 showScoreboard.toggle()
                             } label: {
-                                Label("Scoreboard", systemImage: "square.split.2x1")
+                                Label("Start Scoreboard", systemImage: "square.split.2x1")
                             }
                             .padding()
                             .foregroundStyle(.white)
