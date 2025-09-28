@@ -24,6 +24,13 @@ enum InitialScore : String, Codable, CaseIterable, CustomStringConvertible {
         }
     }
     
+    var eloConstant:Int {
+        switch self {
+        case .standard: 32
+        case .fair: 16
+        }
+    }
+    
     
     static var title:String {
         "Initial Score"
@@ -35,7 +42,6 @@ enum InitialScore : String, Codable, CaseIterable, CustomStringConvertible {
     
     func initialResult(for player1:User?, player2:User?) -> Score.Result
     {
-        return Score.Result(4, 0)
         if self == .standard {
             return Score.Result()
         }

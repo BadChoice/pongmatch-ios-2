@@ -157,6 +157,13 @@ struct GameSummaryView : View {
                     }
                     publicScoreboardCodeView
                 }
+                
+                
+                if game.status == .planned && game.ranking_type == .competitive {
+                    ExpectedEloResults(game: game)
+                        .padding()
+                }
+                
                 Spacer()
             }
         }
