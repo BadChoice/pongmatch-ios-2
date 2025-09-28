@@ -1,4 +1,5 @@
 import SwiftUI
+import Playgrounds
 
 @Observable
 class Score: Codable {
@@ -192,3 +193,7 @@ class Score: Codable {
         firstServer = Player(rawValue: Int.random(in: 0...1))!
     }
 }
+
+//#Playground {
+  //  Score.Result(10, 12).isValid() // true
+//}
