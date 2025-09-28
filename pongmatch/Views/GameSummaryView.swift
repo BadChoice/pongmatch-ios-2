@@ -74,8 +74,10 @@ struct GameSummaryView : View {
                 
                 VStack(spacing: 10) {
                     HStack {
-                                                
-                        /* Label("Standard", systemImage:"bird.fill") */
+  
+                        Label(game.initial_score.description, systemImage: InitialScore.icon)
+                        Spacer()
+
                         Label(game.ranking_type.description, systemImage: RankingType.icon)
                         Spacer()
                         Label(game.winning_condition.description, systemImage: WinningCondition.icon)
@@ -163,9 +165,9 @@ struct GameSummaryView : View {
             ToolbarItem(placement: .topBarTrailing){
                 Menu {
                     if game.status == .waitingOpponent {
-                        Button("Edit game", systemImage: "pencil") {
+                        /*Button("Edit game", systemImage: "pencil") {
                             //TODO
-                        }
+                        }*/
                         
                         Button("Delete", systemImage: "trash", role: .destructive) {
                             showDeleteConfirmation = true
@@ -173,11 +175,11 @@ struct GameSummaryView : View {
                         .disabled(deleteGame.loading)
                     }
                     
-                    if game.status == .finished {
+                    /*if game.status == .finished {
                         Button("Dispute result", systemImage: "flag") {
                             //TODO
                         }
-                    }
+                    }*/
                 } label: {
                     Image(systemName: "ellipsis")
                 }

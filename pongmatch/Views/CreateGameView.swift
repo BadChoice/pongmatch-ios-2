@@ -115,6 +115,7 @@ struct CreateGameView : View {
         
         do {
             let _ = try await auth.api.store(game: Game(
+                initial_score: initialScore,
                 ranking_type: rankingType,
                 winning_condition: winningCondition,
                 status: .waitingOpponent,
