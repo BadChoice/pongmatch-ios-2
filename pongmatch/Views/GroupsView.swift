@@ -54,6 +54,19 @@ struct GroupsView : View {
                 groups = try await auth.api.groups()
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("", systemImage: "plus") {
+                    //searchingUsers = true
+                }
+            }
+            
+            ToolbarItem(placement: .topBarTrailing ){
+                ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
+                    Label("Share", systemImage: "square.and.arrow.up")
+                }
+            }
+        }
     }
     
 }
