@@ -471,6 +471,24 @@ class Api {
     }
     
     //MARK: Groups
+    func createGroup(name:String, description:String?, isPrivate:Bool) async throws -> PMGroup {
+        struct Response:Codable {
+            let data:PMGroup
+        }
+            
+        do {
+            let response:Response = try await client.call(method: .post, url: "groups", params:[
+                "name" : name,
+                "description" : description ?? "",
+                "private" : isPrivate ? 1 : 0
+            ])
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     func groups() async throws -> [PMGroup] {
         struct Response:Codable {
             let data:[PMGroup]
