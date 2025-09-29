@@ -6,6 +6,7 @@ struct GroupsView : View {
     
     @State var fetchingGroups = ApiAction()
     @State var groups:[PMGroup] = []
+    @State var showCreateGroup:Bool = false
     
     var body: some View {
         List {
@@ -17,26 +18,26 @@ struct GroupsView : View {
             if fetchingGroups.loading {
                 ProgressView()
             } else {
+                
+                if groups.isEmpty {
+                    ContentUnavailableView {
+                        Label("You are not a member of any groups yet", systemImage: "person.2")
+                    } description: {
+                        Text("Create or join a group to start playing with friends!")
+                    } actions:{
+                        Button("Create group") {
+                            showCreateGroup = true
+                        }
+                    }
+                }
+                
+                
                 ForEach(groups, id:\.id) { group in
                     NavigationLink {
-                        EmptyView()
+                        GroupView(group: group)
                     } label: {
                         HStack(spacing: 12) {
-                            AsyncImage(url: Images.group(group.photo)) { image in
-                                image
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 40, height: 40)
-                                    .clipShape(Circle())
-                            } placeholder: {
-                                ZStack {
-                                    Circle().fill(Color.gray.opacity(0.2))
-                                    Image(systemName: "person.3.fill")
-                                        .foregroundColor(.gray)
-                                }
-                                .frame(width: 40, height: 40)
-                            }
-                            
+                            GroupImage(group: group)
                             VStack(alignment: .leading) {
                                 Text(group.name)
                                     .font(.headline)
@@ -57,7 +58,7 @@ struct GroupsView : View {
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button("", systemImage: "plus") {
-                    //searchingUsers = true
+                    showCreateGroup = true
                 }
             }
             
@@ -68,7 +69,33 @@ struct GroupsView : View {
             }
         }
     }
+}
+
+struct GroupImage:View {
+    let group:PMGroup
+    let size:Double
     
+    init(group:PMGroup, size:Double = 40) {
+        self.group = group
+        self.size = size
+    }
+    
+    var body: some View {
+        AsyncImage(url: Images.group(group.photo)) { image in
+            image
+                .resizable()
+                .scaledToFill()
+                .frame(width: size, height: size)
+                .clipShape(Circle())
+        } placeholder: {
+            ZStack {
+                Circle().fill(Color.gray.opacity(0.2))
+                Image(systemName: "person.3.fill")
+                    .foregroundColor(.gray)
+            }
+            .frame(width: size, height: size)
+        }
+    }
 }
 
 #Preview {

@@ -485,6 +485,20 @@ class Api {
         }
     }
     
+    func groupUsers(_ group:PMGroup) async throws -> [User] {
+        struct Response:Codable {
+            let data:[User]
+        }
+            
+        do {
+            let response:Response = try await client.call(method: .get, url: "groups/\(group.id)/users")
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     //MARK: Feedbak
     func sendFeedback(_ message:String) async throws {
         struct Response : Codable { }
