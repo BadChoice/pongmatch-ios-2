@@ -7,6 +7,7 @@ struct GroupsView : View {
     @State var fetchingGroups = ApiAction()
     @State var groups:[PMGroup] = []
     @State var showCreateGroup:Bool = false
+    @State private var newGroupToNavigate: PMGroup? = nil
     
     var body: some View {
         List {
@@ -18,7 +19,6 @@ struct GroupsView : View {
             if fetchingGroups.loading {
                 ProgressView()
             } else {
-                
                 if groups.isEmpty {
                     ContentUnavailableView {
                         Label("You are not a member of any groups yet", systemImage: "person.2")
@@ -30,7 +30,6 @@ struct GroupsView : View {
                         }
                     }
                 }
-                
                 
                 ForEach(groups, id:\.id) { group in
                     NavigationLink {
@@ -50,6 +49,14 @@ struct GroupsView : View {
                 }
             }
         }
+        .navigationDestination(isPresented: Binding(
+            get: { newGroupToNavigate != nil },
+            set: { active in if !active { newGroupToNavigate = nil } }
+        )) {
+            if let group = newGroupToNavigate {
+                GroupView(group: group)
+            }
+        }
         .task {
             let _ = await fetchingGroups.run {
                 groups = try await auth.api.groups()
@@ -66,6 +73,94 @@ struct GroupsView : View {
                 ShareLink(item: URL(string: Pongmatch.appStoreUrl)!) {
                     Label("Share", systemImage: "square.and.arrow.up")
                 }
+            }
+        }
+        .sheet(isPresented: $showCreateGroup) {
+            CreateGroupSheet(
+                isPresented: $showCreateGroup,
+                onCreated: { newGroup in
+                    // Add to list and navigate
+                    groups.append(newGroup)
+                    newGroupToNavigate = newGroup
+                }
+            )
+            .environmentObject(auth)
+        }
+    }
+}
+
+private struct CreateGroupSheet: View {
+    @EnvironmentObject var auth: AuthViewModel
+    
+    @Binding var isPresented: Bool
+    var onCreated: (PMGroup) -> Void
+
+    @State private var name = ""
+    @State private var description = ""
+    @State private var isPrivate = true
+    @State private var isCreating = false
+    @State private var errorMessage: String?
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Name", text: $name)
+                    TextField("Description", text: $description)
+                    Toggle("Private group", isOn: $isPrivate)
+                }
+                if let errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                }
+            }
+            .disabled(isCreating)
+            .navigationTitle("Create Group")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { isPresented = false }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Create") {
+                        createGroup()
+                    }
+                    .disabled(
+                        name.trimmingCharacters(in: .whitespaces).isEmpty ||
+                        description.trimmingCharacters(in: .whitespaces).isEmpty  ||
+                        isCreating
+                    )
+                }
+            }
+            .overlay {
+                if isCreating {
+                    ZStack {
+                        Color.black.opacity(0.1).ignoresSafeArea()
+                        ProgressView()
+                    }
+                }
+            }
+        }
+    }
+
+    func createGroup() {
+        errorMessage = nil
+        isCreating = true
+        Task {
+            do {
+                let group = try await auth.api.createGroup(
+                    name: name.trimmingCharacters(in: .whitespaces),
+                    description: description.trimmingCharacters(in: .whitespaces).isEmpty ? nil : description,
+                    isPrivate: isPrivate
+                )
+                isCreating = false
+                isPresented = false
+                // Delay to allow sheet to dismiss before navigating
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    onCreated(group)
+                }
+            } catch {
+                errorMessage = error.localizedDescription
+                isCreating = false
             }
         }
     }
