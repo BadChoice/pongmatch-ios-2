@@ -12,6 +12,14 @@ struct Images {
         return URL(string: "\(Pongmatch.url)storage/avatars/\(avatar)")
     }
     
+    static func group(_ photo:String?) -> URL? {
+        guard let photo else { return nil }
+        if photo.hasPrefix("http") { return URL(string: photo) }
+        
+        return URL(string: "\(Pongmatch.url)storage/groups/\(photo)")
+    }
+    
+    
     // Download or retrieve cached image
     static func download(_ url: URL?, skipCache:Bool = false) async -> UIImage? {
         guard let url = url else { return nil }

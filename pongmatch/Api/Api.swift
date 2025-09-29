@@ -58,6 +58,7 @@ class Api {
         return response.token
     }
     
+    //MARK: Me
     func me() async throws -> User {
         struct UserResponse : Codable {
             var data:User
@@ -138,6 +139,7 @@ class Api {
     
     }
     
+    //MARK: Users and Friends
     func deepDetails(_ user:User) async throws -> UserDeepDetails {
         do {
             let userResponse:UserDeepDetails = try await client.call(method: .get, url: "users/\(user.id)/deepDetails")
@@ -289,6 +291,7 @@ class Api {
         }
     }
     
+    //MARK: Games
     func games() async throws -> [Game] {
         struct GamesResponse : Codable {
             let data:[Game]
@@ -467,6 +470,22 @@ class Api {
         }
     }
     
+    //MARK: Groups
+    func groups() async throws -> [PMGroup] {
+        struct Response:Codable {
+            let data:[PMGroup]
+        }
+            
+        do {
+            let response:Response = try await client.call(method: .get, url: "groups")
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    //MARK: Feedbak
     func sendFeedback(_ message:String) async throws {
         struct Response : Codable { }
         

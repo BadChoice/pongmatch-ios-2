@@ -6,7 +6,8 @@ struct DashboardView : View {
     enum TabSelection : Int {
         case home       = 1
         case community  = 2
-        case search     = 3
+        case groups     = 3
+        case search     = 4
     }
     
     @EnvironmentObject private var auth: AuthViewModel
@@ -57,6 +58,12 @@ struct DashboardView : View {
                 Tab("Community", systemImage: "person.3", value:.community) {
                     NavigationStack(path: $communityPath) {
                         Community()
+                    }
+                }
+                
+                Tab("Groups", systemImage: "person.2", value:.groups) {
+                    NavigationStack(path: $communityPath) {
+                        GroupsView()
                     }
                 }
                 

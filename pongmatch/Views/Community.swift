@@ -97,7 +97,7 @@ struct Community : View {
         TabView
         {
             Community()
-                .tabItem { Image(systemName: "person.3")}
+                .tabItem { Image(systemName: "person.3") }
         }
     }.environmentObject(auth)
 }
