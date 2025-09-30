@@ -40,6 +40,10 @@ struct User : Codable {
         }
     }
     
+    var isUnknown: Bool {
+        id == 0
+    }
+    
     // MARK: Factory
     static func me() -> User {
         User(
@@ -82,11 +86,12 @@ struct User : Codable {
     }
     
     static func unknown() -> User {
-        User(
+        let randomEmails = ["unknown", "random", "notknown", "nobody", "anon", "john.doe", "jane.doe", "noone"]
+        return User(
             id: 0,
             name: "Unknown",
             username:"unknown",
-            email: "unknown@codepassion.io",
+            email: "\(randomEmails.randomElement()!)@codepassion.io",
             ranking: 0,
             avatar: "https://pongmatch.app/img/default-avatar.png",
             language: .english,

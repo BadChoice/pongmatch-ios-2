@@ -48,7 +48,7 @@ class Game : Codable {
     }
     
     func hasAnUnknownPlayer() -> Bool {
-        [player1, player2].contains { $0.id == User.unknown().id }
+        [player1, player2].contains { $0.isUnknown }
     }
     
     func isFinished() -> Bool {

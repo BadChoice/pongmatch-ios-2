@@ -27,7 +27,7 @@ struct CreateGameView : View {
                     Text("VS").font(.largeTitle.bold())
                                         
                     Group {
-                        if opponent.id == User.unknown().id {
+                        if opponent.isUnknown {
                             Image(systemName: "plus.circle.dashed")
                                 .resizable()
                                 .frame(width: 60, height: 60)
@@ -80,10 +80,10 @@ struct CreateGameView : View {
                     .padding(.vertical)
                     .frame(maxWidth:.infinity)
                     .bold()
-                    .background(opponent.id == User.unknown().id ? .gray.opacity(0.2) : Color.accentColor)
+                    .background(opponent.isUnknown ? .gray.opacity(0.2) : Color.accentColor)
                     .foregroundStyle(.white)
                     .clipShape(.capsule)
-                }.disabled(creatingGame || opponent.id == User.unknown().id)
+                }.disabled(creatingGame || opponent.isUnknown)
                 
                 if let errorMessage = errorMessage {
                     Text(errorMessage)
@@ -107,7 +107,7 @@ struct CreateGameView : View {
     }
     
     private func createGame() async {
-        guard opponent.id != User.unknown().id else {
+        guard !opponent.isUnknown else {
             return
         }
         creatingGame = true

@@ -22,7 +22,7 @@ struct UserView : View {
                     .font(.headline)
                 
                 HStack {
-                    if user.id != User.unknown().id {
+                    if !user.isUnknown {
                         Text("\(user.ranking)")
                             .font(.system(size:12, weight: .bold))
                             .foregroundStyle(.white)
@@ -74,7 +74,7 @@ struct CompactUserView : View {
                         .foregroundStyle(.secondary)
                 }
                 
-                if user.id != User.unknown().id {
+                if !user.isUnknown {
                     Text("\(user.ranking)").font(.system(size:10, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(.vertical, 4)

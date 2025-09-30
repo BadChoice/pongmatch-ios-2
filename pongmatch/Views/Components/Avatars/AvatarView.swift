@@ -134,5 +134,9 @@ struct WinnerIconView : View {
             user: User.me(),
             winner: true
         )
+        
+        AvatarView(
+            user:User.unknown()
+        )
     }
 }
