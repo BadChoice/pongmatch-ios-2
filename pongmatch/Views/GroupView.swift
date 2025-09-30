@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct GroupView : View {
+the select the user we can use the SearchUsersView
     @EnvironmentObject var auth:AuthViewModel
     @Environment(\.dismiss) private var dismiss
     

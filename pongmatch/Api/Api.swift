@@ -489,6 +489,49 @@ class Api {
         }
     }
     
+    func update(group:PMGroup) async throws -> PMGroup {
+        struct Response:Codable {
+            let data:PMGroup
+        }
+        
+        do {
+            let response:Response = try await client.call(method: .put, url: "groups/\(group.id)", params:[
+                "name" : group.name,
+                "description" : group.description,
+                "private" : group.isPrivate
+            ], headers:[
+                "Content-Type" : "application/x-www-form-urlencoded"
+            ])
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func uploadGroupAvatar(_ group:PMGroup, image:UIImage) async throws -> PMGroup {
+
+        try await withCheckedThrowingContinuation { continuation in
+            struct Response : Codable {
+                let data:PMGroup
+            }
+            
+            let request = MultipartHttpRequest(method: .post, url: Pongmatch.url + "api/groups/\(group.id)/photo", headers: client.headers)
+            let _ = request.addMultipart(paramName: "avatar", fileName: "avatar.jpg", image: image.resized(to: CGSize(width: 256, height: 256)))
+            
+            Http().callMultipart(request) { response in
+                do {
+                    let result:Response = try ApiClient.parseResponse(response)
+                    return continuation.resume(returning: result.data)
+                }catch{
+                    print(error)
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    
+    }
+    
     func groups() async throws -> [PMGroup] {
         struct Response:Codable {
             let data:[PMGroup]
@@ -511,6 +554,17 @@ class Api {
         do {
             let response:Response = try await client.call(method: .get, url: "groups/\(group.id)/users")
             return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func invite(user:User, to group:PMGroup) async throws {
+        struct Response:Codable { }
+            
+        do {
+            let _:Response = try await client.call(method: .post, url: "groups/\(group.id)/invite/\(user.id)")
         } catch {
             print(error)
             throw error
