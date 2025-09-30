@@ -87,13 +87,15 @@ struct User : Codable {
     
     static func unknown() -> User {
         let randomEmails = ["unknown", "random", "notknown", "nobody", "anon", "john.doe", "jane.doe", "noone"]
+        let diceBear     = Dicebear(email:"\(randomEmails.randomElement()!)@codepassion.io", style:.bigSmile)
+        
         return User(
             id: 0,
             name: "Unknown",
             username:"unknown",
             email: "\(randomEmails.randomElement()!)@codepassion.io",
             ranking: 0,
-            avatar: "https://pongmatch.app/img/default-avatar.png",
+            avatar: diceBear.url?.absoluteString ?? "https://pongmatch.app/img/default-avatar.png",
             language: .english,
             games_won: nil,
             games_lost: nil,
