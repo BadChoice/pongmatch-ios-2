@@ -9,6 +9,20 @@ struct GroupsView : View {
     @State var showCreateGroup:Bool = false
     @State private var newGroupToNavigate: PMGroup? = nil
     
+    @StateObject var joiningGroup = ApiAction()
+    
+    var activeGroups: [PMGroup] {
+        groups.filter { $0.user.status == .active }
+    }
+    
+    var pendingGroups: [PMGroup] {
+        groups.filter { $0.user.status == .invited }
+    }
+    
+    var leftGroups: [PMGroup] {
+        groups.filter { $0.user.status == .left }
+    }
+    
     var body: some View {
         List {
             if let error = fetchingGroups.errorMessage {
@@ -31,18 +45,70 @@ struct GroupsView : View {
                     }
                 }
                 
-                ForEach(groups, id:\.id) { group in
-                    NavigationLink {
-                        GroupView(group: group)
-                    } label: {
-                        HStack(spacing: 12) {
-                            GroupImage(group: group)
-                            VStack(alignment: .leading) {
-                                Text(group.name)
-                                    .font(.headline)
-                                Text("\(group.usersCount) members")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+                Section(header: Text("You have been invited to")) {
+                    
+                    ForEach(pendingGroups, id:\.id) { group in
+                        NavigationLink {
+                            GroupView(group: group)
+                        } label: {
+                            HStack(spacing: 12) {
+                                GroupImage(group: group)
+                                VStack(alignment: .leading) {
+                                    Text(group.name)
+                                        .font(.headline)
+                                    Text("\(group.usersCount) members")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Button {
+                                    Task{
+                                        let _ = await joiningGroup.run {
+                                            let groupUpdated = try await auth.api.leave(group: group)
+                                            groups = groups.filter {
+                                                $0.id == groupUpdated.id
+                                            } + [groupUpdated]
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "exclamationmark.circle")
+                                        .font(.title)
+                                        .foregroundColor(.orange)
+                                }.disabled(joiningGroup.loading)
+                                
+                                Button {
+                                    Task{
+                                        let _ = await joiningGroup.run {
+                                            let groupUpdated = try await auth.api.join(group: group)
+                                            groups = groups.filter {
+                                                $0.id == groupUpdated.id
+                                            } + [groupUpdated]
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "checkmark.circle")
+                                        .font(.title)
+                                        .foregroundColor(.green)
+                                }.disabled(joiningGroup.loading)
+                            }
+                        }
+                    }
+                }
+                
+                Section {
+                    ForEach(activeGroups, id:\.id) { group in
+                        NavigationLink {
+                            GroupView(group: group)
+                        } label: {
+                            HStack(spacing: 12) {
+                                GroupImage(group: group)
+                                VStack(alignment: .leading) {
+                                    Text(group.name)
+                                        .font(.headline)
+                                    Text("\(group.usersCount) members")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
                     }

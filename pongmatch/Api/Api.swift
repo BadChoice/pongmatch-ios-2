@@ -517,6 +517,34 @@ class Api {
         }
     }
     
+    func join(group:PMGroup) async throws -> PMGroup {
+        struct Response:Codable {
+            let data:PMGroup
+        }
+            
+        do {
+            let response:Response = try await client.call(method: .post, url: "groups/\(group.id)/join")
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func leave(group:PMGroup) async throws -> PMGroup {
+        struct Response:Codable {
+            let data:PMGroup
+        }
+            
+        do {
+            let response:Response = try await client.call(method: .post, url: "groups/\(group.id)/leave")
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     //MARK: Feedbak
     func sendFeedback(_ message:String) async throws {
         struct Response : Codable { }
