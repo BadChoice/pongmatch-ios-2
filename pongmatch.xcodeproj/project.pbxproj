@@ -98,13 +98,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BBFB63C52E89A22F00DA4172 /* Exceptions for "pongmatch-watch Watch AppTests" folder in "pongmatch-watch Watch AppTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				"pongmatch-watch-Watch-AppTests-Info.plist",
-			);
-			target = EAE787232E6C748300FB8998 /* pongmatch-watch Watch AppTests */;
-		};
 		EACDCA682E73FC5400FACC72 /* Exceptions for "Pongmatch-widget" folder in "Pongmatch-widgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -200,9 +193,6 @@
 		};
 		EAE787272E6C748300FB8998 /* pongmatch-watch Watch AppTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BBFB63C52E89A22F00DA4172 /* Exceptions for "pongmatch-watch Watch AppTests" folder in "pongmatch-watch Watch AppTests" target */,
-			);
 			path = "pongmatch-watch Watch AppTests";
 			sourceTree = "<group>";
 		};

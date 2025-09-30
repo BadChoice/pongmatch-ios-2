@@ -2,9 +2,14 @@ import SwiftUI
 
 struct GroupView : View {
     @EnvironmentObject var auth:AuthViewModel
+    @Environment(\.dismiss) private var dismiss
     
-    let group:PMGroup
+    @State var group:PMGroup
     @State var users:[User] = []
+    @State var showConfirmDismissAlert = false
+    @State var showConfirmDeleteGroup = false
+    
+    @StateObject var joiningGroup = ApiAction()
     
     var body: some View {
         List {
@@ -18,7 +23,7 @@ struct GroupView : View {
                     if group.user.isAdmin {
                         Spacer()
                         NavigationLink {
-                            //GroupEditView(group: group)
+                            EditGroupView(group: $group)
                         } label: {
                             Image(systemName: "pencil")
                         }
@@ -26,13 +31,18 @@ struct GroupView : View {
                         .navigationLinkIndicatorVisibility(.hidden)
                     }
                 }
-                    
+                
                 if let description = group.description, !description.isEmpty {
                     Text("\(group.description ?? "")")
                         .foregroundStyle(.secondary)
                         .padding(.top, 4)
                 }
             }
+            
+            if group.user.status == .invited {
+                joinSection
+            }
+                
             
             if users.isEmpty {
                 Section {
@@ -75,7 +85,7 @@ struct GroupView : View {
                     }
                     else {
                         Button {
-                            // Leave group
+                            showConfirmDismissAlert.toggle()
                         } label: {
                             Label("Leave Group", systemImage: "rectangle.portrait.and.arrow.right")
                         }
@@ -83,6 +93,72 @@ struct GroupView : View {
                 } label: {
                     Image(systemName: "ellipsis")
                 }
+            }
+        }
+        .alert("Leave Group", isPresented: $showConfirmDismissAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Leave", role: .destructive) {
+                leaveGroup()
+            }
+        } message: {
+            Text("Are you sure you want to leave this group?")
+        }
+    }
+    
+    private var joinSection : some View {
+        Section {
+            HStack {
+                Spacer()
+                Button {
+                    showConfirmDismissAlert.toggle()
+                } label: {
+                    Text("Leave")
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 8)
+                        .foregroundColor(.red)
+                }
+                .disabled(joiningGroup.loading)
+                .buttonStyle(.plain)
+                
+
+                Spacer().frame(width: 60)
+                
+                Button {
+                    joinGroup()
+                } label: {
+                    Text("JOIN")
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 8)
+                        .background(Color.accentColor)
+                        .foregroundStyle(.white)
+                        .cornerRadius(8)
+                }
+                .disabled(joiningGroup.loading)
+                
+                .buttonStyle(.plain)
+                
+                Spacer()
+            }
+            .contentShape(Rectangle())
+        }
+    }
+    
+    private func joinGroup(){
+        Task{
+            let _ = await joiningGroup.run {
+                group = try await auth.api.join(group: group)
+            }
+        }
+    }
+    
+    private func leaveGroup(){
+        Task {
+            let didLeave = await joiningGroup.run {
+                try await auth.api.leave(group: group)
+            }
+            
+            if didLeave {
+                dismiss()
             }
         }
     }
@@ -97,4 +173,3 @@ struct GroupView : View {
         GroupView(group: PMGroup.fake())
     }.environmentObject(auth)
 }
-

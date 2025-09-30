@@ -531,14 +531,11 @@ class Api {
         }
     }
     
-    func leave(group:PMGroup) async throws -> PMGroup {
-        struct Response:Codable {
-            let data:PMGroup
-        }
+    func leave(group:PMGroup) async throws {
+        struct Response:Codable { }
             
         do {
-            let response:Response = try await client.call(method: .post, url: "groups/\(group.id)/leave")
-            return response.data
+            let _:Response = try await client.call(method: .post, url: "groups/\(group.id)/leave")
         } catch {
             print(error)
             throw error

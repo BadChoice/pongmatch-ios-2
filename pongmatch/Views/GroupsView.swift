@@ -9,8 +9,6 @@ struct GroupsView : View {
     @State var showCreateGroup:Bool = false
     @State private var newGroupToNavigate: PMGroup? = nil
     
-    @StateObject var joiningGroup = ApiAction()
-    
     var activeGroups: [PMGroup] {
         groups.filter { $0.user.status == .active }
     }
@@ -45,51 +43,14 @@ struct GroupsView : View {
                     }
                 }
                 
-                Section(header: Text("You have been invited to")) {
-                    
-                    ForEach(pendingGroups, id:\.id) { group in
-                        NavigationLink {
-                            GroupView(group: group)
-                        } label: {
-                            HStack(spacing: 12) {
-                                GroupImage(group: group)
-                                VStack(alignment: .leading) {
-                                    Text(group.name)
-                                        .font(.headline)
-                                    Text("\(group.usersCount) members")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                Button {
-                                    Task{
-                                        let _ = await joiningGroup.run {
-                                            let groupUpdated = try await auth.api.leave(group: group)
-                                            groups = groups.filter {
-                                                $0.id == groupUpdated.id
-                                            } + [groupUpdated]
-                                        }
-                                    }
-                                } label: {
-                                    Image(systemName: "exclamationmark.circle")
-                                        .font(.title)
-                                        .foregroundColor(.orange)
-                                }.disabled(joiningGroup.loading)
-                                
-                                Button {
-                                    Task{
-                                        let _ = await joiningGroup.run {
-                                            let groupUpdated = try await auth.api.join(group: group)
-                                            groups = groups.filter {
-                                                $0.id == groupUpdated.id
-                                            } + [groupUpdated]
-                                        }
-                                    }
-                                } label: {
-                                    Image(systemName: "checkmark.circle")
-                                        .font(.title)
-                                        .foregroundColor(.green)
-                                }.disabled(joiningGroup.loading)
+                if !pendingGroups.isEmpty {
+                    Section(header: Text("You have been invited to")) {
+                        
+                        ForEach(pendingGroups, id:\.id) { group in
+                            NavigationLink {
+                                GroupView(group: group)
+                            } label: {
+                                groupRow(group)
                             }
                         }
                     }
@@ -100,27 +61,11 @@ struct GroupsView : View {
                         NavigationLink {
                             GroupView(group: group)
                         } label: {
-                            HStack(spacing: 12) {
-                                GroupImage(group: group)
-                                VStack(alignment: .leading) {
-                                    Text(group.name)
-                                        .font(.headline)
-                                    Text("\(group.usersCount) members")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
+                            groupRow(group)
                         }
                     }
                 }
-            }
-        }
-        .navigationDestination(isPresented: Binding(
-            get: { newGroupToNavigate != nil },
-            set: { active in if !active { newGroupToNavigate = nil } }
-        )) {
-            if let group = newGroupToNavigate {
-                GroupView(group: group)
+                
             }
         }
         .task {
@@ -151,6 +96,19 @@ struct GroupsView : View {
                 }
             )
             .environmentObject(auth)
+        }
+    }
+    
+    private func groupRow(_ group:PMGroup) -> some View {
+        HStack(spacing: 12) {
+            GroupImage(group: group)
+            VStack(alignment: .leading) {
+                Text(group.name)
+                    .font(.headline)
+                Text("\(group.usersCount) members")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }
