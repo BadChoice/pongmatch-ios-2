@@ -16,29 +16,24 @@ struct SearchOpponentView : View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    ForEach(searchResults, id: \.id) { friend in
-                        HStack{
-                            UserView(user: friend)
-                            Spacer()
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture() {
-                            onSelected(friend)
-                        }
+                if !searchText.isEmpty && searchResults.isEmpty {
+                    ContentUnavailableView {
+                        Label("No results", systemImage: "magnifyingglass")
+                    } description: {
+                        Text("Try searching for another name.")
                     }
                 }
+                
+                Section {
+                    ForEach(searchResults, id: \.id) { friend in
+                        friendRow(friend)
+                    }
+                }
+                
                 if searchText.isEmpty {
                     Section(header: Text("Recent")) {
                         ForEach(recentOpponents, id: \.id) { friend in
-                            HStack{
-                                UserView(user: friend)
-                                Spacer()
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture() {
-                                onSelected(friend)
-                            }
+                            friendRow(friend)
                         }
                     }
                 }
@@ -59,6 +54,21 @@ struct SearchOpponentView : View {
             }.unique(\.id).filter{
                 $0.canBeChallengedByMe()
             } + [User.unknown()]
+        }
+    }
+    
+    private func friendRow(_ friend:User) -> some View {
+        HStack{
+            UserView(user: friend)
+            Spacer()
+            if friend.id == selectedFriend.id {
+                Image(systemName: "checkmark")
+                    .foregroundStyle(.blue)
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture() {
+            onSelected(friend)
         }
     }
     
