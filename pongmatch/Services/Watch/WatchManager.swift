@@ -85,7 +85,7 @@ class WatchManager : NSObject, WCSessionDelegate {
     }
 
     func sessionDidDeactivate(_ session: WCSession) {
-        
+        WCSession.default.activate()
     }
     #endif
 }

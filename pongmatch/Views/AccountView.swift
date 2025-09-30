@@ -14,8 +14,8 @@ struct AccountView : View {
     @State private var showImagePicker = false
     @State private var inputImage: UIImage? = nil
     
-    @State private var savingAvatar = ApiAction()
-    @State private var savingProfile = ApiAction()
+    @StateObject private var savingAvatar = ApiAction()
+    @StateObject private var savingProfile = ApiAction()
     
     var body: some View {
         Form {

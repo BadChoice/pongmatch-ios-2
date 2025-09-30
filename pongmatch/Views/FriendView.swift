@@ -9,8 +9,8 @@ struct FriendView : View {
     //@State private var deepDetails:UserDeepDetails? = nil
     
     @State var isFollowed:Bool
-    @State var fetchGames = ApiAction()
-    @State var fetchOneVsOne = ApiAction()
+    @StateObject var fetchGames = ApiAction()
+    @StateObject var fetchOneVsOne = ApiAction()
     
     @State var games:[Game] = []
     @State var oneVsOne:Api.OneVsOne? = nil

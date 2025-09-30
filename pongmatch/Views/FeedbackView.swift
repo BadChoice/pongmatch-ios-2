@@ -8,7 +8,7 @@ struct FeedbackView : View {
     @State private var feedbackText: String = ""
     @State private var isSubmitted: Bool = false
     
-    @State private var submiteFeedback = ApiAction()
+    @StateObject private var submiteFeedback = ApiAction()
 
     var body: some View {
         VStack(spacing: 24) {

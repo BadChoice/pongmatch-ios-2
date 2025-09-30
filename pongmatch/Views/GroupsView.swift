@@ -4,7 +4,7 @@ struct GroupsView : View {
         
     @EnvironmentObject private var auth: AuthViewModel
     
-    @State var fetchingGroups = ApiAction()
+    @StateObject var fetchingGroups = ApiAction()
     @State var groups:[PMGroup] = []
     @State var showCreateGroup:Bool = false
     @State private var newGroupToNavigate: PMGroup? = nil

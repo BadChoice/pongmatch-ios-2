@@ -6,7 +6,7 @@ struct FinishGameView: View {
     @EnvironmentObject private var auth: AuthViewModel
     @Environment(\.dismiss) private var dismiss
     
-    @State private var uploadGame = ApiAction()
+    @StateObject private var uploadGame = ApiAction()
     @State private var showDiscardConfirmation = false
     
     let game: Game
@@ -95,7 +95,7 @@ struct FinishGameView: View {
                             Label("Upload game", systemImage: "checkmark")
                         }
                     }
-                    .buttonStyle(.glassProminent)
+                    .buttonStyle(uploadGame.loading ? .glassProminent : .glassProminent)
                     .disabled(uploadGame.loading)
                 }
             }

@@ -2,13 +2,14 @@ import Foundation
 import Combine
 import SwiftUI
 
-class SyncedScore:  ObservableObject, WatchContextDelegate {
+class SyncedScore: ObservableObject, WatchContextDelegate {
     static let shared = SyncedScore()
     
     @Published var score:Score!
     
     init() {
         WatchManager.shared.contextDelegate = self
+        score = retrieve()
     }
     
     func retrieve() -> Score? {

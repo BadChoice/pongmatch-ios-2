@@ -8,15 +8,15 @@ struct GameSummaryView : View {
     @Environment(\.dismiss) private var dismiss
     @Namespace private var namespace
         
-    @State private var acceptChallenge = ApiAction()
-    @State private var fetchPublicScoreboardCode = ApiAction()
-    @State private var fetchPlayersDetails = ApiAction()
-    @State private var uploadWatchResults = ApiAction()
+    @StateObject private var acceptChallenge = ApiAction()
+    @StateObject private var fetchPublicScoreboardCode = ApiAction()
+    @StateObject private var fetchPlayersDetails = ApiAction()
+    @StateObject private var uploadWatchResults = ApiAction()
     
     @State private var showUploadResultsSheet = false
     @State private var publicScoreboardCode: String? = nil
     
-    @State private var deleteGame = ApiAction()
+    @StateObject private var deleteGame = ApiAction()
     @State private var showDeleteConfirmation = false
     
     @StateObject private var calendarManager = CalendarManager()

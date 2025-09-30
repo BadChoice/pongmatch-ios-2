@@ -6,8 +6,7 @@ class ApiAction: ObservableObject {
     @Published var loading: Bool = false
     @Published var errorMessage: String? = nil
 
-    func run(_ block: () async throws -> Void) async -> Bool {
-        
+    func run(_ block: () async throws -> Void) async -> Bool {        
         loading = true
         errorMessage = nil
         do {
