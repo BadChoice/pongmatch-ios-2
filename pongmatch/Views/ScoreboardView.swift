@@ -17,8 +17,8 @@ struct ScoreboardView : View {
     var keyHandler          = GamePadInputHandler()
     var volumeButtonHandler = VolumeButtonsHandler()
     
-    var player1: Score.Player { playersSwapped ? .player2 : .player1 }
-    var player2: Score.Player { playersSwapped ? .player1 : .player2 }
+    var player1: Player { playersSwapped ? .player2 : .player1 }
+    var player2: Player { playersSwapped ? .player1 : .player2 }
     
     init(score:Score? = nil) {
         newScore = score
@@ -332,10 +332,17 @@ struct ScoreBoardActionsView:View {
 struct ScoreboardScoreView: View {
     
     let score:Score
-    let player:Score.Player
+    let player:Player
     
     var body: some View {
         VStack(alignment: .center){
+            
+            if let combo = ScoreCombo.getCombo(for: score, player: player){
+                Text(combo.description)
+            } else {
+                Text("")
+            }
+            
             Text("\(score.score.forPlayer(player))")
                 .font(.system(size: 50, weight:.bold))
                 .frame(width:200, height:180)
@@ -364,8 +371,8 @@ struct ScoreboardScoreView: View {
 struct VerticalSetsScoreView : View {
     let score:Score
     
-    let player1:Score.Player
-    let player2:Score.Player
+    let player1:Player
+    let player2:Player
     
     var body: some View {
         VStack {

@@ -39,7 +39,7 @@ struct UploadResultsView: View {
                         HStack(spacing: 8){
                             ForEach(setResults.indices, id: \ .self) { idx in
                                 VStack(alignment: .trailing){
-                                    let isValid = Score.Result(
+                                    let isValid = Result(
                                         player1:setResults[idx][0],
                                         player2: setResults[idx][1]
                                     ).isValid()
@@ -108,7 +108,7 @@ struct UploadResultsView: View {
     
     var areResultsValid: Bool {
         setResults.allSatisfy {
-            Score.Result(player1: $0[0], player2: $0[1]).isValid()
+            Result(player1: $0[0], player2: $0[1]).isValid()
         }
     }
     

@@ -14,8 +14,8 @@ struct ScoreboardView: View {
     
     var newScore:Score?
     
-    var player1: Score.Player { playersSwapped ? .player2 : .player1 }
-    var player2: Score.Player { playersSwapped ? .player1 : .player2 }
+    var player1: Player { playersSwapped ? .player2 : .player1 }
+    var player2: Player { playersSwapped ? .player1 : .player2 }
     
     init(score:Score? = nil) {
         newScore = score
@@ -187,7 +187,7 @@ struct ScoreboardView: View {
 private struct ScoreView : View {
     
     let score:Score
-    let player:Score.Player
+    let player:Player
     
     var body: some View {
         VStack{

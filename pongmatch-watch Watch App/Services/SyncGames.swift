@@ -2,7 +2,7 @@ import Foundation
 
 struct SyncGames {
     
-    static func gameFinished(_ game:Game, sets:[Score.Result]){
+    static func gameFinished(_ game:Game, sets:[Result]){
         game.results = sets.map {
             [$0.player1, $0.player2]
         }

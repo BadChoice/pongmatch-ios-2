@@ -28,7 +28,7 @@ struct TestResultIsValid {
     }
 
     private func isValidSetScore(_ a: Int, _ b: Int, target: Int = 11) -> Bool {
-        Score.Result(a, b).isValid()
+        Result(a, b).isValid()
     }
 
 }

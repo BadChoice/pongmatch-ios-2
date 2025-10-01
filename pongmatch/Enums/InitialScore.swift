@@ -40,19 +40,19 @@ enum InitialScore : String, Codable, CaseIterable, CustomStringConvertible {
         "bird.fill"
     }
     
-    func initialResult(for player1:User?, player2:User?) -> Score.Result
+    func initialResult(for player1:User?, player2:User?) -> Result
     {
         if self == .standard {
-            return Score.Result()
+            return Result()
         }
         
         guard let player1, let player2 else {
-            return Score.Result()
+            return Result()
         }
 
         let pointsDifference = abs(player1.ranking - player2.ranking)
         let initialPoints = initialPointsFor(difference: abs(pointsDifference))
-        return pointsDifference > 0 ? Score.Result(0, initialPoints) : Score.Result(initialPoints, 0)
+        return pointsDifference > 0 ? Result(0, initialPoints) : Result(initialPoints, 0)
     }
     
     private func initialPointsFor(difference:Int) -> Int {

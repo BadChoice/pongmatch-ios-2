@@ -9,7 +9,7 @@ struct EloRating {
         self.kFactor = kFactor
     }
 
-    public func calculateNewRatings(player1Rating: Int, player2Rating: Int, didWinPlayer1: Int) -> Score.Result {
+    public func calculateNewRatings(player1Rating: Int, player2Rating: Int, didWinPlayer1: Int) -> Result {
         // Work in Double for correct Elo math
         let r1 = Double(player1Rating)
         let r2 = Double(player2Rating)
@@ -30,7 +30,7 @@ struct EloRating {
         let newRatingPlayer1 = Int(newRatingPlayer1Double.rounded())
         let newRatingPlayer2 = Int(newRatingPlayer2Double.rounded())
 
-        return Score.Result(
+        return Result(
             newRatingPlayer1,
             newRatingPlayer2
         )
