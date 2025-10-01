@@ -17,12 +17,12 @@ enum ScoreCombo : CustomStringConvertible {
         switch self {
         case .perfect: "PERFECT!"
         case .matchPoint11_0: "1 Point for 11-0!"
-        case .gettingTo11_0: "11-0 is coming!"
+        case .gettingTo11_0: "11-0 coming!"
         case .matchPoint: "Match Point!"
-        case .streak9Points: "9 points streak"
-        case .streak7Points: "7 points streak"
-        case .streak5Points: "5 point streak"
-        case .streak3Points: "3 points streak"
+        case .streak9Points: "9 Points Streak"
+        case .streak7Points: "7 Points Streak"
+        case .streak5Points: "5 Point Streak"
+        case .streak3Points: "3 Points Streak"
         }
     }
         

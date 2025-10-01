@@ -358,10 +358,10 @@ struct ScoreboardScoreView: View {
                 .clipShape(.capsule)
             }
         }
-        .padding(.top, 18)
+        .padding(.top, 24)
         .overlay(alignment:.top){
             ComboBadgeView(combo: ScoreCombo.getCombo(for: score, player: player))
-                .offset(y:-14)
+                .offset(y:-8)
         }
     }
 }
