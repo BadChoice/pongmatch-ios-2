@@ -78,9 +78,15 @@ private struct FlameShape: Shape {
         let h = rect.height
         
         // Base and tip positions
-        let baseY = rect.maxY - h * 0.04
         let leftBaseX = rect.minX + w * 0.22
         let rightBaseX = rect.maxX - w * 0.22
+        let baseWidth = rightBaseX - leftBaseX
+        let radius = baseWidth * 0.5
+        
+        // Default base is near the bottom; raise it if needed so the semicircle fits inside rect.
+        let margin = h * 0.02
+        let baseYDefault = rect.maxY - h * 0.04
+        let baseY = min(baseYDefault, rect.maxY - radius - margin)
         
         let tipX = rect.midX + sway * w * 0.12
         let tipY = rect.minY + h * (0.10 + 0.06 * (1.0 - taper))
@@ -100,8 +106,16 @@ private struct FlameShape: Shape {
         p.move(to: leftBase)
         p.addCurve(to: tip, control1: c1L, control2: c2L)
         p.addCurve(to: rightBase, control1: c2R, control2: c1R)
-        // Slightly concave bottom
-        p.addQuadCurve(to: leftBase, control: CGPoint(x: rect.midX, y: rect.maxY - h * 0.02))
+        
+        // Semicircular bottom from rightBase back to leftBase.
+        // Centered at (midX, baseY), radius equals half the base width.
+        // Counterclockwise draws the lower half in iOS/tvOS coordinate space (y grows down).
+        p.addArc(center: CGPoint(x: rect.midX, y: baseY),
+                 radius: radius,
+                 startAngle: .degrees(0),
+                 endAngle: .degrees(180),
+                 clockwise: false)
+        
         p.closeSubpath()
         return p
     }
@@ -115,11 +129,14 @@ private struct FlameShape: Shape {
             .frame(width: 84, height: 120)
         HStack(spacing: 16) {
             FlameStreakView(speed: 1.0)
+                .frame(width:50, height:50)
             FlameStreakView(speed: 1.8)
+                .frame(width:50, height:50)
             FlameStreakView(speed: 2.4)
+                .frame(width:50, height:50)
             FlameStreakView(speed: 5)
-        }
-        .frame(height: 80)
+                .frame(width:50, height:50)
+        }        
     }
     .padding()
 }

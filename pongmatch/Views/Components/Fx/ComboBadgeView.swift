@@ -8,7 +8,7 @@ struct ComboBadgeView : View{
         HStack (alignment:.center) {
             if let combo {
                 FlameStreakView(speed:6 * combo.intensity)
-                    .frame(width: 30, height:30)
+                    .frame(width: 25, height:25)
                     .offset(y:-5)
                 
                 Text(combo.description)
