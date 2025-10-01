@@ -122,5 +122,4 @@ private struct FlameShape: Shape {
         .frame(height: 80)
     }
     .padding()
-    .background(Color(white: 0.1))
 }
