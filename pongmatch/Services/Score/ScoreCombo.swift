@@ -15,7 +15,7 @@ enum ScoreCombo : CustomStringConvertible {
         switch self {
         case .perfect: "PERFECT!"
         case .perfectMatchPoint: "1 Point for PERFECT!"
-        case .roadToPerfect: "Perfect's coming..."
+        case .roadToPerfect: "Perfect's coming!"
         case .matchPoint: "Match Point!"
         case .pointsStreak(_): "Points Streak"
         }
@@ -35,13 +35,13 @@ enum ScoreCombo : CustomStringConvertible {
         }
     }
     
-    var font:Font {
+    var fontSize:CGFloat {
         switch self {
-        case .perfect: .title2.weight(.heavy)
-        case .perfectMatchPoint: .title2.weight(.heavy)
-        case .roadToPerfect: .title2.bold()
-        case .matchPoint: .title2.weight(.heavy)
-        case .pointsStreak(_) : .footnote.weight(.heavy)
+        case .perfect: 13
+        case .perfectMatchPoint: 10
+        case .roadToPerfect: 12
+        case .matchPoint: 12
+        case .pointsStreak(_) : 10
         }
     }
     
