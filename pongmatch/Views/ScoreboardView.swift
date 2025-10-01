@@ -29,7 +29,7 @@ struct ScoreboardView : View {
             ZStack {
                 BackgroundBlurredImage(user:syncedScore.score?.player1)
                 //Color.white.opacity(0.45).ignoresSafeArea()
-                VStack(spacing: 10){
+                VStack(spacing: 14){
                     if syncedScore.score == nil {
                         Spacer()
                         ProgressView()
@@ -229,7 +229,7 @@ struct ScoreBoardActionsView:View {
     var body: some View {
         if syncedScore.score == nil {
             EmptyView()
-        }else{
+        } else {
             GlassEffectContainer(spacing: 40.0) {
                 HStack {
                     if syncedScore.score.history.count == 0 {
@@ -336,9 +336,6 @@ struct ScoreboardScoreView: View {
     
     var body: some View {
         VStack(alignment: .center){
-                        
-            ComboBadgeView(combo: ScoreCombo.getCombo(for: score, player: player))
-                        
             Text("\(score.score.forPlayer(player))")
                 .font(.system(size: 50, weight:.bold))
                 .frame(width:200, height:180)
@@ -360,6 +357,11 @@ struct ScoreboardScoreView: View {
                 .background(.red)
                 .clipShape(.capsule)
             }
+        }
+        .padding(.top, 18)
+        .overlay(alignment:.top){
+            ComboBadgeView(combo: ScoreCombo.getCombo(for: score, player: player))
+                .offset(y:-14)
         }
     }
 }
