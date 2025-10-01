@@ -7,19 +7,13 @@ struct ComboBadgeView : View{
         
         HStack (alignment:.center) {
             if let combo {
-                WinStreakView(speed:6 * combo.intensity)
+                FlameStreakView(speed:6 * combo.intensity)
                     .frame(width: 30, height:30)
                     .offset(y:-5)
                 
                 Text(combo.description)
                     .font(combo.font)
                     .foregroundStyle(combo.color)
-                
-                if combo == .perfect {
-                    WinStreakView(speed:6 * combo.intensity)
-                    .frame(width: 30, height:30)
-                    .offset(y:-5)
-                }
             } else {
                 Spacer().frame(height:30)
             }

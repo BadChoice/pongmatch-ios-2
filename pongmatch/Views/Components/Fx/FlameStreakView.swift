@@ -2,7 +2,7 @@ import SwiftUI
 
 /// A simple, cartoony, fast‑moving win‑streak flame (3 colors: red body, yellow core, black border).
 /// Drop it anywhere and size with .frame(...).
-struct WinStreakView: View {
+struct FlameStreakView: View {
     /// Speed multiplier for animation (1.0 is fast; increase for even faster).
     var speed: Double = 1.0
     
@@ -109,15 +109,15 @@ private struct FlameShape: Shape {
 
 #Preview {
     VStack(spacing: 24) {
-        WinStreakView()
+        FlameStreakView()
             .frame(width: 56, height: 80)
-        WinStreakView(speed: 1.4)
+        FlameStreakView(speed: 1.4)
             .frame(width: 84, height: 120)
         HStack(spacing: 16) {
-            WinStreakView(speed: 1.0)
-            WinStreakView(speed: 1.8)
-            WinStreakView(speed: 2.4)
-            WinStreakView(speed: 5)
+            FlameStreakView(speed: 1.0)
+            FlameStreakView(speed: 1.8)
+            FlameStreakView(speed: 2.4)
+            FlameStreakView(speed: 5)
         }
         .frame(height: 80)
     }
