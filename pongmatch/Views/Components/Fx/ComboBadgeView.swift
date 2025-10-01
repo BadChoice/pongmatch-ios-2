@@ -5,15 +5,31 @@ struct ComboBadgeView : View{
     
     var body: some View{
         
-        HStack (alignment:.center) {
+        HStack (alignment:.center, spacing: 0) {
             if let combo {
-                FlameStreakView(speed:6 * combo.intensity)
-                    .frame(width: 25, height:25)
-                    .offset(y:-5)
-                
+                if case .pointsStreak(let streak) = combo {
+                    WinStreakView(count:streak, size:30, speed:6 * combo.flameSpeed, shakeIntensity: combo.shakeIntensity)
+                        .offset(y:-4)
+                } else {
+                    FlameStreakView(speed:6 * combo.flameSpeed)
+                        .frame(width: 25, height:25)
+                        .offset(y:-3)
+                }
                 Text(combo.description)
                     .font(combo.font)
-                    .foregroundStyle(combo.color)
+                    .foregroundStyle(Color.accent)
+                    .shake(intensity: combo.shakeIntensity, speed: 4, axis:.horizontal)
+                    .shake(intensity: combo.shakeIntensity, speed: 5, axis:.vertical)
+                
+                if case .perfect = combo {
+                    FlameStreakView(speed:6 * combo.flameSpeed)
+                        .frame(width: 25, height:25)
+                        .offset(y:-3)
+                } else if case .perfectMatchPoint = combo {
+                    FlameStreakView(speed:6 * combo.flameSpeed)
+                        .frame(width: 25, height:25)
+                        .offset(y:-3)
+                }
             } else {
                 Spacer().frame(height:30)
             }
@@ -23,17 +39,17 @@ struct ComboBadgeView : View{
 }
 
 #Preview{
-    VStack{
+    VStack(spacing: 8){
         ComboBadgeView(combo: .perfect)
-        ComboBadgeView(combo: .matchPoint11_0)
-        ComboBadgeView(combo: .gettingTo11_0)
+        ComboBadgeView(combo: .perfectMatchPoint)
+        ComboBadgeView(combo: .roadToPerfect)
         
         ComboBadgeView(combo: .matchPoint)
         
-        ComboBadgeView(combo: .streak9Points)
-        ComboBadgeView(combo: .streak7Points)
-        ComboBadgeView(combo: .streak5Points)
-        ComboBadgeView(combo: .streak3Points)
+        ComboBadgeView(combo: .pointsStreak(9))
+        ComboBadgeView(combo: .pointsStreak(7))
+        ComboBadgeView(combo: .pointsStreak(5))
+        ComboBadgeView(combo: .pointsStreak(3))
         
         ComboBadgeView(combo: nil)
     }

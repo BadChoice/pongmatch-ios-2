@@ -2,38 +2,47 @@ import SwiftUI
 
 struct WinStreakView : View {
     
-    let size:CGFloat
+    let count: Int?
+    let size: CGFloat
+    let speed: Double
+    let shakeIntensity: CGFloat
     
-    init(size:CGFloat = 50){
+    init(count: Int? = nil, size: CGFloat = 50, speed: Double = 1, shakeIntensity: CGFloat = 0) {
+        self.count = count
         self.size = size
+        self.speed = speed
+        self.shakeIntensity = shakeIntensity
     }
     
     var body: some View {
-        VStack{
+        VStack {
             ZStack {
-                FlameStreakView()
-                    .frame(width:size, height:size)
+                FlameStreakView(speed: speed)
+                    .frame(width: size, height: size)
                 
-                Text("4")
-                    .font(Font.system(size: size/2, weight: .bold, design: .default))
-                    .foregroundStyle(.white)
-                    .shadow(color: .black, radius: 3)
-                    .offset(y:5)
-                
+                if let count {
+                    Text("\(count)")
+                        .font(.custom("Impact", size: size / 2))
+                        .bold()
+                        .foregroundStyle(.white)
+                        .shadow(color: .black, radius: 2)
+                        .offset(y: size / 8)
+                        .shake(intensity: shakeIntensity, speed: 4, axis: .horizontal)
+                        .shake(intensity: shakeIntensity, speed: 5, axis: .vertical)
+                }
             }
-            //Text("WIN\nSTREAK")
-              //  .multilineTextAlignment(.center)
-                
         }
-        
     }
 }
 
 
+
 #Preview {
     HStack {
-        WinStreakView(size:40)
-        WinStreakView(size:50)
-        WinStreakView(size:80)
+        WinStreakView(size: 40, speed: 3, shakeIntensity: 1)
+        WinStreakView(count: 1, size: 40, speed: 1, shakeIntensity: 0)
+        WinStreakView(count: 1, size: 40, speed: 1, shakeIntensity: 0.5)
+        WinStreakView(count: 10, size: 50, speed: 2, shakeIntensity: 1)
+        WinStreakView(count: 100, size: 80, speed: 5, shakeIntensity: 2)
     }
 }
