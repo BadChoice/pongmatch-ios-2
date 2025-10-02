@@ -12,7 +12,7 @@ struct GamesScrollView : View {
     var body: some View {
         ScrollView(.horizontal) {
             if games.isEmpty {
-                Text("No games")
+                Text("No matches")
                     .foregroundStyle(.secondary)            
             } else {
                 LazyHStack {

@@ -242,7 +242,7 @@ struct GamesHomeView : View {
             let currentGames = games.filter { $0.status == .ongoing }
             if !currentGames.isEmpty {
                 VStack(alignment: .leading){
-                    Label("Current Games", systemImage: GameStatus.ongoing.icon).font(.headline)
+                    Label("Current Matches", systemImage: GameStatus.ongoing.icon).font(.headline)
                     GamesScrollView(games:currentGames)
                 }.padding()
             }
@@ -266,7 +266,7 @@ struct GamesHomeView : View {
             let finished = games.filter { $0.isFinished() }
             if !finished.isEmpty {
                 VStack(alignment: .leading){
-                    Label("Finished Games", systemImage: GameStatus.finished.icon).font(.headline)
+                    Label("Finished Matches", systemImage: GameStatus.finished.icon).font(.headline)
                     GamesScrollView(games: finished)
                 }.padding()
             }

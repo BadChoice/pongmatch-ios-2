@@ -12,7 +12,7 @@ struct GamesScrollViewVertical : View {
     var body: some View {
         Group {
             if games.isEmpty {
-                Text("No games")
+                Text("No matches")
                     .foregroundStyle(.secondary)
             } else {
                 LazyVStack(spacing:16) {
