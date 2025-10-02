@@ -596,6 +596,39 @@ class Api {
         }
     }
     
+    //MARK: Locations
+    func locations(latitude: Double, longitude: Double) async throws -> [Location] {
+        struct Response:Codable {
+            let data:[Location]
+        }
+                    
+        do {
+            let response:Response = try await client.call(method: .get, url: "locations", params: [
+                "latitude" : latitude,
+                "longitude" : longitude
+            ])
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    func location(id:Int) async throws -> Location {
+        struct Response:Codable {
+            let data:Location
+        }
+                    
+        do {
+            let response:Response = try await client.call(method: .get, url: "locations/\(id)")
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    
     //MARK: Feedbak
     func sendFeedback(_ message:String) async throws {
         struct Response : Codable { }

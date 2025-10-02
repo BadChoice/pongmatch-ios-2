@@ -7,7 +7,8 @@ struct DashboardView : View {
         case home       = 1
         case community  = 2
         case groups     = 3
-        case search     = 4
+        case locations  = 4
+        case search     = 5
     }
     
     @EnvironmentObject private var auth: AuthViewModel
@@ -64,6 +65,12 @@ struct DashboardView : View {
                 Tab("Groups", systemImage: "person.2", value:.groups) {
                     NavigationStack(path: $communityPath) {
                         GroupsView()
+                    }
+                }
+                
+                Tab("Locations", systemImage: "map.fill", value:.locations) {
+                    NavigationStack(path: $communityPath) {
+                        LocationsView()
                     }
                 }
                 

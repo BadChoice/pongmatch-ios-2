@@ -123,6 +123,7 @@
 				Models/Game.swift,
 				Models/GameUser.swift,
 				Models/Group.swift,
+				Models/Location.swift,
 				Models/User.swift,
 				Services/Images.swift,
 				Services/Score/Player.swift,
@@ -817,6 +818,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To find the Ping Pong tables near you";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -869,6 +871,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To find the Ping Pong tables near you";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
