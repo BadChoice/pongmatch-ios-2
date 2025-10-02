@@ -18,8 +18,8 @@ struct ComboBadgeView : View{
                 Text(combo.description)
                     .font(.system(size: combo.fontSize, weight: .heavy, design: .rounded))
                     .foregroundStyle(Color.accent)
-                    .shake(intensity: combo.shakeIntensity, speed: 4, axis:.horizontal)
-                    .shake(intensity: combo.shakeIntensity, speed: 5, axis:.vertical)
+                    .shake(intensity: combo.shakeIntensity, speed: 6, axis:.horizontal)
+                    .shake(intensity: combo.shakeIntensity, speed: 7, axis:.vertical)
                 
                 if case .perfect = combo {
                     FlameStreakView(speed:6 * combo.flameSpeed)

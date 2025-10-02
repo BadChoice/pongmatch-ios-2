@@ -38,10 +38,10 @@ enum ScoreCombo : CustomStringConvertible {
     var fontSize:CGFloat {
         switch self {
         case .perfect: 13
-        case .perfectMatchPoint: 10
-        case .roadToPerfect: 12
-        case .matchPoint: 12
-        case .pointsStreak(_) : 10
+        case .perfectMatchPoint: 11
+        case .roadToPerfect: 13
+        case .matchPoint: 13
+        case .pointsStreak(_) : 11
         }
     }
     

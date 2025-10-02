@@ -22,13 +22,13 @@ struct WinStreakView : View {
                 
                 if let count {
                     Text("\(count)")
-                        .font(.custom("Impact", size: size / 2))
+                        .font(.system(size: size/2, weight:.heavy, design:.rounded))
                         .bold()
                         .foregroundStyle(.white)
                         .shadow(color: .black, radius: 2)
                         .offset(y: size / 8)
-                        .shake(intensity: shakeIntensity, speed: 4, axis: .horizontal)
-                        .shake(intensity: shakeIntensity, speed: 5, axis: .vertical)
+                        .shake(intensity: shakeIntensity, speed: 6, axis: .horizontal)
+                        .shake(intensity: shakeIntensity, speed: 7, axis: .vertical)
                 }
             }
         }

@@ -363,8 +363,8 @@ struct ScoreboardScoreView: View {
             ComboBadgeView(combo: ScoreCombo.getCombo(for: score, player: player))
                 .offset(y:-8)
         }
-        .shake(intensity: score.isMatchPointFor(player: player) ? 1 : 0, speed: 4, axis: .horizontal)
-        .shake(intensity: score.isMatchPointFor(player: player) ? 1 : 0, speed: 5, axis: .vertical)
+        .shake(intensity: (score.isMatchPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 6, axis: .horizontal)
+        .shake(intensity: (score.isMatchPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 7, axis: .vertical)
     }
 }
 
