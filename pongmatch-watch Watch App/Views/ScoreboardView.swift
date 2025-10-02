@@ -190,21 +190,38 @@ private struct ScoreView : View {
     let player:Player
     
     var body: some View {
-        VStack{
+        VStack {
             Text("\(score.score.forPlayer(player))")
                 .font(.largeTitle)
                 .padding(.vertical, 24)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(score.isSetPointFor(player: player) ? .green : .gray)
+                .background(
+                    (ScoreCombo.isSetPointFor(score, player: player) || ScoreCombo.isWinner(score, player: player)) ? .green : .gray
+                )
                 .cornerRadius(8)
                 .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
             
                         
+            serveDots
+        }
+    }
+    
+    private var serveDots : some View {
+        Group {
             if score.server == player {
-                HStack {
-                    Image(systemName: "circle.fill").font(.system(size: 8))
-                    if score.isSecondServe {
-                        Image(systemName: "circle.fill").font(.system(size: 8))
+                Group {
+                    if score.isAtOneServeEach {
+                        Text(" __ ")
+                            .background(.white)
+                            .frame(height:8)
+                            .clipShape(.capsule)
+                    } else {
+                        HStack {
+                            Image(systemName: "circle.fill").font(.system(size: 8))
+                            if score.isSecondServe {
+                                Image(systemName: "circle.fill").font(.system(size: 8))
+                            }
+                        }
                     }
                 }
                 .foregroundStyle(.white)

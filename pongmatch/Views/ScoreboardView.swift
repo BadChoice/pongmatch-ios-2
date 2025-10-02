@@ -180,6 +180,8 @@ struct ScoreboardView : View {
                     }
                 }
             }
+            .shake(intensity: (ScoreCombo.isMatchPoint(syncedScore.score)) ? 1 : 0, speed: 6, axis: .horizontal)
+            .shake(intensity: (ScoreCombo.isMatchPoint(syncedScore.score)) ? 1 : 0, speed: 7, axis: .vertical)
         }
     }
 }
@@ -340,15 +342,40 @@ struct ScoreboardScoreView: View {
                 .font(.system(size: 50, weight:.bold))
                 .frame(width:200, height:180)
                 .foregroundStyle(.white)
-                .background(score.isSetPointFor(player: player) ? .green : Color.accentColor)
+                .background(
+                    (ScoreCombo.isSetPointFor(score, player: player) || ScoreCombo.isWinner(score, player: player)) ? .green : Color.accentColor
+                )
                 .cornerRadius(8)
                 .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
             
+            serveDots
+        }
+        .padding(.top, 24)
+        .overlay(alignment:.top){
+            ComboBadgeView(combo: ScoreCombo.getCombo(for: score, player: player))
+                .offset(y:-8)
+        }
+        .shake(intensity: (ScoreCombo.isSetPointFor(score, player: player)) ? 1 : 0, speed: 6, axis: .horizontal)
+        .shake(intensity: (ScoreCombo.isSetPointFor(score, player: player)) ? 1 : 0, speed: 7, axis: .vertical)
+    }
+    
+    private var serveDots : some View {
+        Group {
             if score.server == player {
-                HStack {
-                    Image(systemName: "circle.fill").font(.system(size: 8))
-                    if score.isSecondServe {
-                        Image(systemName: "circle.fill").font(.system(size: 8))
+                Group {
+                    if score.isAtOneServeEach {
+                        Text(" __ ")
+                            .background(.white)
+                            .frame(height:8)
+                            .clipShape(.capsule)
+                    }
+                    else{
+                        HStack {
+                            Image(systemName: "circle.fill").font(.system(size: 8))
+                            if score.isSecondServe {
+                                Image(systemName: "circle.fill").font(.system(size: 8))
+                            }
+                        }
                     }
                 }
                 .frame(width:200)
@@ -358,13 +385,6 @@ struct ScoreboardScoreView: View {
                 .clipShape(.capsule)
             }
         }
-        .padding(.top, 24)
-        .overlay(alignment:.top){
-            ComboBadgeView(combo: ScoreCombo.getCombo(for: score, player: player))
-                .offset(y:-8)
-        }
-        .shake(intensity: (score.isSetPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 6, axis: .horizontal)
-        .shake(intensity: (score.isSetPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 7, axis: .vertical)
     }
 }
 

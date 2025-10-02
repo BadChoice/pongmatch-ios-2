@@ -37,17 +37,14 @@ class Score: Codable {
     }
     
     var server:Player {
-        if score.player1 + score.player2 >= 20 {
+        if isAtOneServeEach {
             return Player(rawValue:(history.count + firstServer.rawValue) % 2)!
         }
         return Player(rawValue:(Int(history.count / 2) + firstServer.rawValue) % 2)!
     }
-        
-    func isSetPointFor(player:Player) -> Bool {
-        if player == .player1 {
-            return score.player1 >= 10 && score.player1 >= score.player2 + 1
-        }
-        return score.player2 >= 10 && score.player2 >= score.player1 + 1
+    
+    var isAtOneServeEach:Bool {
+        score.player1 + score.player2 >= 20
     }
     
     func winner() -> User? {

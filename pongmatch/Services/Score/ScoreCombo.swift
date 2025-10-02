@@ -3,9 +3,10 @@ import SwiftUI
 enum ScoreCombo : CustomStringConvertible {
     
     case perfect
-    case perfectMatchPoint
+    case perfectSetPoint
     case roadToPerfect
     
+    case matchPoint
     case setPoint
     
     case pointsStreak(_ streak: Int)
@@ -14,8 +15,9 @@ enum ScoreCombo : CustomStringConvertible {
     var description: String {
         switch self {
         case .perfect: "PERFECT!"
-        case .perfectMatchPoint: "1 Point for PERFECT!"
+        case .perfectSetPoint: "1 Point for PERFECT!"
         case .roadToPerfect: "Perfect's coming!"
+        case .matchPoint: "MATCH POINT"
         case .setPoint: "Set Point!"
         case .pointsStreak(_): "Points Streak"
         }
@@ -25,8 +27,9 @@ enum ScoreCombo : CustomStringConvertible {
     var color:Color {
         switch self {
         case .perfect: Color.green
-        case .perfectMatchPoint: Color.red
+        case .perfectSetPoint: Color.red
         case .roadToPerfect: Color.orange
+        case .matchPoint: Color.green
         case .setPoint: Color.green
         case .pointsStreak(let streak) where streak >= 9: Color.purple
         case .pointsStreak(let streak) where streak >= 7: Color.blue
@@ -38,8 +41,9 @@ enum ScoreCombo : CustomStringConvertible {
     var fontSize:CGFloat {
         switch self {
         case .perfect: 13
-        case .perfectMatchPoint: 11
+        case .perfectSetPoint: 11
         case .roadToPerfect: 13
+        case .matchPoint: 13
         case .setPoint: 13
         case .pointsStreak(_) : 11
         }
@@ -48,8 +52,9 @@ enum ScoreCombo : CustomStringConvertible {
     var flameSpeed: Double {
         switch self {
         case .perfect: 1
-        case .perfectMatchPoint: 1
+        case .perfectSetPoint: 1
         case .roadToPerfect: 0.8
+        case .matchPoint: 0.8
         case .setPoint: 0.6
         case .pointsStreak(let streak) where streak >= 9: 0.5
         case .pointsStreak(let streak) where streak >= 7: 0.4
@@ -61,8 +66,9 @@ enum ScoreCombo : CustomStringConvertible {
     var shakeIntensity: Double {
         switch self {
         case .perfect: 1
-        case .perfectMatchPoint: 1
+        case .perfectSetPoint: 1
         case .roadToPerfect: 0.8
+        case .matchPoint: 0.5
         case .setPoint: 0.2
         case .pointsStreak(let streak) where streak >= 9: 0.5
         case .pointsStreak(let streak) where streak >= 7: 0.3
@@ -73,8 +79,9 @@ enum ScoreCombo : CustomStringConvertible {
     
     static func getCombo(for score:Score, player:Player) -> ScoreCombo? {
         if isPerfectFor(score, player: player)              { return .perfect }
-        if isPerfectMatchPoint(score, player: player)       { return .perfectMatchPoint }
+        if isPerfectSetPoint(score, player: player)         { return .perfectSetPoint }
         if isRoadToPerfectFor(score, player: player)        { return .roadToPerfect }
+        if isMatchPointFor(score, player: player)           { return .matchPoint }
         if isSetPointFor(score, player: player)             { return .setPoint }
         if let streak = getPointStreak(for: score, player: player) {
             return .pointsStreak(streak)
@@ -89,8 +96,26 @@ enum ScoreCombo : CustomStringConvertible {
         return score.score.player2 == score.gamePoints && score.score.player1 == 0
     }
     
+    static func isMatchPointFor(_ score:Score, player:Player) -> Bool {        
+        guard isSetPointFor(score, player: player) else { return false }
+        
+        if player == .player1 {
+            return score.setsResult.player1 == score.game.winning_condition.setsToWin - 1
+        }
+        return score.setsResult.player2 == score.game.winning_condition.setsToWin - 1
+    }
+    
+    static func isWinner(_ score:Score, player:Player) -> Bool {
+        score.winner()?.id == score.player(player).id
+    }
+    
+    static func isMatchPoint(_ score:Score?) -> Bool {
+        guard let score else { return false }
+        return isMatchPointFor(score, player: .player1) || isMatchPointFor(score, player: .player2)
+    }
+    
     static func isSetPointFor(_ score:Score, player:Player) -> Bool {
-        if score.winner() != nil { return false }
+        guard score.winner() == nil else { return false }
         
         let target = score.gamePoints - 1
         if player == .player1 {
@@ -99,7 +124,7 @@ enum ScoreCombo : CustomStringConvertible {
         return score.score.player2 >= target && score.score.player2 >= score.score.player1 + 1
     }
     
-    static func isPerfectMatchPoint(_ score:Score, player:Player) -> Bool {
+    static func isPerfectSetPoint(_ score:Score, player:Player) -> Bool {
         guard score.history.count == 10 else { return false }
         return score.history.allSatisfy { $0 == player }
     }
