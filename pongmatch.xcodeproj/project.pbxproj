@@ -813,6 +813,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = pongmatch/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
@@ -864,6 +865,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = pongmatch/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
