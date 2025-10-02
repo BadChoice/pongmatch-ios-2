@@ -44,7 +44,7 @@ struct ComboBadgeView : View{
         ComboBadgeView(combo: .perfectMatchPoint)
         ComboBadgeView(combo: .roadToPerfect)
         
-        ComboBadgeView(combo: .matchPoint)
+        ComboBadgeView(combo: .setPoint)
         
         ComboBadgeView(combo: .pointsStreak(9))
         ComboBadgeView(combo: .pointsStreak(7))

@@ -195,7 +195,7 @@ private struct ScoreView : View {
                 .font(.largeTitle)
                 .padding(.vertical, 24)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(score.isMatchPointFor(player: player) ? .green : .gray)
+                .background(score.isSetPointFor(player: player) ? .green : .gray)
                 .cornerRadius(8)
                 .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
             

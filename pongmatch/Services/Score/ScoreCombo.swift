@@ -6,7 +6,7 @@ enum ScoreCombo : CustomStringConvertible {
     case perfectMatchPoint
     case roadToPerfect
     
-    case matchPoint
+    case setPoint
     
     case pointsStreak(_ streak: Int)
 
@@ -16,7 +16,7 @@ enum ScoreCombo : CustomStringConvertible {
         case .perfect: "PERFECT!"
         case .perfectMatchPoint: "1 Point for PERFECT!"
         case .roadToPerfect: "Perfect's coming!"
-        case .matchPoint: "Match Point!"
+        case .setPoint: "Set Point!"
         case .pointsStreak(_): "Points Streak"
         }
     }
@@ -27,7 +27,7 @@ enum ScoreCombo : CustomStringConvertible {
         case .perfect: Color.green
         case .perfectMatchPoint: Color.red
         case .roadToPerfect: Color.orange
-        case .matchPoint: Color.green
+        case .setPoint: Color.green
         case .pointsStreak(let streak) where streak >= 9: Color.purple
         case .pointsStreak(let streak) where streak >= 7: Color.blue
         case .pointsStreak(let streak) where streak >= 5: Color.pink
@@ -40,7 +40,7 @@ enum ScoreCombo : CustomStringConvertible {
         case .perfect: 13
         case .perfectMatchPoint: 11
         case .roadToPerfect: 13
-        case .matchPoint: 13
+        case .setPoint: 13
         case .pointsStreak(_) : 11
         }
     }
@@ -50,7 +50,7 @@ enum ScoreCombo : CustomStringConvertible {
         case .perfect: 1
         case .perfectMatchPoint: 1
         case .roadToPerfect: 0.8
-        case .matchPoint: 0.6
+        case .setPoint: 0.6
         case .pointsStreak(let streak) where streak >= 9: 0.5
         case .pointsStreak(let streak) where streak >= 7: 0.4
         case .pointsStreak(let streak) where streak >= 5: 0.2
@@ -63,7 +63,7 @@ enum ScoreCombo : CustomStringConvertible {
         case .perfect: 1
         case .perfectMatchPoint: 1
         case .roadToPerfect: 0.8
-        case .matchPoint: 0.2
+        case .setPoint: 0.2
         case .pointsStreak(let streak) where streak >= 9: 0.5
         case .pointsStreak(let streak) where streak >= 7: 0.3
         case .pointsStreak(let streak) where streak >= 5: 0.1
@@ -72,10 +72,10 @@ enum ScoreCombo : CustomStringConvertible {
     }
     
     static func getCombo(for score:Score, player:Player) -> ScoreCombo? {
-        if isPerfectFor(score, player: player)                { return .perfect }
-        if isPerfectMatchPoint(score, player: player)         { return .perfectMatchPoint }
-        if isRoadToPerfectFor(score, player: player)       { return .roadToPerfect }
-        if isMatchPointFor(score, player: player)             { return .matchPoint }
+        if isPerfectFor(score, player: player)              { return .perfect }
+        if isPerfectMatchPoint(score, player: player)       { return .perfectMatchPoint }
+        if isRoadToPerfectFor(score, player: player)        { return .roadToPerfect }
+        if isSetPointFor(score, player: player)             { return .setPoint }
         if let streak = getPointStreak(for: score, player: player) {
             return .pointsStreak(streak)
         }
@@ -89,7 +89,7 @@ enum ScoreCombo : CustomStringConvertible {
         return score.score.player2 == score.gamePoints && score.score.player1 == 0
     }
     
-    static func isMatchPointFor(_ score:Score, player:Player) -> Bool {
+    static func isSetPointFor(_ score:Score, player:Player) -> Bool {
         if score.winner() != nil { return false }
         
         let target = score.gamePoints - 1

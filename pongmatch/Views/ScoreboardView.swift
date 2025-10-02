@@ -340,7 +340,7 @@ struct ScoreboardScoreView: View {
                 .font(.system(size: 50, weight:.bold))
                 .frame(width:200, height:180)
                 .foregroundStyle(.white)
-                .background(score.isMatchPointFor(player: player) ? .green : Color.accentColor)
+                .background(score.isSetPointFor(player: player) ? .green : Color.accentColor)
                 .cornerRadius(8)
                 .contentTransition(.numericText(value: Double(score.score.forPlayer(player))))
             
@@ -363,8 +363,8 @@ struct ScoreboardScoreView: View {
             ComboBadgeView(combo: ScoreCombo.getCombo(for: score, player: player))
                 .offset(y:-8)
         }
-        .shake(intensity: (score.isMatchPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 6, axis: .horizontal)
-        .shake(intensity: (score.isMatchPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 7, axis: .vertical)
+        .shake(intensity: (score.isSetPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 6, axis: .horizontal)
+        .shake(intensity: (score.isSetPointFor(player: player) && score.winner() == nil) ? 1 : 0, speed: 7, axis: .vertical)
     }
 }
 
