@@ -42,8 +42,11 @@ struct LocationsView: View {
         Map(position: $cameraPosition, selection: $selectedLocationId) {
             UserAnnotation()
             ForEach(locations, id: \.id) { location in
-                Marker(location.name, coordinate: LocationInMap(location: location).coordinate)
-                    .tag(location.id)
+                Marker(coordinate: LocationInMap(location: location).coordinate) {
+                    Label(location.name, systemImage: "figure.table.tennis.circle.fill")
+                }
+                .tint(location.isIndoor ? .blue : .red)
+                .tag(location.id)
             }
         }
         .mapControls {
@@ -113,10 +116,6 @@ private struct LocationInfo: View {
                         .font(.title)
                         .foregroundStyle(.primary)
                     
-                    Text(location.description ?? "")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    
                     HStack {
                         Tag("\(location.number_of_tables ?? 0)", icon: "table")
                         
@@ -127,11 +126,17 @@ private struct LocationInfo: View {
                         }
                         
                         if location.isIndoor {
-                            Tag("Indoor", icon: "house.fill")
+                            Tag("Indoor", icon: "house.fill", color: .blue)
                         } else {
-                            Tag("Outdoor", icon: "sun.max.fill")
+                            Tag("Outdoor", icon: "sun.max.fill", color: .red)
                         }
                         Spacer()
+                    }
+                                                                                             
+                    if let address = location.address {
+                        Label(address, systemImage: "mappin.and.ellipse")
+                            .foregroundStyle(.secondary)
+                            .font(.callout)
                     }
                     
                     if let instructions = location.instructions {
@@ -140,11 +145,11 @@ private struct LocationInfo: View {
                             .font(.callout)
                     }
                     
-                    if let address = location.address {
-                        Label(address, systemImage: "mappin.and.ellipse")
-                            .foregroundStyle(.secondary)
-                            .font(.callout)
-                    }
+                    Divider().padding(.vertical, 4)
+                    
+                    Text(location.description ?? "")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
                 .padding(.horizontal)
                 .frame(maxWidth: .infinity)
