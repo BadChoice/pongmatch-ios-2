@@ -22,16 +22,16 @@ struct LocationInMap : Identifiable {
 struct LocationsView: View {
     @EnvironmentObject var auth: AuthViewModel
     
-    let locationManager = CLLocationManager()
+    @State private var locationManager = LocationManager.shared
     
     @StateObject var searchingLocations = ApiAction()
     
     @State var locations:[Location] = []
     
-    @State private var region = MKCoordinateRegion(
+    /*@State private var region = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 41.7226538, longitude: 1.8178933),
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-    )
+    )*/
     
     @State private var cameraPosition:MapCameraPosition = .userLocation(fallback: .automatic)
         
@@ -52,8 +52,14 @@ struct LocationsView: View {
         .mapControls {
             MapUserLocationButton()
         }
-        .onAppear {
-            locationManager.requestWhenInUseAuthorization()
+        .overlay(alignment: .bottom) {
+            if !locationManager.isAuhtorized {
+                Label("Location access is denied. Please enable it in Settings.", systemImage: "location.slash")
+                    .padding()
+                    .glassEffect()
+                    .padding(.bottom)
+                    
+            }
         }
         //.navigationTitle("Locations")
         .toolbar {
@@ -170,7 +176,11 @@ private struct LocationInfo: View {
     auth.user = User.me()
     auth.api = FakeApi("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
     
-    return NavigationStack {
-        LocationsView()
+    return TabView {
+        Tab {
+            NavigationStack {
+                LocationsView()
+            }
+        }
     }.environmentObject(auth)
 }
