@@ -652,6 +652,29 @@ class Api {
         }
     }
     
+    func uploadLocationAvatar(_ location:Location, image:UIImage) async throws -> Location {
+
+        try await withCheckedThrowingContinuation { continuation in
+            struct Response : Codable {
+                let data:Location
+            }
+            
+            let request = MultipartHttpRequest(method: .post, url: Pongmatch.url + "api/locations/\(location.id)/photo", headers: client.headers)
+            let _ = request.addMultipart(paramName: "avatar", fileName: "avatar.jpg", image: image.resized(to: CGSize(width: 256, height: 256)))
+            
+            Http().callMultipart(request) { response in
+                do {
+                    let result:Response = try ApiClient.parseResponse(response)
+                    return continuation.resume(returning: result.data)
+                }catch{
+                    print(error)
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    
+    }
+    
     //MARK: Feedbak
     func sendFeedback(_ message:String) async throws {
         struct Response : Codable { }

@@ -1,6 +1,38 @@
 import SwiftUI
 import UIKit
 import CoreLocation
+import MapKit
+import Contacts
+
+private enum LocationInputMode: String, CaseIterable, Identifiable {
+    case current = "Current Location"
+    case address = "Address"
+    var id: Self { self }
+}
+
+private final class AddressSearchCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
+    @Published var results: [MKLocalSearchCompletion] = []
+    let completer: MKLocalSearchCompleter
+    
+    override init() {
+        self.completer = MKLocalSearchCompleter()
+        super.init()
+        completer.delegate = self
+        completer.resultTypes = .address
+    }
+    
+    func update(query: String) {
+        completer.queryFragment = query
+    }
+    
+    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        results = completer.results
+    }
+    
+    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        results = []
+    }
+}
 
 struct CreateLocationView : View {
     @EnvironmentObject var auth: AuthViewModel
@@ -30,6 +62,10 @@ struct CreateLocationView : View {
     @State private var geocoding: Bool = false
     @State private var errorMessage: String?
     @State private var showError: Bool = false
+    
+    // Location input mode + address autocomplete
+    @State private var locationInputMode: LocationInputMode = .current
+    @StateObject private var addressSearch = AddressSearchCompleter()
     
     private var latitude: Double? {
         Double(latitudeText.replacingOccurrences(of: ",", with: "."))
@@ -65,47 +101,93 @@ struct CreateLocationView : View {
             }
             
             Section("Location") {
-                HStack {
-                    Button {
-                        useCurrentLocation()
-                    } label: {
-                        Label("Use Current Location", systemImage: "location.fill")
-                    }
-                    .disabled(!locationManager.isAuhtorized && locationManager.userLocation == nil)
-                    
-                    Spacer()
-                    
-                    if geocoding {
-                        ProgressView().controlSize(.small)
+                Picker("Location Input", selection: $locationInputMode) {
+                    ForEach(LocationInputMode.allCases) { mode in
+                        Text(mode.rawValue).tag(mode)
                     }
                 }
+                .pickerStyle(.segmented)
                 
-                TextField("Address (optional, we can geocode it)", text: $address, axis: .vertical)
-                    .lineLimit(1...3)
-                
-                Button {
-                    Task { await geocodeAddress() }
-                } label: {
-                    Label("Geocode address", systemImage: "mappin.and.ellipse")
+                switch locationInputMode {
+                case .current:
+                    HStack {
+                        Button {
+                            useCurrentLocation()
+                        } label: {
+                            Label("Use Current Location", systemImage: "location.fill")
+                        }
+                        .disabled(!locationManager.isAuhtorized && locationManager.userLocation == nil)
+                        
+                        Spacer()
+                        
+                        if geocoding {
+                            ProgressView().controlSize(.small)
+                        }
+                    }
+                    
+                    if let lat = latitude, let lon = longitude {
+                        HStack {
+                            Text("Selected coordinates")
+                            Spacer()
+                            Text(String(format: "%.6f, %.6f", lat, lon))
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    
+                case .address:
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            TextField("Search for an address", text: $address, axis: .vertical)
+                                .lineLimit(1...3)
+                                .onChange(of: address) { newValue in
+                                    addressSearch.update(query: newValue)
+                                }
+                            
+                            if geocoding {
+                                ProgressView().controlSize(.small)
+                            }
+                        }
+                        
+                        if !address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !addressSearch.results.isEmpty {
+                            VStack(spacing: 0) {
+                                ForEach(Array(addressSearch.results.enumerated()), id: \.offset) { index, completion in
+                                    Button {
+                                        Task { await selectAddressCompletion(completion) }
+                                    } label: {
+                                        VStack(alignment: .leading, spacing: 2) {
+                                            Text(completion.title)
+                                                .foregroundStyle(.primary)
+                                            if !completion.subtitle.isEmpty {
+                                                Text(completion.subtitle)
+                                                    .font(.subheadline)
+                                                    .foregroundStyle(.secondary)
+                                            }
+                                        }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .contentShape(Rectangle())
+                                    }
+                                    .buttonStyle(.plain)
+                                    .padding(.vertical, 6)
+                                    
+                                    if index < addressSearch.results.count - 1 {
+                                        Divider()
+                                    }
+                                }
+                            }
+                            .padding(10)
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
+                        }
+                        
+                        if let lat = latitude, let lon = longitude {
+                            HStack {
+                                Text("Selected coordinates")
+                                Spacer()
+                                Text(String(format: "%.6f, %.6f", lat, lon))
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
                 }
-                .disabled(address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || geocoding)
-                
-                /*
-                HStack {
-                    Text("Latitude")
-                    TextField("lat", text: $latitudeText)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .foregroundStyle(latitude == nil ? .red : .primary)
-                }
-                HStack {
-                    Text("Longitude")
-                    TextField("lon", text: $longitudeText)
-                        .keyboardType(.decimalPad)
-                        .multilineTextAlignment(.trailing)
-                        .foregroundStyle(longitude == nil ? .red : .primary)
-                }
-                 */
             }
             
             Section("Details") {
@@ -182,10 +264,16 @@ struct CreateLocationView : View {
             Text(errorMessage ?? "Unknown error")
         })
         .task {
-            // Prefill with current location if available
+            // Prefill and default mode
             if let loc = locationManager.userLocation {
+                locationInputMode = .current
                 setCoordinates(from: loc.coordinate)
                 await reverseGeocodeIfNeeded(for: loc)
+                
+                // Optional: bias autocomplete around user location
+                addressSearch.completer.region = MKCoordinateRegion(center: loc.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3))
+            } else {
+                locationInputMode = .address
             }
         }
     }
@@ -246,6 +334,45 @@ struct CreateLocationView : View {
         longitudeText = String(coord.longitude)
     }
     
+    // Resolve a selected suggestion to coordinates and a formatted address
+    private func selectAddressCompletion(_ completion: MKLocalSearchCompletion) async {
+        geocoding = true
+        defer { geocoding = false }
+        
+        let request = MKLocalSearch.Request(completion: completion)
+        let search = MKLocalSearch(request: request)
+        
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            search.start { response, error in
+                if let item = response?.mapItems.first {
+                    let coord = item.placemark.coordinate
+                    setCoordinates(from: coord)
+                    
+                    if let postal = item.placemark.postalAddress {
+                        let formatted = CNPostalAddressFormatter.string(from: postal, style: .mailingAddress)
+                            .replacingOccurrences(of: "\n", with: ", ")
+                        self.address = formatted
+                    } else {
+                        let composed = [completion.title, completion.subtitle]
+                            .filter { !$0.isEmpty }
+                            .joined(separator: ", ")
+                        if !composed.isEmpty {
+                            self.address = composed
+                        }
+                    }
+                } else if let error {
+                    self.errorMessage = "Could not resolve address: \(error.localizedDescription)"
+                    self.showError = true
+                } else {
+                    self.errorMessage = "Could not resolve the selected address."
+                    self.showError = true
+                }
+                continuation.resume()
+            }
+        }
+    }
+    
+    // Fallback geocoder (not used by UI now, but kept in case you want to trigger it elsewhere)
     private func geocodeAddress() async {
         guard !address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         geocoding = true
