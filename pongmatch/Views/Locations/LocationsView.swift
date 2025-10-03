@@ -68,7 +68,7 @@ struct LocationsView: View {
         }
         .sheet(item: $selectedLocation) { location in
             LocationInfo(location: location.location)
-                .presentationDetents([.fraction(0.25), .medium])
+                .presentationDetents([.fraction(0.33), .medium])
                 .presentationDragIndicator(.visible)
         }
     }
@@ -81,12 +81,26 @@ private struct LocationInfo: View {
     @StateObject var fetchingLocation = ApiAction()
     
     var body: some View {
-        VStack {
-            Text(location.name)
+        VStack(alignment: .leading) {
             if fetchingLocation.loading {
+                Text(location.name)
+                    .font(.title)
+                    .foregroundStyle(.primary)
                 ProgressView()
-            } else{
-                Text(location.description ?? "")
+            } else {
+                AsyncImage(url: Images.location(location.photo)) { image in
+                    image.image?.resizable()
+                        .frame(height: 130)
+                }
+                VStack(alignment: .leading) {
+                    Text(location.name)
+                        .font(.title)
+                        .foregroundStyle(.primary)
+                    
+                    Text(location.description ?? "")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }.padding()
             }
         }
         .task {
