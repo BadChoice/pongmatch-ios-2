@@ -42,7 +42,7 @@ struct LocationsView: View {
             }
         }
         .ignoresSafeArea()
-        .navigationTitle("Locations")
+        //.navigationTitle("Locations")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -51,6 +51,18 @@ struct LocationsView: View {
                     Image(systemName: "plus")
                 }
             }
+            
+            ToolbarItemGroup (placement: .bottomBar) {
+                ToolbarSpacer()
+                ToolbarItem {
+                    Button {
+                        // Center on user location
+                    } label: {
+                        Image(systemName: "location.circle")
+                    }
+                }
+            }
+                
         }
         .onChange(of: selectedLocationId) { _, newValue in
             guard let id = newValue else {
@@ -68,7 +80,7 @@ struct LocationsView: View {
         }
         .sheet(item: $selectedLocation) { location in
             LocationInfo(location: location.location)
-                .presentationDetents([.fraction(0.33), .medium])
+                .presentationDetents([.fraction(0.40), .medium])
                 .presentationDragIndicator(.visible)
         }
     }
@@ -90,9 +102,9 @@ private struct LocationInfo: View {
             } else {
                 AsyncImage(url: Images.location(location.photo)) { image in
                     image.image?.resizable()
-                        .frame(height: 130)
+                        .frame(height: 150)
                 }
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(location.name)
                         .font(.title)
                         .foregroundStyle(.primary)
@@ -100,9 +112,42 @@ private struct LocationInfo: View {
                     Text(location.description ?? "")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
-                }.padding()
+                    
+                    HStack {
+                        Tag("\(location.number_of_tables ?? 0)", icon: "table")
+                        
+                        if location.isPrivate ?? false {
+                            Tag("Private", icon: "lock.fill")
+                        }else{
+                            Tag("Public", icon: "lock.open.fill")
+                        }
+                        
+                        if location.isIndoor {
+                            Tag("Indoor", icon: "house.fill")
+                        } else {
+                            Tag("Outdoor", icon: "sun.max.fill")
+                        }
+                        Spacer()
+                    }
+                    
+                    if let instructions = location.instructions {
+                        Label(instructions, systemImage: "info.circle")
+                            .foregroundStyle(.secondary)
+                            .font(.callout)
+                    }
+                    
+                    if let address = location.address {
+                        Label(address, systemImage: "mappin.and.ellipse")
+                            .foregroundStyle(.secondary)
+                            .font(.callout)
+                    }
+                }
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
             }
+            Spacer()
         }
+        .frame(maxWidth: .infinity)
         .task {
             let _ = await fetchingLocation.run {
                 location = try await auth.api!.location(id: location.id)
