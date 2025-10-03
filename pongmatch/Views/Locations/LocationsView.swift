@@ -28,15 +28,13 @@ struct LocationsView: View {
     
     @State var locations:[Location] = []
     
-    /*@State private var region = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 41.7226538, longitude: 1.8178933),
-        span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-    )*/
-    
     @State private var cameraPosition:MapCameraPosition = .userLocation(fallback: .automatic)
         
     @State private var selectedLocation:LocationInMap? = nil
     @State private var selectedLocationId:Int? = nil
+    
+    // Track last center we fetched for, to avoid spamming the API
+    @State private var lastRequestedCenter: CLLocationCoordinate2D? = nil
     
     var body: some View {
         Map(position: $cameraPosition, selection: $selectedLocationId) {
@@ -52,12 +50,30 @@ struct LocationsView: View {
         .mapControls {
             MapUserLocationButton()
         }
+        .onMapCameraChange(frequency: .onEnd) { context in
+            let center = context.region.center
+            Task { await fetchLocations(around: center) }
+        }
         .overlay(alignment: .bottom) {
             if !locationManager.isAuhtorized {
-                Label("Location access is denied. Please enable it in Settings.", systemImage: "location.slash")
-                    .padding()
-                    .glassEffect()
-                    .padding(.bottom)
+                VStack {
+                    Label("Location access is denied. Please enable it in Settings.", systemImage: "location.slash")
+                        .padding(.top, 12)
+                    Button {
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    } label: {
+                        Text("Open Settings")
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .background(Color.accentColor)
+                            .foregroundStyle(.white)
+                            .cornerRadius(8)
+                            .bold()
+                    }
+                }
+                .padding()
+                .glassEffect()
+                .padding(.bottom)
                     
             }
         }
@@ -79,17 +95,31 @@ struct LocationsView: View {
             }
             selectedLocation = LocationInMap(location: locations.first(where: { $0.id == id })!)
         }
-        .task {
-            let _ = await searchingLocations.run {
-                let foundLocations = try await auth.api!.locations(latitude: 41.7226538, longitude: 1.8178933)
-                locations.append(contentsOf: foundLocations)
-                locations = locations.unique(\.id)
-            }
-        }
         .sheet(item: $selectedLocation) { location in
             LocationInfo(location: location.location)
                 .presentationDetents([.fraction(0.40), .medium])
                 .presentationDragIndicator(.visible)
+        }
+    }
+    
+    // MARK: - Fetching
+    
+    private func shouldFetch(for center: CLLocationCoordinate2D) -> Bool {
+        guard let last = lastRequestedCenter else { return true }
+        let lastLoc = CLLocation(latitude: last.latitude, longitude: last.longitude)
+        let newLoc  = CLLocation(latitude: center.latitude, longitude: center.longitude)
+        // Only fetch if moved more than 100 meters
+        return lastLoc.distance(from: newLoc) > 100
+    }
+    
+    @MainActor
+    private func fetchLocations(around center: CLLocationCoordinate2D) async {
+        guard shouldFetch(for: center) else { return }
+        let _ = await searchingLocations.run {
+            let foundLocations = try await auth.api!.locations(latitude: center.latitude, longitude: center.longitude)
+            locations.append(contentsOf: foundLocations)
+            locations = locations.unique(\.id)
+            lastRequestedCenter = center
         }
     }
 }
