@@ -22,8 +22,10 @@ struct LocationInMap : Identifiable {
 struct LocationsView: View {
     @EnvironmentObject var auth: AuthViewModel
     
+    let locationManager = CLLocationManager()
+    
     @StateObject var searchingLocations = ApiAction()
-
+    
     @State var locations:[Location] = []
     
     @State private var region = MKCoordinateRegion(
@@ -31,17 +33,25 @@ struct LocationsView: View {
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     )
     
+    @State private var cameraPosition:MapCameraPosition = .userLocation(fallback: .automatic)
+        
     @State private var selectedLocation:LocationInMap? = nil
     @State private var selectedLocationId:Int? = nil
     
     var body: some View {
-        Map(initialPosition: .region(region), selection: $selectedLocationId) {
+        Map(position: $cameraPosition, selection: $selectedLocationId) {
+            UserAnnotation()
             ForEach(locations, id: \.id) { location in
                 Marker(location.name, coordinate: LocationInMap(location: location).coordinate)
                     .tag(location.id)
             }
         }
-        .ignoresSafeArea()
+        .mapControls {
+            MapUserLocationButton()
+        }
+        .onAppear {
+            locationManager.requestWhenInUseAuthorization()
+        }
         //.navigationTitle("Locations")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -49,17 +59,6 @@ struct LocationsView: View {
                     // Add location
                 } label: {
                     Image(systemName: "plus")
-                }
-            }
-            
-            ToolbarItemGroup (placement: .bottomBar) {
-                ToolbarSpacer()
-                ToolbarItem {
-                    Button {
-                        // Center on user location
-                    } label: {
-                        Image(systemName: "location.circle")
-                    }
                 }
             }
                 
@@ -95,10 +94,15 @@ private struct LocationInfo: View {
     var body: some View {
         VStack(alignment: .leading) {
             if fetchingLocation.loading {
+                Spacer().frame(height: 150)
                 Text(location.name)
                     .font(.title)
                     .foregroundStyle(.primary)
-                ProgressView()
+                HStack {
+                    ProgressView()
+                    EmptyView()
+                    ProgressView()
+                }
             } else {
                 AsyncImage(url: Images.location(location.photo)) { image in
                     image.image?.resizable()
