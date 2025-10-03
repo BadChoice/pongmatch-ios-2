@@ -628,6 +628,29 @@ class Api {
         }
     }
     
+    func createLocation(name:String, isPrivate:Bool, isIndoor:Bool, numberOfTables:Int, description:String, instructions:String, address:String, longitude:Double, latitude:Double) async throws -> Location {
+        struct Response:Codable {
+            let data:Location
+        }
+                    
+        do {
+            let response:Response = try await client.call(method: .post, url: "locations", params:[
+                "name" :name,
+                "private" : isPrivate,
+                "indoor" : isIndoor,
+                "number_of_tables" : numberOfTables,
+                "description" : description,
+                "instructions" : instructions,
+                "address" : address,
+                "longitude" : longitude,
+                "latitude" : latitude,
+            ])
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
     
     //MARK: Feedbak
     func sendFeedback(_ message:String) async throws {
