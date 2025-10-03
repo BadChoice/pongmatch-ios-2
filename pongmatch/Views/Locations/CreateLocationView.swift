@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import CoreLocation
 
 struct CreateLocationView : View {
@@ -89,6 +90,7 @@ struct CreateLocationView : View {
                 }
                 .disabled(address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || geocoding)
                 
+                /*
                 HStack {
                     Text("Latitude")
                     TextField("lat", text: $latitudeText)
@@ -103,6 +105,7 @@ struct CreateLocationView : View {
                         .multilineTextAlignment(.trailing)
                         .foregroundStyle(longitude == nil ? .red : .primary)
                 }
+                 */
             }
             
             Section("Details") {
@@ -135,7 +138,7 @@ struct CreateLocationView : View {
                             } label: {
                                 Label("Change photo", systemImage: "photo.on.rectangle.angled")
                             }
-                        }
+                        }.padding(.top)
                     }
                 } else {
                     Button {

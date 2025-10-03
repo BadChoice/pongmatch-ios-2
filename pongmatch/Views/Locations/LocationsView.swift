@@ -80,8 +80,8 @@ struct LocationsView: View {
         //.navigationTitle("Locations")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    // Add location
+                NavigationLink {
+                    CreateLocationView()
                 } label: {
                     Image(systemName: "plus")
                 }
