@@ -70,7 +70,11 @@ struct DisputeView : View {
 }
 
 #Preview {
-    DisputeView(
+    let auth = AuthViewModel()
+    auth.user = User.me()
+    auth.api = FakeApi("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
+    
+    return DisputeView(
         game: Game.fakeDisputed()
-    ).environmentObject(AuthViewModel())
+    ).environmentObject(auth)
 }
