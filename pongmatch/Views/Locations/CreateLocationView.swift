@@ -84,6 +84,43 @@ struct CreateLocationView : View {
     
     var body: some View {
         Form {
+            Section("Photo") {
+                if let image = selectedImage {
+                    VStack(alignment: .leading) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 180)
+                            .clipped()
+                            .cornerRadius(8)
+                        
+                        HStack {
+                            Button(role: .destructive) {
+                                selectedImage = nil
+                            } label: {
+                                Label("Remove photo", systemImage: "trash")
+                            }
+                            Spacer()
+                            Button {
+                                showImagePicker = true
+                            } label: {
+                                Label("Change photo", systemImage: "photo.on.rectangle.angled")
+                            }
+                        }.padding(.top)
+                    }
+                } else {
+                    Button {
+                        showImagePicker = true
+                    } label: {
+                        Label("Pick a photo", systemImage: "photo")
+                    }
+                }
+                
+                // NOTE: When you add the API for uploading a location photo, call it right after creation:
+                // try await auth.api.uploadLocationPhoto(createdLocation, image: selectedImage)
+            }
+            
             Section("Basic info") {
                 TextField("Name", text: $name)
                     .textContentType(.name)
@@ -197,44 +234,7 @@ struct CreateLocationView : View {
                 TextField("Instructions (how to get in, etc.)", text: $instructions, axis: .vertical)
                     .lineLimit(1...3)
             }
-            
-            Section("Photo") {
-                if let image = selectedImage {
-                    VStack(alignment: .leading) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 180)
-                            .clipped()
-                            .cornerRadius(8)
                         
-                        HStack {
-                            Button(role: .destructive) {
-                                selectedImage = nil
-                            } label: {
-                                Label("Remove photo", systemImage: "trash")
-                            }
-                            Spacer()
-                            Button {
-                                showImagePicker = true
-                            } label: {
-                                Label("Change photo", systemImage: "photo.on.rectangle.angled")
-                            }
-                        }.padding(.top)
-                    }
-                } else {
-                    Button {
-                        showImagePicker = true
-                    } label: {
-                        Label("Pick a photo", systemImage: "photo")
-                    }
-                }
-                
-                // NOTE: When you add the API for uploading a location photo, call it right after creation:
-                // try await auth.api.uploadLocationPhoto(createdLocation, image: selectedImage)
-            }
-            
             if creating.loading {
                 Section {
                     HStack {

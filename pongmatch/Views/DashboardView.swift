@@ -68,11 +68,11 @@ struct DashboardView : View {
                     }
                 }
                 
-                /*Tab("Locations", systemImage: "map.fill", value:.locations) {
+                Tab("Locations", systemImage: "map.fill", value:.locations) {
                     NavigationStack(path: $communityPath) {
                         LocationsView()
                     }
-                }*/
+                }
                 
                 if [.community, .search].contains(activeTab) {
                     Tab("Search", systemImage: "magnifyingglass", value:.search, role: .search) {
