@@ -64,6 +64,9 @@ struct CreateLocationView : View {
     // Map (iOS 17+ modern Map API)
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     
+    // Desired landscape aspect ratio for location photos
+    private let desiredPhotoAspect: CGFloat = 16.0 / 9.0
+    
     private var latitude: Double? {
         Double(latitudeText.replacingOccurrences(of: ",", with: "."))
     }
@@ -91,7 +94,7 @@ struct CreateLocationView : View {
                             .resizable()
                             .scaledToFill()
                             .frame(maxWidth: .infinity)
-                            .frame(height: 180)
+                            .frame(height: 180) // landscape preview
                             .clipped()
                             .cornerRadius(8)
                         
@@ -208,15 +211,6 @@ struct CreateLocationView : View {
                     }
                     .frame(height: 160)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
-                    
-                    /*if let coord = selectedCoordinate {
-                        HStack {
-                            Text("Selected coordinates")
-                            Spacer()
-                            Text(String(format: "%.6f, %.6f", coord.latitude, coord.longitude))
-                                .foregroundStyle(.secondary)
-                        }
-                    }*/
                 }
             }
             
@@ -249,7 +243,16 @@ struct CreateLocationView : View {
             }
         }
         .sheet(isPresented: $showImagePicker) {
-            ImagePicker(image: $selectedImage, allowsCropping: true)
+            // Disable the system’s square crop UI; we’ll crop to landscape ourselves.
+            ImagePicker(image: $selectedImage, allowsCropping: false)
+        }
+        .onChange(of: selectedImage) { _, newValue in
+            guard let img = newValue else { return }
+            let currentAspect = img.size.width / max(img.size.height, 1)
+            // Only crop if not already ~16:9
+            if abs(currentAspect - desiredPhotoAspect) > 0.02 {
+                selectedImage = img.croppedToAspect(desiredPhotoAspect)
+            }
         }
         .alert("Error", isPresented: $showError, actions: {
             Button("OK", role: .cancel) { }
@@ -407,6 +410,38 @@ struct CreateLocationView : View {
                 continuation.resume()
             }
         }
+    }
+}
+
+// MARK: - UIImage helpers
+
+private extension UIImage {
+    // aspectRatio = width / height (e.g., 16/9)
+    func croppedToAspect(_ aspectRatio: CGFloat) -> UIImage {
+        guard let cg = self.cgImage else { return self }
+        
+        let widthPx  = CGFloat(cg.width)
+        let heightPx = CGFloat(cg.height)
+        let currentAspect = widthPx / max(heightPx, 1)
+        
+        var cropWidth  = widthPx
+        var cropHeight = heightPx
+        
+        if currentAspect > aspectRatio {
+            // Too wide — limit width
+            cropWidth = heightPx * aspectRatio
+        } else {
+            // Too tall — limit height
+            cropHeight = widthPx / aspectRatio
+        }
+        
+        let x = (widthPx  - cropWidth)  / 2.0
+        let y = (heightPx - cropHeight) / 2.0
+        let cropRect = CGRect(x: x.rounded(.down), y: y.rounded(.down),
+                              width: cropWidth.rounded(.down), height: cropHeight.rounded(.down))
+        
+        guard let croppedCG = cg.cropping(to: cropRect) else { return self }
+        return UIImage(cgImage: croppedCG, scale: self.scale, orientation: self.imageOrientation)
     }
 }
 
