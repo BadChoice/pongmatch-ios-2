@@ -305,7 +305,7 @@ struct CreateLocationView : View {
                 )
                 
                 if let image = selectedImage {
-                     _ = try await auth.api!.uploadLocationPhoto(created, image: image)
+                     _ = try await auth.api!.uploadLocationAvatar(created, image: image)
                 }
                 
                 await MainActor.run {
