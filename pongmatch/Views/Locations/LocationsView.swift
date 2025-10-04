@@ -131,66 +131,83 @@ private struct LocationInfo: View {
     @StateObject var fetchingLocation = ApiAction()
     
     var body: some View {
-        VStack(alignment: .leading) {
-            if fetchingLocation.loading {
-                Spacer().frame(height: 150)
-                Text(location.name)
-                    .font(.title)
-                    .foregroundStyle(.primary)
-                HStack {
-                    ProgressView()
-                    EmptyView()
-                    ProgressView()
-                }
-            } else {
-                AsyncImage(url: Images.location(location.photo)) { image in
-                    image.image?.resizable()
-                        .frame(height: 150)
-                }
-                VStack(alignment: .leading, spacing: 8) {
+        NavigationStack {
+            VStack(alignment: .leading) {
+                if fetchingLocation.loading {
+                    Spacer().frame(height: 150)
                     Text(location.name)
                         .font(.title)
                         .foregroundStyle(.primary)
-                    
                     HStack {
-                        Tag("\(location.number_of_tables ?? 0)", icon: "table")
+                        ProgressView()
+                        EmptyView()
+                        ProgressView()
+                    }
+                } else {
+                    AsyncImage(url: Images.location(location.photo)) { image in
+                        image.image?.resizable()
+                            .frame(height: 150)
+                    }
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(location.name)
+                            .font(.title)
+                            .foregroundStyle(.primary)
                         
-                        if location.isPrivate ?? false {
-                            Tag("Private", icon: "lock.fill")
-                        }else{
-                            Tag("Public", icon: "lock.open.fill")
+                        HStack {
+                            Tag("\(location.number_of_tables ?? 0)", icon: "table")
+                            
+                            if location.isPrivate ?? false {
+                                Tag("Private", icon: "lock.fill")
+                            }else{
+                                Tag("Public", icon: "lock.open.fill")
+                            }
+                            
+                            if location.isIndoor {
+                                Tag("Indoor", icon: "house.fill", color: .blue)
+                            } else {
+                                Tag("Outdoor", icon: "sun.max.fill", color: .red)
+                            }
+                            Spacer()
                         }
                         
-                        if location.isIndoor {
-                            Tag("Indoor", icon: "house.fill", color: .blue)
-                        } else {
-                            Tag("Outdoor", icon: "sun.max.fill", color: .red)
+                        if let address = location.address {
+                            Label(address, systemImage: "mappin.and.ellipse")
+                                .foregroundStyle(.secondary)
+                                .font(.callout)
                         }
-                        Spacer()
-                    }
-                                                                                             
-                    if let address = location.address {
-                        Label(address, systemImage: "mappin.and.ellipse")
+                        
+                        if let instructions = location.instructions {
+                            Label(instructions, systemImage: "info.circle")
+                                .foregroundStyle(.secondary)
+                                .font(.callout)
+                        }
+                        
+                        Divider().padding(.vertical, 4)
+                        
+                        Text(location.description ?? "")
+                            .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            .font(.callout)
                     }
-                    
-                    if let instructions = location.instructions {
-                        Label(instructions, systemImage: "info.circle")
-                            .foregroundStyle(.secondary)
-                            .font(.callout)
-                    }
-                    
-                    Divider().padding(.vertical, 4)
-                    
-                    Text(location.description ?? "")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity)
+                Spacer()
             }
-            Spacer()
+            .ignoresSafeArea(edges: .top)
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    if location.user_id == auth.user.id {
+                        NavigationLink {
+                            EditLocationView(location: location)
+                            EmptyView()
+                        } label: {
+                            Label("Edit", systemImage: "pencil")
+                        }
+                    }
+                }
+            }
         }
         .frame(maxWidth: .infinity)
         .task {

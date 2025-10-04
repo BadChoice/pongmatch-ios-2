@@ -4,6 +4,7 @@ class FakeApi : Api {
         return [
             Location(
                 id: 1,
+                user_id: 1,
                 name: "Casa el Jordi P",
                 isIndoor: true,
                 coordinates:
@@ -22,6 +23,7 @@ class FakeApi : Api {
             ,
             Location(
                 id: 4,
+                user_id: 1,
                 name: "Revo",
                 isIndoor: true,
                 coordinates:
@@ -39,6 +41,7 @@ class FakeApi : Api {
             ),
             Location(
                 id: 5,
+                user_id: 2, 
                 name: "Cal Gallifa",
                 isIndoor: false,
                 coordinates:

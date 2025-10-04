@@ -7,6 +7,7 @@ struct Coordinates: Codable {
 
 struct Location : Codable {
     let id:Int
+    let user_id:Int?
     let name:String
     let isIndoor:Bool
     let coordinates:Coordinates
