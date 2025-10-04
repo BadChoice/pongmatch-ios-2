@@ -18,6 +18,7 @@ struct GameSummaryView : View {
     
     @StateObject private var deleteGame = ApiAction()
     @State private var showDeleteConfirmation = false
+    @State private var showDisputeResult = false
     
     @StateObject private var calendarManager = CalendarManager()
     
@@ -182,11 +183,11 @@ struct GameSummaryView : View {
                         .disabled(deleteGame.loading)
                     }
                     
-                    /*if game.status == .finished {
+                    if game.canBeDisputed() {
                         Button("Dispute result", systemImage: "flag") {
-                            //TODO
+                            showDisputeResult.toggle()
                         }
-                    }*/
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                 }
@@ -330,17 +331,24 @@ struct GameSummaryView : View {
         .fullScreenCover(isPresented: $showScoreboard) {
             ScoreboardView(score: Score(game: game))
         }
+        
         .sheet(isPresented: $showUploadResultsSheet) {
             Task {
                 try? await auth.loadGames()
                 dismiss()
             }
-        }
-        content: {
+        } content: {
             UploadResultsView(game: $game)
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
         }
+        
+        .sheet(isPresented: $showDisputeResult){
+            DisputeResultView(game: game)
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+        }
+        
         .alert("Delete game?", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) {
                 Task {
@@ -355,6 +363,7 @@ struct GameSummaryView : View {
         } message: {
             Text("This action cannot be undone.")
         }
+
     }
     
     @ViewBuilder

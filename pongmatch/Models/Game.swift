@@ -17,8 +17,10 @@ class Game : Codable {
     let player1:User
     let player2:User
     
+    let dispute:Dispute?
     
-    init(id: Int? = nil, initial_score:InitialScore, ranking_type: RankingType, winning_condition: WinningCondition, information: String? = nil, date: Date = Date(), status: GameStatus, results: [[Int]]? = nil, player1: User, player2: User) {
+    
+    init(id: Int? = nil, initial_score:InitialScore, ranking_type: RankingType, winning_condition: WinningCondition, information: String? = nil, date: Date = Date(), status: GameStatus, results: [[Int]]? = nil, player1: User, player2: User, dispute:Dispute? = nil, disputed_reason:String? = nil) {
         self.id = id ?? Int.random(in: 1...9999) * -1
         self.initial_score = initial_score
         self.ranking_type = ranking_type
@@ -29,6 +31,7 @@ class Game : Codable {
         self.results = results
         self.player1 = player1
         self.player2 = player2
+        self.dispute = dispute
     }
     
     var needsId: Bool {
@@ -72,6 +75,13 @@ class Game : Codable {
     }
     
     
+    func canBeDisputed() -> Bool {
+        status == .finished
+        && dispute == nil
+        //&& ranking_type == .competitive
+        //&& date.addingTimeInterval(7*24*60*60) > Date() // 7 Days margin
+    }
+    
     static func anonimus() -> Game {
         Game(
             id: Int.random(in: 1...9999) * -1,
@@ -99,6 +109,22 @@ class Game : Codable {
             results: [[11, 7], [5, 11], [11, 9]],
             player1: player1,
             player2: player2
+        )
+    }
+    
+    static func fakeDisputed() -> Game {
+        Game(
+            id: Int.random(in: 1...9999) * -1,
+            initial_score: .standard,
+            ranking_type: .competitive,
+            winning_condition: .bestof3,
+            information: "A fake game",
+            date: Date(),
+            status: .finished,
+            results: [[11, 7], [5, 11], [11, 9]],
+            player1: User.me(),
+            player2: User.opponent(),
+            dispute:Dispute(id: 1, reason: "A Fake dispute", game_id: 1, user_id: 1, status: .open, created_at: Date())
         )
     }
 }

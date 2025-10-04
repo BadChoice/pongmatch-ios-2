@@ -11,6 +11,7 @@ struct ScoreboardView: View {
     @State private var showFinishConfirmation = false
     @State private var showGameFinished = false
     @State private var playersSwapped:Bool = false
+    @State private var motionDetectionEnabled:Bool = false
     
     var newScore:Score?
     
@@ -144,6 +145,10 @@ struct ScoreboardView: View {
                     }
                 }
                 VStack {
+                    Toggle(isOn: $motionDetectionEnabled) {
+                        Text("Motion detection")
+                    }
+                        
                     Button("Reset") {
                         showResetConfirmation = true
                     }.alert("Are you sure you want to reset?", isPresented: $showResetConfirmation) {
@@ -167,7 +172,20 @@ struct ScoreboardView: View {
                     }
                 }
             }
-        }.task {
+        }
+        .motionGestures { count in
+            guard motionDetectionEnabled else { return }
+            switch count {
+            case 1: syncedScore.score.addScore(player: .player1)
+            case 2: syncedScore.score.addScore(player: .player2)
+            case 3: syncedScore.score.undo()
+            default:
+                break
+            }
+            syncedScore.sync()
+        }
+        
+        .task {
             if let newScore {
                 syncedScore.replace(score: newScore)
                 syncedScore.sync()

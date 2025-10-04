@@ -119,6 +119,7 @@
 				Enums/Language.swift,
 				Enums/RankingType.swift,
 				Enums/WinningCondition.swift,
+				Models/Dispute.swift,
 				Models/Elo.swift,
 				Models/Game.swift,
 				Models/GameUser.swift,

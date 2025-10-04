@@ -408,6 +408,26 @@ class Api {
         }
     }
     
+    func dispute(_ game:Game, reason:String) async throws -> Game {
+        guard !game.needsId else {
+            throw ApiClient.Errors.other("Game ID is nil")
+        }
+        
+        struct Response : Codable {
+            let data:Game
+        }
+        
+        do{
+            let response:Response = try await client.call(method: .post, url: "games/\(game.id)/dispute", params:[
+                "reason" : reason
+            ])
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     func getGame(publicScoreboardCode:String) async throws -> Game {        
         struct Response : Codable {
             let data:Game
