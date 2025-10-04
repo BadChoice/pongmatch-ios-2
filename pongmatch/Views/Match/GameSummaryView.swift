@@ -159,8 +159,9 @@ struct GameSummaryView : View {
                     publicScoreboardCodeView
                 }
                 
-                if let dispute = game.dispute {
+                if game.dispute != nil {
                     DisputeView(game: game)
+                        .padding(.top, 8)
                 }
                 
                 
