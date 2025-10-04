@@ -159,6 +159,10 @@ struct GameSummaryView : View {
                     publicScoreboardCodeView
                 }
                 
+                if let dispute = game.dispute {
+                    DisputeView(game: game)
+                }
+                
                 
                 if game.status == .planned && game.ranking_type == .competitive {
                     ExpectedEloResults(game: game)
@@ -169,27 +173,28 @@ struct GameSummaryView : View {
             }
         }
         .toolbar {
-            
-            ToolbarItem(placement: .topBarTrailing){
-                Menu {
-                    if game.status == .waitingOpponent {
-                        /*Button("Edit game", systemImage: "pencil") {
-                            //TODO
-                        }*/
+            if game.hasPlayer(auth.user) {
+                ToolbarItem(placement: .topBarTrailing){
+                    Menu {
+                        if game.status == .waitingOpponent {
+                            /*Button("Edit game", systemImage: "pencil") {
+                             //TODO
+                             }*/
+                            
+                            Button("Delete", systemImage: "trash", role: .destructive) {
+                                showDeleteConfirmation = true
+                            }
+                            .disabled(deleteGame.loading)
+                        }
                         
-                        Button("Delete", systemImage: "trash", role: .destructive) {
-                            showDeleteConfirmation = true
+                        if game.canBeDisputed(){
+                            Button("Dispute result", systemImage: "flag") {
+                                showDisputeResult.toggle()
+                            }
                         }
-                        .disabled(deleteGame.loading)
+                    } label: {
+                        Image(systemName: "ellipsis")
                     }
-                    
-                    if game.canBeDisputed() {
-                        Button("Dispute result", systemImage: "flag") {
-                            showDisputeResult.toggle()
-                        }
-                    }
-                } label: {
-                    Image(systemName: "ellipsis")
                 }
             }
             
@@ -197,7 +202,7 @@ struct GameSummaryView : View {
         .safeAreaInset(edge: .bottom) {
             GlassEffectContainer {
                 HStack {
-                    if game.status == .planned {
+                    if game.status == .planned && game.hasPlayer(auth.user) {
                         Button{
                             showUploadResultsSheet = true
                         } label :{
@@ -211,7 +216,7 @@ struct GameSummaryView : View {
 
                     }
                     
-                    if game.status == .planned && publicScoreboardCode == nil {
+                    if game.status == .planned && publicScoreboardCode == nil && game.hasPlayer(auth.user) {
                         Button {
                             getPublicScoreboardCode()
                         } label: {
@@ -246,7 +251,7 @@ struct GameSummaryView : View {
                         }
                     }
                     
-                    if game.status == .finished && game.needsId{
+                    if game.status == .finished && game.needsId {
                         Button {
                             WatchFinishedGames.shared.remove(game: game)
                             dismiss()
@@ -517,3 +522,13 @@ struct HorizontalSetsScoreView: View {
         ))
     }.environmentObject(auth)
 }
+
+#Preview("Dispute") {
+    let auth = AuthViewModel()
+    auth.user = User.me()
+    auth.api = FakeApi("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
+    return NavigationStack {
+        GameSummaryView(game: Game.fakeDisputed())
+    }.environmentObject(auth)
+}
+

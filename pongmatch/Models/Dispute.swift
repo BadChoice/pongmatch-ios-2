@@ -9,6 +9,6 @@ struct Dispute : Codable {
     let reason:String
     let game_id:Int
     let user_id:Int
-    let status:DisputeStatus
+    //let status:DisputeStatus
     let created_at:Date
 }

@@ -62,6 +62,10 @@ class Game : Codable {
         [GameStatus.planned].contains(status)
     }
     
+    func hasPlayer(_ player:User) -> Bool {
+        [player1.id, player2.id].contains(player.id)
+    }
+    
     func winner() -> User? {
         guard let finalResult = finalResult else { return nil }
         return finalResult[0] > finalResult[1] ? player1 : player2
@@ -124,7 +128,9 @@ class Game : Codable {
             results: [[11, 7], [5, 11], [11, 9]],
             player1: User.me(),
             player2: User.opponent(),
-            dispute:Dispute(id: 1, reason: "A Fake dispute", game_id: 1, user_id: 1, status: .open, created_at: Date())
+            //dispute:Dispute(id: 1, reason: "A Fake dispute", game_id: 1, user_id: 1, status: .open, created_at: Date())
+            //
+            dispute:Dispute(id: 1, reason: "A Fake dispute", game_id: 1, user_id: 1, created_at: Date())
         )
     }
 }
