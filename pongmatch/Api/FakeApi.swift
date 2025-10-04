@@ -61,4 +61,8 @@ class FakeApi : Api {
     override func location(id:Int) async throws -> Location {
         try await locations(latitude: 0, longitude: 0).first { $0.id == id }!           
     }
+    
+    override func deleteAccount() async throws {
+        return
+    }
 }

@@ -139,6 +139,16 @@ class Api {
     
     }
     
+    func deleteAccount() async throws {
+        struct Response: Codable { }
+        do {
+            let _: Response = try await client.call(method: .delete, url: "me")
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     //MARK: Users and Friends
     func deepDetails(_ user:User) async throws -> UserDeepDetails {
         do {
@@ -691,3 +701,4 @@ class Api {
     }
     
 }
+

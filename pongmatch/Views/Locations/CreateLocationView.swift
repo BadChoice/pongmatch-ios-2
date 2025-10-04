@@ -3,6 +3,7 @@ import UIKit
 import CoreLocation
 import MapKit
 import Contacts
+import Combine
 
 private enum LocationInputMode: String, CaseIterable, Identifiable {
     case current = "Current Location"
@@ -139,7 +140,7 @@ struct CreateLocationView : View {
                         HStack {
                             TextField("Search for an address", text: $address, axis: .vertical)
                                 .lineLimit(1...3)
-                                .onChange(of: address) { newValue in
+                                .onChange(of: address) { _, newValue in
                                     addressSearch.update(query: newValue)
                                 }
                             

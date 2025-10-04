@@ -16,6 +16,10 @@ struct AccountView : View {
     
     @StateObject private var savingAvatar = ApiAction()
     @StateObject private var savingProfile = ApiAction()
+    @StateObject private var deletingAccount = ApiAction()
+    
+    @State private var showDeleteSheet = false
+    @State private var deleteConfirmationText = ""
     
     var body: some View {
         Form {
@@ -133,6 +137,23 @@ struct AccountView : View {
                         .font(.caption)
                 }
             }
+            
+            Section(header: Text("Danger Zone")) {
+                VStack(spacing: 12) {
+                    Button(role: .destructive) {
+                        showDeleteSheet = true
+                    } label: {
+                        Text("Delete Account")
+                            .frame(maxWidth: .infinity)
+                    }
+                    .disabled(deletingAccount.loading)
+                    
+                    Text("This will permanently delete your account and all associated data. This action cannot be undone.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+            }
         }.onAppear {
             let user = auth.user
             name = user?.name ?? ""
@@ -155,6 +176,9 @@ struct AccountView : View {
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(image: $inputImage, allowsCropping: true)
         }
+        .sheet(isPresented: $showDeleteSheet) {
+            deleteAccountSheet
+        }
     }
     
     private func saveProfile() async{
@@ -174,11 +198,81 @@ struct AccountView : View {
             dismiss()
         }
     }
+    
+    private var deleteAccountSheet: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundStyle(.yellow)
+                    Text("Delete Account")
+                        .font(.title2.bold())
+                }
+                
+                Text("This will permanently delete your account and all associated data. This action cannot be undone.")
+                    .foregroundStyle(.secondary)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Type “delete” to confirm:")
+                        .font(.subheadline)
+                    TextField("delete", text: $deleteConfirmationText)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .textFieldStyle(.roundedBorder)
+                }
+                
+                if let error = deletingAccount.errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .font(.caption)
+                }
+                
+                Spacer()
+                
+                Button(role: .destructive) {
+                    Task { await performDeleteAccount() }
+                } label: {
+                    HStack {
+                        if deletingAccount.loading { ProgressView() }
+                        Text("Permanently Delete Account")
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .disabled(!canConfirmDelete || deletingAccount.loading)
+            }
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        showDeleteSheet = false
+                        deleteConfirmationText = ""
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+    
+    private var canConfirmDelete: Bool {
+        deleteConfirmationText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == "delete"
+    }
+    
+    private func performDeleteAccount() async {
+        let deleted = await deletingAccount.run {
+            try await auth.api.deleteAccount()
+        }
+        if deleted {
+            showDeleteSheet = false
+            deleteConfirmationText = ""
+            auth.logout()
+        }
+    }
 }
 
 #Preview {
     let auth = AuthViewModel()
     auth.user = User.me()
-    auth.api = Api("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
+    auth.api = FakeApi("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
     return AccountView().environmentObject(auth)
 }
+
