@@ -5,12 +5,6 @@ import MapKit
 import Contacts
 import Combine
 
-private enum LocationInputMode: String, CaseIterable, Identifiable {
-    case current = "Current Location"
-    case address = "Address"
-    var id: Self { self }
-}
-
 private final class AddressSearchCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var results: [MKLocalSearchCompletion] = []
     let completer: MKLocalSearchCompleter
@@ -64,15 +58,21 @@ struct CreateLocationView : View {
     @State private var errorMessage: String?
     @State private var showError: Bool = false
     
-    // Location input mode + address autocomplete
-    @State private var locationInputMode: LocationInputMode = .current
+    // Address autocomplete
     @StateObject private var addressSearch = AddressSearchCompleter()
+    
+    // Map (iOS 17+ modern Map API)
+    @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     
     private var latitude: Double? {
         Double(latitudeText.replacingOccurrences(of: ",", with: "."))
     }
     private var longitude: Double? {
         Double(longitudeText.replacingOccurrences(of: ",", with: "."))
+    }
+    private var selectedCoordinate: CLLocationCoordinate2D? {
+        guard let lat = latitude, let lon = longitude else { return nil }
+        return CLLocationCoordinate2D(latitude: lat, longitude: lon)
     }
     
     private var canCreate: Bool {
@@ -116,9 +116,6 @@ struct CreateLocationView : View {
                         Label("Pick a photo", systemImage: "photo")
                     }
                 }
-                
-                // NOTE: When you add the API for uploading a location photo, call it right after creation:
-                // try await auth.api.uploadLocationPhoto(createdLocation, image: selectedImage)
             }
             
             Section("Basic info") {
@@ -128,7 +125,7 @@ struct CreateLocationView : View {
                 Toggle("Private", isOn: $isPrivate)
                 Toggle("Indoor", isOn: $isIndoor)
                 
-                Stepper(value: $numberOfTables, in: 1...20) {
+                Stepper(value: $numberOfTables, in: 1...50) {
                     HStack {
                         Text("Number of tables")
                         Spacer()
@@ -139,92 +136,87 @@ struct CreateLocationView : View {
             }
             
             Section("Location") {
-                Picker("Location Input", selection: $locationInputMode) {
-                    ForEach(LocationInputMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                
-                switch locationInputMode {
-                case .current:
-                    HStack {
-                        Button {
-                            useCurrentLocation()
-                        } label: {
-                            Label("Use Current Location", systemImage: "location.fill")
-                        }
-                        .disabled(!locationManager.isAuhtorized && locationManager.userLocation == nil)
-                        
-                        Spacer()
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .top) {
+                        TextField("Address", text: $address, axis: .vertical)
+                            .lineLimit(1...3)
+                            .onChange(of: address) { _, newValue in
+                                addressSearch.update(query: newValue)
+                            }
+                            .textInputAutocapitalization(.words)
+                            .disableAutocorrection(true)
                         
                         if geocoding {
                             ProgressView().controlSize(.small)
                         }
+                        
+                        Button {
+                            useCurrentLocation()
+                        } label: {
+                            Image(systemName: "location.fill")
+                                .imageScale(.medium)
+                                .padding(6)
+                        }
+                        .buttonStyle(.borderless)
+                        .disabled(!locationManager.isAuhtorized && locationManager.userLocation == nil)
+                        .help("Use Current Location")
                     }
                     
-                    if let lat = latitude, let lon = longitude {
+                    if !address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !addressSearch.results.isEmpty {
+                        VStack(spacing: 0) {
+                            ForEach(Array(addressSearch.results.enumerated()), id: \.offset) { index, completion in
+                                Button {
+                                    Task { await selectAddressCompletion(completion) }
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(completion.title)
+                                            .foregroundStyle(.primary)
+                                        if !completion.subtitle.isEmpty {
+                                            Text(completion.subtitle)
+                                                .font(.subheadline)
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .contentShape(Rectangle())
+                                }
+                                .buttonStyle(.plain)
+                                .padding(.vertical, 6)
+                                
+                                if index < addressSearch.results.count - 1 {
+                                    Divider()
+                                }
+                            }
+                        }
+                        .padding(10)
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
+                    }
+                    
+                    // Always show the map; add a pin when coordinates are selected
+                    Map(position: $mapPosition) {
+                        if let coord = selectedCoordinate {
+                            Marker(coordinate: coord) {
+                                Label("Selected location", systemImage: "mappin.circle.fill")
+                            }
+                            .tint(.red)
+                        }
+                        UserAnnotation()
+                    }
+                    .mapControls {
+                        MapUserLocationButton()
+                        MapCompass()
+                    }
+                    .frame(height: 160)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    
+                    /*if let coord = selectedCoordinate {
                         HStack {
                             Text("Selected coordinates")
                             Spacer()
-                            Text(String(format: "%.6f, %.6f", lat, lon))
+                            Text(String(format: "%.6f, %.6f", coord.latitude, coord.longitude))
                                 .foregroundStyle(.secondary)
                         }
-                    }
-                    
-                case .address:
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            TextField("Search for an address", text: $address, axis: .vertical)
-                                .lineLimit(1...3)
-                                .onChange(of: address) { _, newValue in
-                                    addressSearch.update(query: newValue)
-                                }
-                            
-                            if geocoding {
-                                ProgressView().controlSize(.small)
-                            }
-                        }
-                        
-                        if !address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !addressSearch.results.isEmpty {
-                            VStack(spacing: 0) {
-                                ForEach(Array(addressSearch.results.enumerated()), id: \.offset) { index, completion in
-                                    Button {
-                                        Task { await selectAddressCompletion(completion) }
-                                    } label: {
-                                        VStack(alignment: .leading, spacing: 2) {
-                                            Text(completion.title)
-                                                .foregroundStyle(.primary)
-                                            if !completion.subtitle.isEmpty {
-                                                Text(completion.subtitle)
-                                                    .font(.subheadline)
-                                                    .foregroundStyle(.secondary)
-                                            }
-                                        }
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .contentShape(Rectangle())
-                                    }
-                                    .buttonStyle(.plain)
-                                    .padding(.vertical, 6)
-                                    
-                                    if index < addressSearch.results.count - 1 {
-                                        Divider()
-                                    }
-                                }
-                            }
-                            .padding(10)
-                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 8))
-                        }
-                        
-                        if let lat = latitude, let lon = longitude {
-                            HStack {
-                                Text("Selected coordinates")
-                                Spacer()
-                                Text(String(format: "%.6f, %.6f", lat, lon))
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
+                    }*/
                 }
             }
             
@@ -265,16 +257,15 @@ struct CreateLocationView : View {
             Text(errorMessage ?? "Unknown error")
         })
         .task {
-            // Prefill and default mode
+            // Prefill from current location and bias autocomplete
             if let loc = locationManager.userLocation {
-                locationInputMode = .current
                 setCoordinates(from: loc.coordinate)
                 await reverseGeocodeIfNeeded(for: loc)
                 
-                // Optional: bias autocomplete around user location
-                addressSearch.completer.region = MKCoordinateRegion(center: loc.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3))
-            } else {
-                locationInputMode = .address
+                addressSearch.completer.region = MKCoordinateRegion(
+                    center: loc.coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.3, longitudeDelta: 0.3)
+                )
             }
         }
     }
@@ -313,10 +304,9 @@ struct CreateLocationView : View {
                     latitude: lat
                 )
                 
-                // TODO: When the API is available, upload the photo here.
-                // if let image = selectedImage {
-                //     _ = try await auth.api!.uploadLocationPhoto(created, image: image)
-                // }
+                if let image = selectedImage {
+                     _ = try await auth.api!.uploadLocationPhoto(created, image: image)
+                }
                 
                 await MainActor.run {
                     dismiss()
@@ -333,6 +323,9 @@ struct CreateLocationView : View {
     private func setCoordinates(from coord: CLLocationCoordinate2D) {
         latitudeText = String(coord.latitude)
         longitudeText = String(coord.longitude)
+        // Center the map on the selected coordinate
+        let span = MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005)
+        mapPosition = .region(MKCoordinateRegion(center: coord, span: span))
     }
     
     // Resolve a selected suggestion to coordinates and a formatted address
@@ -373,7 +366,7 @@ struct CreateLocationView : View {
         }
     }
     
-    // Fallback geocoder (not used by UI now, but kept in case you want to trigger it elsewhere)
+    // Optional fallback: geocode freeform address if you want to support "enter then press return"
     private func geocodeAddress() async {
         guard !address.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         geocoding = true
