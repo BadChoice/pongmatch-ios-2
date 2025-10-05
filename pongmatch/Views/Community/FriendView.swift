@@ -159,7 +159,7 @@ struct FriendView : View {
     private func fetchFriendGames(){
         Task {
             await fetchGames.run {
-                games = try await auth.api.users.friendGames(user.id)
+                games = try await auth.api.users.games(user.id)
             }
         }
     }
@@ -168,7 +168,7 @@ struct FriendView : View {
         if auth.user.id == user.id { return }
         Task {
             await fetchOneVsOne.run {
-                oneVsOne = try await auth.api.users.friendOneVsOne(user.id)
+                oneVsOne = try await auth.api.users.oneVsOne(user.id)
             }
         }
     }

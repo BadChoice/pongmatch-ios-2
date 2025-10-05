@@ -9,7 +9,7 @@ extension Api {
             self.client = client
         }
         
-        func games() async throws -> [Game] {
+        func index() async throws -> [Game] {
             struct GamesResponse : Codable {
                 let data:[Game]
             }
@@ -23,7 +23,7 @@ extension Api {
             }
         }
         
-        func store(game:Game) async throws -> Game {
+        func store(_ game:Game) async throws -> Game {
             struct GameResponse : Codable {
                 let data:Game
             }
@@ -135,13 +135,13 @@ extension Api {
             }
         }
         
-        func getGame(publicScoreboardCode:String) async throws -> Game {
+        func get(withPublicScoreboardCode:String) async throws -> Game {
             struct Response : Codable {
                 let data:Game
             }
             
             do{
-                let response:Response = try await client.call(method: .get, url: "games/\(publicScoreboardCode)")
+                let response:Response = try await client.call(method: .get, url: "games/\(withPublicScoreboardCode)")
                 return response.data
             } catch {
                 print(error)
@@ -172,7 +172,7 @@ extension Api {
             let earned_points:Int?
         }
         
-        func playersDetails(game:Game) async throws -> (player1:PlayerDetails?, player2:PlayerDetails?) {
+        func playersDetails(_ game:Game) async throws -> (player1:PlayerDetails?, player2:PlayerDetails?) {
             guard !game.needsId else {
                 throw ApiClient.Errors.other("Game ID is nil")
             }
@@ -191,7 +191,7 @@ extension Api {
             }
         }
         
-        func delete(game:Game) async throws {
+        func delete(_ game:Game) async throws {
             guard !game.needsId else {
                 throw ApiClient.Errors.other("Game ID is nil")
             }
@@ -206,7 +206,5 @@ extension Api {
                 throw error
             }
         }
-        
-        
     }
 }

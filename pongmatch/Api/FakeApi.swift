@@ -5,7 +5,7 @@ class FakeApi : Api {
 
 class FakeApiLocations : Api.Locations {
     
-    override func locations(latitude: Double, longitude: Double) async throws -> [Location] {
+    override func near(latitude: Double, longitude: Double) async throws -> [Location] {
         return [
             Location(
                 id: 1,
@@ -66,8 +66,8 @@ class FakeApiLocations : Api.Locations {
         ]
     }
     
-    override func location(id:Int) async throws -> Location {
-        try await locations(latitude: 0, longitude: 0).first { $0.id == id }!           
+    override func get(id:Int) async throws -> Location {
+        try await near(latitude: 0, longitude: 0).first { $0.id == id }!
     }
 }
 

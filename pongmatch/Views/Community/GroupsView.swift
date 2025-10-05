@@ -70,7 +70,7 @@ struct GroupsView : View {
         }
         .task {
             let _ = await fetchingGroups.run {
-                groups = try await auth.api.groups.groups()
+                groups = try await auth.api.groups.index()
             }
         }
         .toolbar {
@@ -171,7 +171,7 @@ private struct CreateGroupSheet: View {
         isCreating = true
         Task {
             do {
-                let group = try await auth.api.groups.createGroup(
+                let group = try await auth.api.groups.create(
                     name: name.trimmingCharacters(in: .whitespaces),
                     description: description.trimmingCharacters(in: .whitespaces).isEmpty ? nil : description,
                     isPrivate: isPrivate

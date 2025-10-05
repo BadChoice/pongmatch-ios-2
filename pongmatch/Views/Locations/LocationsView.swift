@@ -116,7 +116,7 @@ struct LocationsView: View {
     private func fetchLocations(around center: CLLocationCoordinate2D) async {
         guard shouldFetch(for: center) else { return }
         let _ = await searchingLocations.run {
-            let foundLocations = try await auth.api!.locations.locations(latitude: center.latitude, longitude: center.longitude)
+            let foundLocations = try await auth.api!.locations.near(latitude: center.latitude, longitude: center.longitude)
             locations.append(contentsOf: foundLocations)
             locations = locations.unique(\.id)
             lastRequestedCenter = center
@@ -226,7 +226,7 @@ private struct LocationInfo: View {
         .frame(maxWidth: .infinity)
         .task {
             let _ = await fetchingLocation.run {
-                location = try await auth.api!.locations.location(id: location.id)
+                location = try await auth.api!.locations.get(id: location.id)
             }
         }
     }

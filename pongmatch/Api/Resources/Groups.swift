@@ -10,7 +10,7 @@ extension Api {
             self.client = client
         }
         
-        func createGroup(name:String, description:String?, isPrivate:Bool) async throws -> PMGroup {
+        func create(name:String, description:String?, isPrivate:Bool) async throws -> PMGroup {
             struct Response:Codable {
                 let data:PMGroup
             }
@@ -28,7 +28,7 @@ extension Api {
             }
         }
         
-        func update(group:PMGroup) async throws -> PMGroup {
+        func update(_ group:PMGroup) async throws -> PMGroup {
             struct Response:Codable {
                 let data:PMGroup
             }
@@ -48,7 +48,7 @@ extension Api {
             }
         }
         
-        func uploadGroupAvatar(_ group:PMGroup, image:UIImage) async throws -> PMGroup {
+        func uploadAvatar(_ group:PMGroup, image:UIImage) async throws -> PMGroup {
 
             try await withCheckedThrowingContinuation { continuation in
                 struct Response : Codable {
@@ -71,7 +71,7 @@ extension Api {
         
         }
         
-        func groups() async throws -> [PMGroup] {
+        func index() async throws -> [PMGroup] {
             struct Response:Codable {
                 let data:[PMGroup]
             }
@@ -85,7 +85,7 @@ extension Api {
             }
         }
         
-        func groupUsers(_ group:PMGroup) async throws -> [User] {
+        func users(_ group:PMGroup) async throws -> [User] {
             struct Response:Codable {
                 let data:[User]
             }
@@ -110,7 +110,7 @@ extension Api {
             }
         }
         
-        func join(group:PMGroup) async throws -> PMGroup {
+        func join(_ group:PMGroup) async throws -> PMGroup {
             struct Response:Codable {
                 let data:PMGroup
             }
@@ -124,7 +124,7 @@ extension Api {
             }
         }
         
-        func leave(group:PMGroup) async throws {
+        func leave(_ group:PMGroup) async throws {
             struct Response:Codable { }
                 
             do {

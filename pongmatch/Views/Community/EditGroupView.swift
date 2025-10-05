@@ -117,7 +117,7 @@ struct EditGroupView: View {
             
             
             let _ = await updatingGroup.run {
-                group = try await auth.api.groups.update(group: group)
+                group = try await auth.api.groups.update(group)
             }
             
             dismiss()
@@ -128,7 +128,7 @@ struct EditGroupView: View {
         Task {
             if let inputImage {
                 let _ = await updatingGroup.run {
-                    group = try await auth.api.groups.uploadGroupAvatar(group, image:inputImage)
+                    group = try await auth.api.groups.uploadAvatar(group, image:inputImage)
                 }
             }
         }

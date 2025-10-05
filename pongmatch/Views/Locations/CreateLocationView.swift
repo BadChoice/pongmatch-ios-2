@@ -295,7 +295,7 @@ struct CreateLocationView : View {
         
         let _ = await creating.run {
             do {
-                let created = try await auth.api!.locations.createLocation(
+                let created = try await auth.api!.locations.create(
                     name: name,
                     isPrivate: isPrivate,
                     isIndoor: isIndoor,
@@ -308,7 +308,7 @@ struct CreateLocationView : View {
                 )
                 
                 if let image = selectedImage {
-                    _ = try await auth.api!.locations.uploadLocationAvatar(created, image: image)
+                    _ = try await auth.api!.locations.uploadAvatar(created, image: image)
                 }
                 
                 await MainActor.run {

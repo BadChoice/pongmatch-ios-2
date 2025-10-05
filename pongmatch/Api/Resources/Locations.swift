@@ -10,7 +10,7 @@ extension Api {
             self.client = client
         }
         
-        func locations(latitude: Double, longitude: Double) async throws -> [Location] {
+        func near(latitude: Double, longitude: Double) async throws -> [Location] {
             struct Response:Codable {
                 let data:[Location]
             }
@@ -27,7 +27,7 @@ extension Api {
             }
         }
         
-        func location(id:Int) async throws -> Location {
+        func get(id:Int) async throws -> Location {
             struct Response:Codable {
                 let data:Location
             }
@@ -41,7 +41,7 @@ extension Api {
             }
         }
         
-        func createLocation(name:String, isPrivate:Bool, isIndoor:Bool, numberOfTables:Int, description:String, instructions:String, address:String, longitude:Double, latitude:Double) async throws -> Location {
+        func create(name:String, isPrivate:Bool, isIndoor:Bool, numberOfTables:Int, description:String, instructions:String, address:String, longitude:Double, latitude:Double) async throws -> Location {
             struct Response:Codable {
                 let data:Location
             }
@@ -65,7 +65,7 @@ extension Api {
             }
         }
         
-        func uploadLocationAvatar(_ location:Location, image:UIImage) async throws -> Location {
+        func uploadAvatar(_ location:Location, image:UIImage) async throws -> Location {
 
             try await withCheckedThrowingContinuation { continuation in
                 struct Response : Codable {
@@ -89,7 +89,7 @@ extension Api {
         }
         
         // New: Update an existing location
-        func update(location: Location, name: String, isPrivate: Bool, isIndoor: Bool, numberOfTables: Int, description: String, instructions: String) async throws -> Location {
+        func update(_ location: Location, name: String, isPrivate: Bool, isIndoor: Bool, numberOfTables: Int, description: String, instructions: String) async throws -> Location {
             struct Response: Codable {
                 let data: Location
             }
@@ -117,7 +117,7 @@ extension Api {
         }
         
         // New: Delete a location
-        func delete(location: Location) async throws {
+        func delete(_ location: Location) async throws {
             struct Response: Codable { }
             do {
                 let _: Response = try await client.call(method: .delete, url: "locations/\(location.id)")

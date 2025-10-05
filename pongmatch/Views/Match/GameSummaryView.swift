@@ -267,7 +267,7 @@ struct GameSummaryView : View {
                             Button {
                                 Task {
                                     let didUpload = await uploadWatchResults.run {
-                                        let newGame = try await auth.api.games.store(game: game)
+                                        let newGame = try await auth.api.games.store(game)
                                         let _ = try await auth.api.games.uploadResults(newGame, results:game.results)
                                         WatchFinishedGames.shared.remove(game: game)
                                     }
@@ -330,7 +330,7 @@ struct GameSummaryView : View {
         .task {
             if game.isFinished() && game.ranking_type == .competitive {
                 Task {
-                    (player1Details, player2Details) = try await auth.api.games.playersDetails(game: game)
+                    (player1Details, player2Details) = try await auth.api.games.playersDetails(game)
                 }
             }
         }
@@ -359,7 +359,7 @@ struct GameSummaryView : View {
             Button("Delete", role: .destructive) {
                 Task {
                     if (await deleteGame.run {
-                        try await auth.api.games.delete(game: game)
+                        try await auth.api.games.delete(game)
                     }) {
                         dismiss()
                     }

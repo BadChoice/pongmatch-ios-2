@@ -34,7 +34,7 @@ extension Api {
             }
         }
         
-        func friend(_ id:Int) async throws -> User {
+        func get(_ id:Int) async throws -> User {
             struct UserResponse : Codable {
                 let data:User
             }
@@ -47,13 +47,13 @@ extension Api {
             }
         }
         
-        func friendGames(_ id:Int) async throws -> [Game] {
+        func games(_ userId:Int) async throws -> [Game] {
             struct GamesResponse : Codable {
                 let data:[Game]
             }
             
             do {
-                let gamesResponse:GamesResponse = try await client.call(method: .get, url: "friends/\(id)/games")
+                let gamesResponse:GamesResponse = try await client.call(method: .get, url: "friends/\(userId)/games")
                 return gamesResponse.data.unique(\.id)
             } catch {
                 print(error)
@@ -67,7 +67,7 @@ extension Api {
             let games:[Game]
         }
         
-        func friendOneVsOne(_ id:Int) async throws -> OneVsOne {
+        func oneVsOne(_ userId:Int) async throws -> OneVsOne {
             struct GamesResponse : Codable {
                 let won:Int
                 let lost:Int
@@ -75,7 +75,7 @@ extension Api {
             }
             
             do {
-                return try await client.call(method: .get, url: "friends/\(id)/oneVsOne")
+                return try await client.call(method: .get, url: "friends/\(userId)/oneVsOne")
             } catch {
                 print(error)
                 throw error
@@ -83,7 +83,6 @@ extension Api {
         }
         
         func friends() async throws -> [User] {
-            
             struct FriendsResponse : Codable {
                 let data:[User]
             }
@@ -129,7 +128,7 @@ extension Api {
         }
         
         
-        func friends(search text:String?) async throws -> [User] {
+        func search(friends text:String?) async throws -> [User] {
             guard let text, !text.isEmpty else { return[] }
             
             struct FriendsResponse : Codable {

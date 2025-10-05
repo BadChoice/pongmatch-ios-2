@@ -10,7 +10,7 @@ extension Api {
             self.client = client
         }
         
-        func me() async throws -> User {
+        func get() async throws -> User {
             struct UserResponse : Codable {
                 var data:User
             }
@@ -40,7 +40,7 @@ extension Api {
         }
 
         
-        func updateProfile(name:String, language:Language, timeZone:String, phonePrefix:String?, phone:String?, address:String?, acceptChallengesFrom:AcceptChallengeRequestFrom) async throws  -> User {
+        func update(name:String, language:Language, timeZone:String, phonePrefix:String?, phone:String?, address:String?, acceptChallengesFrom:AcceptChallengeRequestFrom) async throws  -> User {
             
             struct Response : Codable {
                 let data:User

@@ -129,13 +129,12 @@ struct FinishGameView: View {
         Task {
             if (await uploadGame.run {
                 if game.needsId {
-                    let newGame = try await auth.api.games.store(game: game)
+                    let newGame = try await auth.api.games.store(game)
                     let _ = try await auth.api.games.uploadResults(newGame, results: game.results)
                 } else {
                     let _ = try await auth.api.games.uploadResults(game, results: game.results)
                 }
             }) {
-                // Refresh games so HomeView updates immediately
                 try? await auth.loadGames()
                 SyncedScore.shared.clear()
                 dismiss()

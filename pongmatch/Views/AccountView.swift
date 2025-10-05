@@ -183,7 +183,7 @@ struct AccountView : View {
     
     private func saveProfile() async{
         let saved = await savingProfile.run {
-            auth.user = try await auth.api.me.updateProfile(
+            auth.user = try await auth.api.me.update(
                 name: name,
                 language: language,
                 timeZone: TimeZone.current.identifier,

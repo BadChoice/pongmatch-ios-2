@@ -72,7 +72,7 @@ struct GroupView: View {
             }
         }
         .task {
-            users = (try? await auth.api.groups.groupUsers(group)) ?? []
+            users = (try? await auth.api.groups.users(group)) ?? []
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -119,7 +119,7 @@ struct GroupView: View {
                     if success {
                         // Close picker and refresh members
                         showInviteSheet = false
-                        users = (try? await auth.api.groups.groupUsers(group)) ?? users
+                        users = (try? await auth.api.groups.users(group)) ?? users
                     }
                 }
             }
@@ -173,7 +173,7 @@ struct GroupView: View {
     private func joinGroup() {
         Task {
             let _ = await joiningGroup.run {
-                group = try await auth.api.groups.join(group: group)
+                group = try await auth.api.groups.join(group)
             }
         }
     }
@@ -181,7 +181,7 @@ struct GroupView: View {
     private func leaveGroup() {
         Task {
             let didLeave = await joiningGroup.run {
-                try await auth.api.groups.leave(group: group)
+                try await auth.api.groups.leave(group)
             }
             
             if didLeave {

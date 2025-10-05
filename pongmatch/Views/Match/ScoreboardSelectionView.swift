@@ -200,7 +200,7 @@ private struct OneTimeCodeView : View {
         guard code.count == 6 else { return }
         Task {
             do {
-                let game = try await auth.api.games.getGame(publicScoreboardCode: code)
+                let game = try await auth.api.games.get(withPublicScoreboardCode: code)
                 await MainActor.run {
                     onSelect(game)
                 }
