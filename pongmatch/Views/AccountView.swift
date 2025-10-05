@@ -113,25 +113,11 @@ struct AccountView : View {
                         .padding(.vertical, 4)
                         .font(Font.caption)
                         .foregroundStyle(.secondary)
-                }
-                
+                }                
             }
-            Section {
-                HStack {
-                    Spacer()
-                    Button {
-                        Task { await saveProfile() }
-                    } label: {
-                        HStack {
-                            if savingProfile.loading { ProgressView() }
-                            Text("Save")
-                        }
-                    }
-                    .disabled(savingProfile.loading)
-                    Spacer()
-                }
-                
-                if let errorMessage = savingProfile.errorMessage {
+            
+            if let errorMessage = savingProfile.errorMessage {
+                Section {
                     Text(errorMessage)
                         .foregroundColor(.red)
                         .font(.caption)
@@ -171,6 +157,16 @@ struct AccountView : View {
                         auth.user = try await auth.api.me.uploadAvatar(newImage)
                     }
                 }
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    Task { await saveProfile() }
+                } label: {
+                    Text("Save").bold()
+                }
+                .disabled(savingProfile.loading)
             }
         }
         .sheet(isPresented: $showImagePicker) {

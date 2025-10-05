@@ -6,6 +6,8 @@ struct EditLocationView: View {
     @Environment(\.dismiss) private var dismiss
     
     let location: Location
+    // Callback to propagate the updated Location back to the caller
+    let onUpdated: ((Location) -> Void)?
     
     // Form fields
     @State private var name: String
@@ -27,8 +29,9 @@ struct EditLocationView: View {
     // Desired landscape aspect ratio for location photos
     private let desiredPhotoAspect: CGFloat = 16.0 / 9.0
     
-    init(location: Location) {
+    init(location: Location, onUpdated: ((Location) -> Void)? = nil) {
         self.location = location
+        self.onUpdated = onUpdated
         _name = State(initialValue: location.name)
         _isPrivate = State(initialValue: location.isPrivate ?? false)
         _isIndoor = State(initialValue: location.isIndoor)
@@ -57,82 +60,7 @@ struct EditLocationView: View {
     
     var body: some View {
         Form {
-            Section {
-                if let newImage = selectedImage {
-                    VStack(alignment: .leading) {
-                        Image(uiImage: newImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 180)
-                            .clipped()
-                            .cornerRadius(8)
-                        
-                        HStack {
-                            Button(role: .destructive) {
-                                selectedImage = nil
-                            } label: {
-                                Label("Remove selected", systemImage: "trash")
-                            }
-                            Spacer()
-                            Button {
-                                showImagePicker = true
-                            } label: {
-                                Label("Change photo", systemImage: "photo.on.rectangle.angled")
-                            }
-                        }
-                        .padding(.top)
-                    }
-                } else {
-                    VStack(alignment: .leading, spacing: 8) {
-                        if let urlString = location.photo, let url = URL(string: urlString) {
-                            AsyncImage(url: url) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(maxWidth: .infinity)
-                                        .frame(height: 180)
-                                        .clipped()
-                                        .cornerRadius(8)
-                                case .empty:
-                                    ZStack {
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(Color.gray.opacity(0.15))
-                                            .frame(height: 180)
-                                        ProgressView()
-                                    }
-                                case .failure:
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.gray.opacity(0.15))
-                                        .overlay {
-                                            Label("No photo", systemImage: "photo")
-                                                .foregroundStyle(.secondary)
-                                        }
-                                        .frame(height: 180)
-                                @unknown default:
-                                    EmptyView()
-                                }
-                            }
-                        } else {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.gray.opacity(0.15))
-                                .overlay {
-                                    Label("No photo", systemImage: "photo")
-                                        .foregroundStyle(.secondary)
-                                }
-                                .frame(height: 120)
-                        }
-                        
-                        Button {
-                            showImagePicker = true
-                        } label: {
-                            Label("Change photo", systemImage: "photo")
-                        }
-                    }
-                }
-            }
+            photoSection
             
             Section("Basic info") {
                 TextField("Name", text: $name)
@@ -210,7 +138,6 @@ struct EditLocationView: View {
             }
         }
         .sheet(isPresented: $showImagePicker) {
-            // Use same approach as CreateLocationView: disable system crop; crop to 16:9 ourselves.
             ImagePicker(image: $selectedImage, allowsCropping: false)
         }
         .onChange(of: selectedImage) { _, newValue in
@@ -232,6 +159,124 @@ struct EditLocationView: View {
         }
     }
     
+    // MARK: - Sections
+    private var photoSection : some View {
+        Section {
+            if let newImage = selectedImage {
+                VStack(alignment: .leading, spacing: 8) {
+                    if let url = Images.location(location.photo) {
+                        Text("Current photo")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 120)
+                                    .clipped()
+                                    .cornerRadius(8)
+                            case .empty:
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.gray.opacity(0.15))
+                                        .frame(height: 120)
+                                    ProgressView()
+                                }
+                            case .failure:
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.gray.opacity(0.15))
+                                    .overlay {
+                                        Label("No photo", systemImage: "photo")
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(height: 120)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
+                    }
+                    
+                    Text("New photo")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    Image(uiImage: newImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 180)
+                        .clipped()
+                        .cornerRadius(8)
+                    
+                    HStack {
+                        Button(role: .destructive) {
+                            selectedImage = nil
+                        } label: {
+                            Label("Remove selected", systemImage: "trash")
+                        }
+                        Spacer()
+                        Button {
+                            showImagePicker = true
+                        } label: {
+                            Label("Change photo", systemImage: "photo.on.rectangle.angled")
+                        }
+                    }
+                    .padding(.top)
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    if let urlString = location.photo, let url = URL(string: urlString) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 180)
+                                    .clipped()
+                                    .cornerRadius(8)
+                            case .empty:
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.gray.opacity(0.15))
+                                        .frame(height: 180)
+                                    ProgressView()
+                                }
+                            case .failure:
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.gray.opacity(0.15))
+                                    .overlay {
+                                        Label("No photo", systemImage: "photo")
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    .frame(height: 180)
+                            @unknown default:
+                                EmptyView()
+                            }
+                        }
+                    } else {
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.gray.opacity(0.15))
+                            .overlay {
+                                Label("No photo", systemImage: "photo")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .frame(height: 120)
+                    }
+                    
+                    Button {
+                        showImagePicker = true
+                    } label: {
+                        Label("Change photo", systemImage: "photo")
+                    }
+                }
+            }
+        }
+    }
+    
     // MARK: - Actions
     
     @MainActor
@@ -241,7 +286,8 @@ struct EditLocationView: View {
         let trimmedInstructions = instructions.trimmingCharacters(in: .whitespacesAndNewlines)
         
         let _ = await saving.run {
-            let updated = try await auth.api!.locations.update(
+            // First, update fields on the server
+            var latest = try await auth.api!.locations.update(
                 location,
                 name: trimmedName,
                 isPrivate: isPrivate,
@@ -251,9 +297,13 @@ struct EditLocationView: View {
                 instructions: trimmedInstructions
             )
             
+            // Then, if there is a new image, upload it and use the returned Location
             if let image = selectedImage {
-                let _ = try await auth.api!.locations.uploadAvatar(updated, image: image)
+                latest = try await auth.api!.locations.uploadAvatar(latest, image: image)
             }
+            
+            // Inform caller with the freshest server copy
+            onUpdated?(latest)
             
             await MainActor.run {
                 dismiss()

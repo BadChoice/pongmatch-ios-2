@@ -125,7 +125,13 @@ struct CreateLocationView : View {
                 TextField("Name", text: $name)
                     .textContentType(.name)
                 
-                Toggle("Private", isOn: $isPrivate)
+                VStack {
+                    Toggle("Private", isOn: $isPrivate)
+                    Text("Private locations will only be visible to you and users you explicitly share them with.")
+                        .foregroundStyle(.secondary)
+                        .font(.callout)
+                }
+                
                 Toggle("Indoor", isOn: $isIndoor)
                 
                 Stepper(value: $numberOfTables, in: 1...50) {

@@ -214,8 +214,9 @@ private struct LocationInfo: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     if location.user_id == auth.user.id {
                         NavigationLink {
-                            EditLocationView(location: location)
-                            EmptyView()
+                            EditLocationView(location: location) { updated in
+                                self.location = updated
+                            }
                         } label: {
                             Label("Edit", systemImage: "pencil")
                         }
