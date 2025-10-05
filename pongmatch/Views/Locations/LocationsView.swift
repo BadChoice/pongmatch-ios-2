@@ -97,7 +97,7 @@ struct LocationsView: View {
         }
         .sheet(item: $selectedLocation) { location in
             LocationInfo(location: location.location)
-                .presentationDetents([.fraction(0.40), .medium])
+                .presentationDetents([.fraction(0.40), .medium, .large])
                 .presentationDragIndicator(.visible)
         }
     }
