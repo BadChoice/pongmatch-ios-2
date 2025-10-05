@@ -144,7 +144,7 @@ private struct LocationInfo: View {
                         ProgressView()
                     }
                 } else {
-                    AsyncImage(url: Images.location(location.photo)) { image in
+                    AsyncImage(url: location.photoUrl) { image in
                         image.resizable()
                             .scaledToFill()
                             .frame(height: 150)

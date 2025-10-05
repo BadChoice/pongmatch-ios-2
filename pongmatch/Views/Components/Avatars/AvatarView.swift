@@ -4,19 +4,19 @@ struct AvatarView: View {
     
     @State private var image: UIImage?
     
-    let url: String?
+    let url: URL?
     let name: String?
     let email: String?
     let winner: Bool
     
     init(user: User, winner: Bool = false) {
-        self.url = user.avatar
+        self.url = user.photoUrl
         self.name = user.initials
         self.email = user.email
         self.winner = winner
     }
     
-    init(url: String?, name: String?, email: String? = nil, winner: Bool = false) {
+    init(url: URL?, name: String?, email: String? = nil, winner: Bool = false) {
         self.url = url
         self.name = name
         self.email = email
@@ -66,7 +66,7 @@ struct AvatarView: View {
             }
             
             // 1) Try custom avatar URL if present
-            if let customURL = Images.avatar(url) {
+            if let customURL = url {
                 if let downloadedImage = await Images.download(customURL) {
                     await MainActor.run { image = downloadedImage }
                     return
@@ -84,7 +84,7 @@ struct AvatarView: View {
     
     // Combine url+email to force refresh when either changes
     private var identityKey: String {
-        "\(url ?? "nil")|\(email ?? "nil")"
+        "\(url?.absoluteString ?? "nil")|\(email ?? "nil")"
     }
 }
 
@@ -113,7 +113,7 @@ struct WinnerIconView : View {
     VStack {
         
         AvatarView(
-            url: "http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png",
+            url: URL(string: "http://pongmatch.app/storage/avatars/nRw1un6FnI50LoNn.png",)!,
             name: "Jordi Puigdellívol",
             email: "jordi+pongmatch@gloobus.net"
         )
@@ -125,7 +125,7 @@ struct WinnerIconView : View {
         )
         
         AvatarView(
-            url: "http://google.com/not found.png",
+            url: URL(string: "http://google.com/not found.png")!,
             name: "Jordi Puigdellívol",
             email: "jordi+pongmatch@gloobus.net"
         )

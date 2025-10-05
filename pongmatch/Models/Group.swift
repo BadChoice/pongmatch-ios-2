@@ -16,6 +16,10 @@ struct PMGroup : Codable {
     let created_at:Date
     let user:UserGroup
     
+    var photoUrl:URL? {
+        Images.url(photo, folder: .groups)
+    }
+    
     static func fake() -> PMGroup {
         PMGroup(
             id: 1,

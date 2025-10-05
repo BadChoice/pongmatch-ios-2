@@ -3,27 +3,21 @@ import SwiftUI
 
 struct Images {
     
+    enum Folder: String {
+        case avatars
+        case groups
+        case tournaments
+        case locations
+        case games
+    }
+    
     private static let imageCache = NSCache<NSString, UIImage>()
     
-    static func avatar(_ avatar:String?) -> URL? {
-        guard let avatar else { return nil }
-        if avatar.hasPrefix("http") { return URL(string: avatar) }
-        
-        return URL(string: "\(Pongmatch.url)storage/avatars/\(avatar)")
-    }
-    
-    static func group(_ photo:String?) -> URL? {
+    static func url(_ photo:String?, folder:Folder) -> URL? {
         guard let photo else { return nil }
         if photo.hasPrefix("http") { return URL(string: photo) }
         
-        return URL(string: "\(Pongmatch.url)storage/groups/\(photo)")
-    }
-    
-    static func location(_ photo:String?) -> URL? {
-        guard let photo else { return nil }
-        if photo.hasPrefix("http") { return URL(string: photo) }
-        
-        return URL(string: "\(Pongmatch.url)storage/locations/\(photo)")
+        return URL(string: "\(Pongmatch.url)storage/\(folder.rawValue)/\(photo)")
     }
     
     // Download or retrieve cached image

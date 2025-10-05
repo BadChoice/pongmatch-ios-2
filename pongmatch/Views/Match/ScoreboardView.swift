@@ -199,7 +199,7 @@ struct BackgroundBlurredImage : View {
     }
             
     var body: some View {
-        if let url = Images.avatar(user?.avatar) {
+        if let url = user?.photoUrl {
             AsyncImage(url: url) { image in
                 image
                     .resizable()

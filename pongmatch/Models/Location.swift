@@ -21,6 +21,10 @@ struct Location : Codable {
     let created_at:Date?
     let updated_at:Date?
     
+    var photoUrl:URL? {
+        Images.url(photo, folder: .locations)
+    }
+    
     static func fake() -> Location {
         Location(
             id: 5,

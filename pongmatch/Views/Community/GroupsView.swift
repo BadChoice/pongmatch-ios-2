@@ -200,7 +200,7 @@ struct GroupImage:View {
     }
     
     var body: some View {
-        AsyncImage(url: Images.group(group.photo)) { image in
+        AsyncImage(url: group.photoUrl) { image in
             image
                 .resizable()
                 .scaledToFill()

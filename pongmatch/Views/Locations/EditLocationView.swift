@@ -164,7 +164,7 @@ struct EditLocationView: View {
         Section {
             if let newImage = selectedImage {
                 VStack(alignment: .leading, spacing: 8) {
-                    if let url = Images.location(location.photo) {
+                    if let url = location.photoUrl {
                         Text("Current photo")
                             .font(.caption)
                             .foregroundStyle(.secondary)

@@ -25,6 +25,10 @@ struct Tournament : Codable {
     let created_at:Date
     let updated_at:Date
     
+    var photoUrl:URL? {
+        Images.url(photo, folder: .tournaments)
+    }
+    
     var shareURL:URL? {
         guard let token else { return nil }
         return URL(string: Pongmatch.url + "tournaments/join/\(token)")

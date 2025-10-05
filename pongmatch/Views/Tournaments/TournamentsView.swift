@@ -17,6 +17,16 @@ struct TournamentsView : View {
                 Section {
                     VStack(alignment: .leading) {
                         VStack(alignment: .leading){
+                            
+                            if let url = tournament.photoUrl {
+                                AsyncImage(url: url) { image in
+                                    image.image?.resizable()
+                                        .scaledToFill()
+                                        
+                                }
+                                .frame(height: 140)
+                            }
+                            
                             HStack {
                                 Text(tournament.name)
                                     .font(.headline)

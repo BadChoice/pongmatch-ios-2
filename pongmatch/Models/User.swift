@@ -29,6 +29,10 @@ struct User : Codable {
     var address: String?
     var accept_challenge_requests_from: AcceptChallengeRequestFrom?
     
+    var photoUrl:URL? {
+        Images.url(avatar, folder: .avatars)
+    }
+        
     func canBeChallengedByMe() -> Bool {
         guard let accept_challenge_requests_from else { return false }
         

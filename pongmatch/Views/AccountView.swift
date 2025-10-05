@@ -33,7 +33,7 @@ struct AccountView : View {
                                 .scaledToFill()
                                 .frame(width: 100, height: 100)
                                 .clipShape(Circle())
-                        } else if let url = Images.avatar(auth.user?.avatar ?? "") {
+                        } else if let url = auth.user?.photoUrl {
                             AsyncImage(url: url) { image in
                                 image.resizable().scaledToFill()
                             } placeholder: {
