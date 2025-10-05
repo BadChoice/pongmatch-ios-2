@@ -58,11 +58,12 @@ class Api {
         return response.token
     }
  
-    var me: Me               { Me(client: client) }
-    var users: Users         { Users(client: client) }
-    var games: Games         { Games(client: client) }
-    var groups: Groups       { Groups(client: client) }
-    var locations: Locations { Locations(client: client) }
+    var me: Me                  { Me(client: client) }
+    var users: Users            { Users(client: client) }
+    var games: Games            { Games(client: client) }
+    var tournaments:Tournaments { Tournaments(client: client) }
+    var groups: Groups          { Groups(client: client) }
+    var locations: Locations    { Locations(client: client) }
     
     func sendFeedback(_ message:String) async throws {
         struct Response : Codable { }

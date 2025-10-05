@@ -4,11 +4,12 @@ internal import RevoFoundation
 struct DashboardView : View {
     
     enum TabSelection : Int {
-        case home       = 1
-        case community  = 2
-        case groups     = 3
-        case locations  = 4
-        case search     = 5
+        case home        = 1
+        case tournaments = 2
+        case community   = 3
+        case groups      = 4
+        case locations   = 5
+        case search      = 6
     }
     
     @EnvironmentObject private var auth: AuthViewModel
@@ -53,6 +54,12 @@ struct DashboardView : View {
                             scoreboardGame = game
                             presentableScoreboard = PresentableGame(score:Score(game: game))
                         }
+                    }
+                }
+                
+                Tab("Tournaments", systemImage: "trophy.fill", value:.community) {
+                    NavigationStack(path: $communityPath) {
+                        TournamentsView()
                     }
                 }
                 

@@ -1,3 +1,5 @@
+import Foundation
+
 class FakeApi : Api {
     override var me: Api.Me               { FakeApiMe(client: client) }
     override var locations: Api.Locations { FakeApiLocations(client: client) }
@@ -74,5 +76,53 @@ class FakeApiLocations : Api.Locations {
 class FakeApiMe : Api.Me {
     override func deleteAccount() async throws {
         
+    }
+}
+
+
+class FakeApiTorunaments : Api.Tournaments {
+    override func index() async throws -> [Tournament] {
+        [
+            Tournament(
+                id: 1,
+                name: "Primer torunament",
+                information: nil,
+                token: "ABCDEF",
+                initial_score: .standard,
+                ranking_type: .competitive,
+                winning_condition: .single,
+                status: .started,
+                photo: nil,
+                date: Date(),
+                entry_max_players_slots: 100,
+                entry_min_elo: 1400,
+                entry_max_elo: 1800,
+                user: User.me(),
+                winner: User.opponent(),
+                location: nil,
+                created_at: Date(),
+                updated_at: Date()
+            ),
+            Tournament(
+                id: 1,
+                name: "Second Tournament",
+                information: nil,
+                token: "FEDABC",
+                initial_score: .standard,
+                ranking_type: .competitive,
+                winning_condition: .bestof3,
+                status: .draft,
+                photo: nil,
+                date: Date(),
+                entry_max_players_slots: 12,
+                entry_min_elo: nil,
+                entry_max_elo: nil,
+                user: User.me(),
+                winner: nil,
+                location: nil,
+                created_at: Date(),
+                updated_at: Date()
+            )
+        ]
     }
 }
