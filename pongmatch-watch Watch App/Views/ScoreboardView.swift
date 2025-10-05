@@ -173,7 +173,7 @@ struct ScoreboardView: View {
                 }
             }
         }
-        .motionGestures { count in
+        /*.motionGestures { count in
             guard motionDetectionEnabled else { return }
             switch count {
             case 1: syncedScore.score.addScore(player: .player1)
@@ -183,7 +183,7 @@ struct ScoreboardView: View {
                 break
             }
             syncedScore.sync()
-        }
+        }*/
         
         .task {
             if let newScore {

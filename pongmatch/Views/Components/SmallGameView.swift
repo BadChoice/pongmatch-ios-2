@@ -22,7 +22,7 @@ struct SmallGameView : View {
                 
                 HStack {
                     VStack{
-                        AvatarView(user:game.player1)
+                        AvatarView(user:game.player1, winner: game.winner()?.id == game.player1.id)
                             .frame(width: 40,  height: 40)
                         Text(game.player1.initials)
                             .font(.caption.bold())
@@ -34,7 +34,7 @@ struct SmallGameView : View {
                         .frame(maxWidth:.infinity)
                     
                     VStack{
-                        AvatarView(user:game.player2)
+                        AvatarView(user:game.player2, winner: game.winner()?.id == game.player2.id)
                             .frame(width: 40,  height: 40)
                         Text(game.player2.initials)
                             .font(.caption.bold())
