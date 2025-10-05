@@ -51,6 +51,7 @@ struct CreateGameView : View {
                         Label("Date", systemImage: "calendar")
                         Spacer()
                         DatePicker("", selection: $selectedDate, displayedComponents: [.date, .hourAndMinute])
+                        
                             .labelsHidden()
                     }
                     

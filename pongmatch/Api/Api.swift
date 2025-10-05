@@ -29,7 +29,7 @@ class Api {
             "password": password,
             "device_name" : deviceName
         ], headers:[
-            "Accept": "application/json"
+                "Accept": "application/json"
         ])
         
         return response.token
@@ -705,6 +705,45 @@ class Api {
     
     }
     
+    // New: Update an existing location
+    func update(location: Location, name: String, isPrivate: Bool, isIndoor: Bool, numberOfTables: Int, description: String, instructions: String) async throws -> Location {
+        struct Response: Codable {
+            let data: Location
+        }
+        do {
+            let response: Response = try await client.call(
+                method: .put,
+                url: "locations/\(location.id)",
+                params: [
+                    "name": name,
+                    "private": isPrivate,
+                    "indoor": isIndoor,
+                    "number_of_tables": numberOfTables,
+                    "description": description,
+                    "instructions": instructions
+                ],
+                headers: [
+                    "Content-Type": "application/x-www-form-urlencoded"
+                ]
+            )
+            return response.data
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
+    // New: Delete a location
+    func delete(location: Location) async throws {
+        struct Response: Codable { }
+        do {
+            let _: Response = try await client.call(method: .delete, url: "locations/\(location.id)")
+        } catch {
+            print(error)
+            throw error
+        }
+    }
+    
     //MARK: Feedbak
     func sendFeedback(_ message:String) async throws {
         struct Response : Codable { }
@@ -721,4 +760,3 @@ class Api {
     }
     
 }
-
