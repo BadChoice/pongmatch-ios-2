@@ -97,7 +97,7 @@ struct LocationsView: View {
         }
         .sheet(item: $selectedLocation) { location in
             LocationInfo(location: location.location)
-                .presentationDetents([.fraction(0.40), .medium, .large])
+                .presentationDetents([.fraction(0.50), .medium, .large])
                 .presentationDragIndicator(.visible)
         }
     }
@@ -145,9 +145,22 @@ private struct LocationInfo: View {
                     }
                 } else {
                     AsyncImage(url: Images.location(location.photo)) { image in
-                        image.image?.resizable()
+                        image.resizable()
+                            .scaledToFill()
                             .frame(height: 150)
+                    } placeholder: {
+                        HStack{
+                            Spacer()
+                            Image(systemName: "photo")
+                                .resizable()
+                                .scaledToFit()
+                                .opacity(0.2)
+                            Spacer()
+                        }.padding(.top, 18)
                     }
+                    .foregroundStyle(.secondary)
+                    .frame(height: 150)
+                    
                     VStack(alignment: .leading, spacing: 8) {
                         Text(location.name)
                             .font(.title)
@@ -189,6 +202,7 @@ private struct LocationInfo: View {
                             .foregroundStyle(.secondary)
                     }
                     .padding(.horizontal)
+                    .padding(.top, 32)
                     .frame(maxWidth: .infinity)
                 }
                 Spacer()

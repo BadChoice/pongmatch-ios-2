@@ -59,7 +59,7 @@ struct EditLocationView: View {
     
     var body: some View {
         Form {
-            Section("Photo") {
+            Section {
                 if let newImage = selectedImage {
                     VStack(alignment: .leading) {
                         Image(uiImage: newImage)
@@ -315,7 +315,7 @@ private extension UIImage {
     }
 }
 
-/*#Preview {
+#Preview {
     let auth = AuthViewModel()
     auth.user = User.me()
     auth.api = FakeApi("2|69n4MjMi5nzY8Q2zGlwL7Wvg7M6d5jb0PaCyS2Yla68afa64")
@@ -323,4 +323,4 @@ private extension UIImage {
     return NavigationStack {
         EditLocationView(location: Location.fake())
     }.environmentObject(auth)
-}*/
+}
