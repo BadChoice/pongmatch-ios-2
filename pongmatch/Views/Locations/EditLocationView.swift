@@ -22,8 +22,6 @@ struct EditLocationView: View {
     // State
     @StateObject private var saving = ApiAction()
     @StateObject private var deleting = ApiAction()
-    @State private var showError: Bool = false
-    @State private var errorMessage: String? = nil
     @State private var showDeleteConfirm: Bool = false
     
     // Desired landscape aspect ratio for location photos
@@ -164,7 +162,7 @@ struct EditLocationView: View {
                     }
                     .foregroundStyle(.secondary)
                 }
-                Text("Address and coordinates cannot be changed here.")
+                Text("Address and coordinates cannot be changed.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -183,6 +181,13 @@ struct EditLocationView: View {
                         ProgressView(saving.loading ? "Saving…" : "Deleting…")
                         Spacer()
                     }
+                }
+            }
+            
+            if let errorMessage = saving.errorMessage ?? deleting.errorMessage {
+                Section {
+                    Text(errorMessage)
+                        .foregroundStyle(.red)
                 }
             }
             
@@ -215,11 +220,6 @@ struct EditLocationView: View {
                 selectedImage = img.croppedToAspect(desiredPhotoAspect)
             }
         }
-        .alert("Error", isPresented: $showError, actions: {
-            Button("OK", role: .cancel) { }
-        }, message: {
-            Text(errorMessage ?? "Unknown error")
-        })
         .confirmationDialog(
             "Are you sure you want to delete this location?",
             isPresented: $showDeleteConfirm,
@@ -241,29 +241,22 @@ struct EditLocationView: View {
         let trimmedInstructions = instructions.trimmingCharacters(in: .whitespacesAndNewlines)
         
         let _ = await saving.run {
-            do {
-                let updated = try await auth.api!.update(
-                    location: location,
-                    name: trimmedName,
-                    isPrivate: isPrivate,
-                    isIndoor: isIndoor,
-                    numberOfTables: numberOfTables,
-                    description: trimmedDescription,
-                    instructions: trimmedInstructions
-                )
-                
-                if let image = selectedImage {
-                    let _ = try await auth.api!.uploadLocationAvatar(updated, image: image)
-                }
-                
-                await MainActor.run {
-                    dismiss()
-                }
-            } catch {
-                await MainActor.run {
-                    errorMessage = "\(error)"
-                    showError = true
-                }
+            let updated = try await auth.api!.update(
+                location: location,
+                name: trimmedName,
+                isPrivate: isPrivate,
+                isIndoor: isIndoor,
+                numberOfTables: numberOfTables,
+                description: trimmedDescription,
+                instructions: trimmedInstructions
+            )
+            
+            if let image = selectedImage {
+                let _ = try await auth.api!.uploadLocationAvatar(updated, image: image)
+            }
+            
+            await MainActor.run {
+                dismiss()
             }
         }
     }
@@ -271,16 +264,9 @@ struct EditLocationView: View {
     @MainActor
     private func deleteLocation() async {
         let _ = await deleting.run {
-            do {
-                try await auth.api!.delete(location: location)
-                await MainActor.run {
-                    dismiss()
-                }
-            } catch {
-                await MainActor.run {
-                    errorMessage = "\(error)"
-                    showError = true
-                }
+            try await auth.api!.delete(location: location)
+            await MainActor.run {
+                dismiss()
             }
         }
     }
