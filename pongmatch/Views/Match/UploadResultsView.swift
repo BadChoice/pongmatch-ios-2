@@ -117,7 +117,7 @@ struct UploadResultsView: View {
         defer { uploading = false }
         errorMessage = nil
         do {
-            game = try await auth.api.uploadResults(game, results: setResults)
+            game = try await auth.api.games.uploadResults(game, results: setResults)
             dismiss()
         } catch {
             errorMessage = "\(error)"

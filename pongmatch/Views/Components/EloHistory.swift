@@ -64,7 +64,7 @@ struct EloHistory : View {
         }
         .task {
             Task {
-                let eloHistory = try await auth.api.eloHistory(user).map {
+                let eloHistory = try await auth.api.users.eloHistory(user).map {
                     EloEntry(date: $0.date, elo: $0.elo)
                 }
                 withAnimation {

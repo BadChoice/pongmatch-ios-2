@@ -268,7 +268,7 @@ struct DisputeResultView: View {
         guard !disputing.loading else { return }
         Task {
             let success = await disputing.run {
-                _ = try await auth.api.dispute(game, reason: trimmedReason)
+                _ = try await auth.api.games.dispute(game, reason: trimmedReason)
             }
             if success {
                 dismiss()

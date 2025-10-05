@@ -13,7 +13,7 @@ struct FriendView : View {
     @StateObject var fetchOneVsOne = ApiAction()
     
     @State var games:[Game] = []
-    @State var oneVsOne:Api.OneVsOne? = nil
+    @State var oneVsOne:Api.Users.OneVsOne? = nil
     
     init(user:User) {
         self.user = user
@@ -149,7 +149,7 @@ struct FriendView : View {
     
     private func fetchDetails(){
         Task {
-            let deepDetails = try? await auth.api.deepDetails(user)
+            let deepDetails = try? await auth.api.users.deepDetails(user)
             withAnimation {
                 self.user.deepDetails = deepDetails
             }
@@ -159,7 +159,7 @@ struct FriendView : View {
     private func fetchFriendGames(){
         Task {
             await fetchGames.run {
-                games = try await auth.api.friendGames(user.id)
+                games = try await auth.api.users.friendGames(user.id)
             }
         }
     }
@@ -168,7 +168,7 @@ struct FriendView : View {
         if auth.user.id == user.id { return }
         Task {
             await fetchOneVsOne.run {
-                oneVsOne = try await auth.api.friendOneVsOne(user.id)
+                oneVsOne = try await auth.api.users.friendOneVsOne(user.id)
             }
         }
     }
@@ -185,7 +185,7 @@ struct FollowButton : View {
         
         Button {
             Task {
-                try await isFollowed ? auth.api.unfollow(user) : auth.api.follow(user)
+                try await isFollowed ? auth.api.users.unfollow(user) : auth.api.users.follow(user)
                 withAnimation { isFollowed.toggle()}
             }
         } label: {

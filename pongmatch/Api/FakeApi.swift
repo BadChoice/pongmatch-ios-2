@@ -1,4 +1,9 @@
 class FakeApi : Api {
+    override var me: Api.Me               { FakeApiMe(client: client) }
+    override var locations: Api.Locations { FakeApiLocations(client: client) }
+}
+
+class FakeApiLocations : Api.Locations {
     
     override func locations(latitude: Double, longitude: Double) async throws -> [Location] {
         return [
@@ -64,8 +69,10 @@ class FakeApi : Api {
     override func location(id:Int) async throws -> Location {
         try await locations(latitude: 0, longitude: 0).first { $0.id == id }!           
     }
-    
+}
+
+class FakeApiMe : Api.Me {
     override func deleteAccount() async throws {
-        return
+        
     }
 }

@@ -74,7 +74,7 @@ class AuthViewModel : ObservableObject {
         isLoading = true
         defer { isLoading = false }
         do {
-            games = try await api.games()
+            games = try await api.games.games()
                 .sort(by: \.date)
                 .reversed()
         } catch {
@@ -90,15 +90,15 @@ class AuthViewModel : ObservableObject {
     }
     
     func fetchMe() async throws {
-        user = try await api.me()
+        user = try await api.me.me()
         WatchManager.shared.sendUserInfo(["auth_user" : try! user.encode()])
     }
     
     func friends() async throws -> [User] {
-        try await api.friends()
+        try await api.users.friends()
     }
     
     func searchFriends(_ text:String?) async throws -> [User] {
-        try await api.friends(search: text)
+        try await api.users.friends(search: text)
     }
 }

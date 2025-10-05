@@ -22,8 +22,8 @@ struct GameSummaryView : View {
     
     @StateObject private var calendarManager = CalendarManager()
     
-    @State private var player1Details:Api.PlayerDetails? = nil
-    @State private var player2Details:Api.PlayerDetails? = nil
+    @State private var player1Details:Api.Games.PlayerDetails? = nil
+    @State private var player2Details:Api.Games.PlayerDetails? = nil
     
     @State private var showScoreboard = false
 
@@ -267,8 +267,8 @@ struct GameSummaryView : View {
                             Button {
                                 Task {
                                     let didUpload = await uploadWatchResults.run {
-                                        let newGame = try await auth.api.store(game: game)
-                                        let _ = try await auth.api.uploadResults(newGame, results:game.results)
+                                        let newGame = try await auth.api.games.store(game: game)
+                                        let _ = try await auth.api.games.uploadResults(newGame, results:game.results)
                                         WatchFinishedGames.shared.remove(game: game)
                                     }
                                     if didUpload {
@@ -291,7 +291,7 @@ struct GameSummaryView : View {
                     if game.status == .waitingOpponent && game.player2.id == auth.user.id {
                         Button {
                             Task { await acceptChallenge.run {
-                                game = try await auth.api.declineChallenge(game)
+                                game = try await auth.api.games.declineChallenge(game)
                                 dismiss()
                             }}
                         }
@@ -308,7 +308,7 @@ struct GameSummaryView : View {
                         
                         Button {
                             Task { await acceptChallenge.run {
-                                game = try await auth.api.acceptChallenge(game)
+                                game = try await auth.api.games.acceptChallenge(game)
                                 dismiss()
                             }}
                         }
@@ -330,7 +330,7 @@ struct GameSummaryView : View {
         .task {
             if game.isFinished() && game.ranking_type == .competitive {
                 Task {
-                    (player1Details, player2Details) = try await auth.api.playersDetails(game: game)
+                    (player1Details, player2Details) = try await auth.api.games.playersDetails(game: game)
                 }
             }
         }
@@ -359,7 +359,7 @@ struct GameSummaryView : View {
             Button("Delete", role: .destructive) {
                 Task {
                     if (await deleteGame.run {
-                        try await auth.api.delete(game: game)
+                        try await auth.api.games.delete(game: game)
                     }) {
                         dismiss()
                     }
@@ -448,7 +448,7 @@ struct GameSummaryView : View {
     private func getPublicScoreboardCode() {
         Task {
             await fetchPublicScoreboardCode.run {
-                let code = try? await auth.api.getPublicScoreboardCode(game)
+                let code = try? await auth.api.games.getPublicScoreboardCode(game)
                 await MainActor.run {
                     withAnimation { publicScoreboardCode = code }
                 }

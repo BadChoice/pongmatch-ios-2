@@ -72,7 +72,7 @@ struct GroupView: View {
             }
         }
         .task {
-            users = (try? await auth.api.groupUsers(group)) ?? []
+            users = (try? await auth.api.groups.groupUsers(group)) ?? []
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -114,12 +114,12 @@ struct GroupView: View {
             SearchOpponentView(selectedFriend: $selectedFriend) { user in
                 Task {
                     let success = await inviteAction.run {
-                        try await auth.api.invite(user: user, to: group)
+                        try await auth.api.groups.invite(user: user, to: group)
                     }
                     if success {
                         // Close picker and refresh members
                         showInviteSheet = false
-                        users = (try? await auth.api.groupUsers(group)) ?? users
+                        users = (try? await auth.api.groups.groupUsers(group)) ?? users
                     }
                 }
             }
@@ -173,7 +173,7 @@ struct GroupView: View {
     private func joinGroup() {
         Task {
             let _ = await joiningGroup.run {
-                group = try await auth.api.join(group: group)
+                group = try await auth.api.groups.join(group: group)
             }
         }
     }
@@ -181,7 +181,7 @@ struct GroupView: View {
     private func leaveGroup() {
         Task {
             let didLeave = await joiningGroup.run {
-                try await auth.api.leave(group: group)
+                try await auth.api.groups.leave(group: group)
             }
             
             if didLeave {

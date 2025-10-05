@@ -241,7 +241,7 @@ struct EditLocationView: View {
         let trimmedInstructions = instructions.trimmingCharacters(in: .whitespacesAndNewlines)
         
         let _ = await saving.run {
-            let updated = try await auth.api!.update(
+            let updated = try await auth.api!.locations.update(
                 location: location,
                 name: trimmedName,
                 isPrivate: isPrivate,
@@ -252,7 +252,7 @@ struct EditLocationView: View {
             )
             
             if let image = selectedImage {
-                let _ = try await auth.api!.uploadLocationAvatar(updated, image: image)
+                let _ = try await auth.api!.locations.uploadLocationAvatar(updated, image: image)
             }
             
             await MainActor.run {
@@ -264,7 +264,7 @@ struct EditLocationView: View {
     @MainActor
     private func deleteLocation() async {
         let _ = await deleting.run {
-            try await auth.api!.delete(location: location)
+            try await auth.api!.locations.delete(location: location)
             await MainActor.run {
                 dismiss()
             }

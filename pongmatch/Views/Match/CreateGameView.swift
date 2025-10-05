@@ -115,7 +115,7 @@ struct CreateGameView : View {
         defer { creatingGame = false }
         
         do {
-            let _ = try await auth.api.store(game: Game(
+            let _ = try await auth.api.games.store(game: Game(
                 initial_score: initialScore,
                 ranking_type: rankingType,
                 winning_condition: winningCondition,

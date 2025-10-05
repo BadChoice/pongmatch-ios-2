@@ -54,7 +54,7 @@ struct Apn {
     private static func saveToken(_ token:String) {
         Task {
             do {
-                try await Api.makeFromStorageKey()?.registerApnToken(token)
+                try await Api.makeFromStorageKey()?.me.registerApnToken(token)
                 Storage().save(.apnTokenSaved, value: true)
             } catch {
                 

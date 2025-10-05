@@ -91,7 +91,7 @@ private extension SearchUsersView {
         isSearching = true
         errorMessage = nil
         do {
-            users = try await api.users(search: text)
+            users = try await api.users.search(text)
         } catch {
             errorMessage = "\(error)"
         }

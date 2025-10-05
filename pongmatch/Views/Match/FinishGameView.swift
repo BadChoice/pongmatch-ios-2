@@ -129,10 +129,10 @@ struct FinishGameView: View {
         Task {
             if (await uploadGame.run {
                 if game.needsId {
-                    let newGame = try await auth.api.store(game: game)
-                    let _ = try await auth.api.uploadResults(newGame, results: game.results)
+                    let newGame = try await auth.api.games.store(game: game)
+                    let _ = try await auth.api.games.uploadResults(newGame, results: game.results)
                 } else {
-                    let _ = try await auth.api.uploadResults(game, results: game.results)
+                    let _ = try await auth.api.games.uploadResults(game, results: game.results)
                 }
             }) {
                 // Refresh games so HomeView updates immediately

@@ -168,7 +168,7 @@ struct AccountView : View {
                 avatarImage = Image(uiImage: newImage)
                 Task {
                     await savingAvatar.run {
-                        auth.user = try await auth.api.uploadAvatar(newImage)
+                        auth.user = try await auth.api.me.uploadAvatar(newImage)
                     }
                 }
             }
@@ -183,7 +183,7 @@ struct AccountView : View {
     
     private func saveProfile() async{
         let saved = await savingProfile.run {
-            auth.user = try await auth.api.updateProfile(
+            auth.user = try await auth.api.me.updateProfile(
                 name: name,
                 language: language,
                 timeZone: TimeZone.current.identifier,
@@ -259,7 +259,7 @@ struct AccountView : View {
     
     private func performDeleteAccount() async {
         let deleted = await deletingAccount.run {
-            try await auth.api.deleteAccount()
+            try await auth.api.me.deleteAccount()
         }
         if deleted {
             showDeleteSheet = false
