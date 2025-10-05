@@ -12,13 +12,90 @@ struct TournamentsView : View {
                 Text(errorMessage)
                     .foregroundStyle(.red)
             }
+            
             ForEach(tournaments, id:\.id) { tournament in
-                Text(tournament.name)
+                Section {
+                    VStack(alignment: .leading) {
+                        VStack(alignment: .leading){
+                            HStack {
+                                Text(tournament.name)
+                                    .font(.headline)
+                                
+                                Spacer()
+                                
+                                Label(tournament.status.description, systemImage: tournament.status.icon)
+                                    .font(.caption)
+                            }
+                            
+                            if let info = tournament.information {
+                                Text(info)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            
+                        }
+                        
+                        
+                        Divider().padding(.vertical)
+                        
+                        HStack {
+                            if let organizer = tournament.user {
+                                HStack {
+                                    AvatarView(user: organizer)
+                                        .frame(width:20, height:20)
+                                    Text(organizer.name)
+                                }
+                                .foregroundStyle(.secondary)
+                                .font(.footnote)
+                            }
+                            
+                            Spacer()
+                            
+                            if let date = tournament.date?.displayForHumans {
+                                HStack {
+                                    Image(systemName: "calendar")
+                                    Text(date)
+                                }
+                                .foregroundStyle(.secondary)
+                                .font(.footnote)
+                            }
+                        }
+                        
+                        if let location = tournament.location {
+                            HStack {
+                                Image(systemName: "mappin.and.ellipse")
+                                Text(location.name)
+                            }
+                            .foregroundStyle(.secondary)
+                            .font(.footnote)
+                        }
+                        
+                        Divider().padding(.vertical)
+                        
+                        ModesView(
+                            initialScore: tournament.initial_score,
+                            rankingType: tournament.ranking_type,
+                            winningCondition: tournament.winning_condition,
+                        )
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 14)
+                    }
+                }
             }
         }
         .task {
             let _ = await fetchingTournaments.run {
                 tournaments = try await auth.api.tournaments.index()
+            }
+        }
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    //TODO
+                } label: {
+                    Image(systemName: "plus")
+                }
             }
         }
     }

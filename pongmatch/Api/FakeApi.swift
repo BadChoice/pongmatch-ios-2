@@ -1,8 +1,10 @@
 import Foundation
 
 class FakeApi : Api {
-    override var me: Api.Me               { FakeApiMe(client: client) }
-    override var locations: Api.Locations { FakeApiLocations(client: client) }
+    override var me: Api.Me                     { FakeApiMe(client: client) }
+    override var tournaments: Api.Tournaments   { FakeApiTorunaments(client: client) }
+    override var locations: Api.Locations       { FakeApiLocations(client: client) }
+    
 }
 
 class FakeApiLocations : Api.Locations {
@@ -104,9 +106,9 @@ class FakeApiTorunaments : Api.Tournaments {
                 updated_at: Date()
             ),
             Tournament(
-                id: 1,
+                id: 2,
                 name: "Second Tournament",
-                information: nil,
+                information: "Un torneig molt important a veure qui serà el campió?",
                 token: "FEDABC",
                 initial_score: .standard,
                 ranking_type: .competitive,
@@ -119,7 +121,7 @@ class FakeApiTorunaments : Api.Tournaments {
                 entry_max_elo: nil,
                 user: User.me(),
                 winner: nil,
-                location: nil,
+                location: Location.fake(),
                 created_at: Date(),
                 updated_at: Date()
             )
