@@ -1,4 +1,4 @@
-import HealthKit
+/*import HealthKit
 import Combine
 
 class TableTennisWorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDelegate {
@@ -36,3 +36,4 @@ class TableTennisWorkoutManager: NSObject, ObservableObject, HKWorkoutSessionDel
     }
 
 }
+*/
