@@ -85,26 +85,7 @@ class FakeApiMe : Api.Me {
 class FakeApiTorunaments : Api.Tournaments {
     override func index() async throws -> [Tournament] {
         [
-            Tournament(
-                id: 1,
-                name: "Primer torunament",
-                information: nil,
-                token: "ABCDEF",
-                initial_score: .standard,
-                ranking_type: .competitive,
-                winning_condition: .single,
-                status: .started,
-                photo: nil,
-                date: Date(),
-                entry_max_players_slots: 100,
-                entry_min_elo: 1400,
-                entry_max_elo: 1800,
-                user: User.me(),
-                winner: User.opponent(),
-                location: nil,
-                created_at: Date(),
-                updated_at: Date()
-            ),
+            Tournament.fake(),
             Tournament(
                 id: 2,
                 name: "Second Tournament",
