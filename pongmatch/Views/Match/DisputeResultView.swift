@@ -25,7 +25,7 @@ struct DisputeResultView: View {
 
     private var opponentName: String {
         guard let me = auth.user else { return "the other player" }
-        return me.id == game.player1.id ? game.player2.name : game.player1.name
+        return me.id == game.safePlayer1.id ? game.safePlayer2.name : game.safePlayer1.name
     }
 
     var body: some View {

@@ -18,7 +18,7 @@ struct CompactGameView: View {
             Divider()
             
             HStack(alignment: .center) {
-                CompactUserView(user: game.player1, winner: game.winner()?.id == game.player1.id)
+                CompactUserView(user: game.safePlayer1, winner: game.winner()?.id == game.safePlayer1.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
                 
                 VStack {
@@ -26,7 +26,7 @@ struct CompactGameView: View {
                 }
                 .frame(minWidth: 0, maxWidth: .infinity)
                 
-                CompactUserView(user: game.player2, winner: game.winner()?.id == game.player2.id)
+                CompactUserView(user: game.safePlayer2, winner: game.winner()?.id == game.safePlayer2.id)
                     .frame(minWidth: 0, maxWidth: .infinity)
             }
             .overlay(alignment:.top){

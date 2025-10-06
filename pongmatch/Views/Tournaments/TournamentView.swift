@@ -14,7 +14,7 @@ struct TournamentView : View {
                 HStack {
                     ForEach(details?.players ?? [], id:\.id){
                         AvatarView(user: $0)
-                            .frame(width:20, height:20)
+                            .frame(width:40, height:40)
                     }
                 }
             }

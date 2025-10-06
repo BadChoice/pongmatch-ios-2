@@ -52,20 +52,20 @@ struct DisputeView : View {
     }
     
     private func disputer() -> User? {
-        if game.player1.id == game.dispute?.user_id {
+        if game.safePlayer1.id == game.dispute?.user_id {
             return game.player1
         }
-        if game.player2.id == game.dispute?.user_id {
+        if game.safePlayer2.id == game.dispute?.user_id {
             return game.player2
         }
         return nil
     }
     
     private func accepter() -> User {
-        if game.player1.id == game.dispute?.user_id {
-            return game.player2
+        if game.safePlayer1.id == game.dispute?.user_id {
+            return game.safePlayer2
         }
-        return game.player1
+        return game.safePlayer1
     }
 }
 

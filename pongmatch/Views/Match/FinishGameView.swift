@@ -27,13 +27,13 @@ struct FinishGameView: View {
                 
                 HStack {
                     Spacer()
-                    CompactUserView(user: game.player1, winner: game.winner()?.id == game.player1.id)
+                    CompactUserView(user: game.safePlayer1, winner: game.isTheWinner(game.safePlayer1))
                         .frame(minWidth: 0, maxWidth: .infinity)
                     
                     FinalResult(game.finalResult)
                         .frame(minWidth: 0, maxWidth: .infinity)
                     
-                    CompactUserView(user: game.player2, winner: game.winner()?.id == game.player2.id)
+                    CompactUserView(user: game.safePlayer2, winner: game.isTheWinner(game.safePlayer2))
                         .frame(minWidth: 0, maxWidth: .infinity)
                     Spacer()
                 }
@@ -42,8 +42,8 @@ struct FinishGameView: View {
                 
                 if let results = game.results {
                     WinLossBar(
-                        me:game.player1,
-                        friend: game.player2,
+                        me:game.safePlayer1,
+                        friend: game.safePlayer2,
                         wins: results.sum { $0[0] },
                         losses: results.sum { $0[1] },
                         label: "Points ratio"

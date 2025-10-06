@@ -50,7 +50,7 @@ struct SearchOpponentView : View {
             recentOpponents = auth.games.filter {
                 $0.isFinished()
             }.map {
-                $0.player1.id == auth.user?.id ? $0.player2 : $0.player1
+                $0.safePlayer1.id == auth.user?.id ? $0.safePlayer2 : $0.safePlayer1
             }.unique(\.id).filter{
                 $0.canBeChallengedByMe()
             } + [User.unknown()]

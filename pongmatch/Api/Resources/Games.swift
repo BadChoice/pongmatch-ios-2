@@ -36,8 +36,8 @@ extension Api {
                     "winning_condition" : game.winning_condition.rawValue,
                     "ranking_type" : game.ranking_type.rawValue,
                     "initial_score" : InitialScore.standard.rawValue, //TODO
-                    "player1_id" : game.player1.id,
-                    "player2_id" : game.player2.id,
+                    "player1_id" : game.safePlayer1.id,
+                    "player2_id" : game.safePlayer2.id,
                 ])
                 return gameResponse.data
                 

@@ -12,14 +12,14 @@ struct CurrentGameView : View {
                 
                 Spacer().frame(width:20)
                 
-                AvatarView(user: score.game.player1)
+                AvatarView(user: score.game.safePlayer1)
                     .frame(width: 24, height:24)
                 Group {
                     let result = score.setsResult
                     Text("\(result.player1) - \(result.player2)")
                 }.font(.headline)
                 
-                AvatarView(user: score.game.player2)
+                AvatarView(user: score.game.safePlayer2)
                     .frame(width: 24, height:24)
                 
                 Spacer().frame(width:20)

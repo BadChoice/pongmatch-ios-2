@@ -25,8 +25,8 @@ class Score: Codable {
         self.score = initialScore()
     }
     
-    var player1:User { game.player1 }
-    var player2:User { game.player2 }
+    var player1:User { game.safePlayer1 }
+    var player2:User { game.safePlayer2 }
     
     private func initialScore() -> Result {
         game.initial_score.initialResult(for: game.player1, player2: game.player2)

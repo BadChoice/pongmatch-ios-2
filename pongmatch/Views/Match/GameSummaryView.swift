@@ -33,23 +33,23 @@ struct GameSummaryView : View {
             VStack {
                 HStack {
                     NavigationLink {
-                        FriendView(user: game.player1)
-                            .navigationTransition(.zoom(sourceID: "zoom_user_\(game.player1.id)", in: namespace))
+                        FriendView(user: game.safePlayer1)
+                            .navigationTransition(.zoom(sourceID: "zoom_user_\(game.safePlayer1.id)", in: namespace))
                     } label: {
-                        CompactUserView(user: game.player1, winner:game.winner()?.id == game.player1.id)
+                        CompactUserView(user: game.safePlayer1, winner:game.winner()?.id == game.safePlayer1.id)
                             .frame(minWidth: 0, maxWidth: .infinity)
-                            .matchedTransitionSource(id: "zoom_user_\(game.player1.id)", in: namespace)
+                            .matchedTransitionSource(id: "zoom_user_\(game.safePlayer1.id)", in: namespace)
                     }
                     
                     FinalResult(game.finalResult)
                     
                     NavigationLink {
-                        FriendView(user: game.player2)
-                            .navigationTransition(.zoom(sourceID: "zoom_user_\(game.player2.id)", in: namespace))
+                        FriendView(user: game.safePlayer2)
+                            .navigationTransition(.zoom(sourceID: "zoom_user_\(game.safePlayer2.id)", in: namespace))
                     } label: {
-                        CompactUserView(user: game.player2, winner:game.winner()?.id == game.player2.id)
+                        CompactUserView(user: game.safePlayer2, winner:game.winner()?.id == game.safePlayer2.id)
                             .frame(minWidth: 0, maxWidth: .infinity)
-                            .matchedTransitionSource(id: "zoom_user_\(game.player2.id)", in: namespace)
+                            .matchedTransitionSource(id: "zoom_user_\(game.safePlayer2.id)", in: namespace)
                     }
                 }
                 .foregroundStyle(.primary)
@@ -105,8 +105,8 @@ struct GameSummaryView : View {
                 
                 if let results = game.results, !results.isEmpty {
                     WinLossBar(
-                        me:game.player1,
-                        friend: game.player2,
+                        me:game.safePlayer1,
+                        friend: game.safePlayer2,
                         wins: results.sum { $0[0] },
                         losses: results.sum { $0[1] },
                         label: "Points ratio"
@@ -147,7 +147,7 @@ struct GameSummaryView : View {
                         .padding(.vertical)
                     }
                     
-                    if game.status == .waitingOpponent && game.player2.id == auth.user.id {
+                    if game.status == .waitingOpponent && game.safePlayer2.id == auth.user.id {
                         VStack(alignment: .center) {
                             Text("YOU HAVE BEEN CHALLENGED!")
                                 .multilineTextAlignment(.center)
@@ -288,7 +288,7 @@ struct GameSummaryView : View {
                         }
                     }
                     
-                    if game.status == .waitingOpponent && game.player2.id == auth.user.id {
+                    if game.status == .waitingOpponent && game.safePlayer2.id == auth.user.id {
                         Button {
                             Task { await acceptChallenge.run {
                                 game = try await auth.api.games.declineChallenge(game)
@@ -467,7 +467,7 @@ struct HorizontalSetsScoreView: View {
     var body: some View {
         VStack(alignment: .leading) {
             HStack(spacing: 20) {
-                AvatarView(user: game.player1).frame(width: 30)
+                AvatarView(user: game.safePlayer1).frame(width: 30)
                 ForEach(results, id: \.self) { set in
                     Text("\(set[0])").bold(set[0] > set[1])
                         .frame(width: 20)
@@ -475,7 +475,7 @@ struct HorizontalSetsScoreView: View {
             }
             Divider()
             HStack(spacing: 20) {
-                AvatarView(user: game.player2).frame(width: 30)
+                AvatarView(user: game.safePlayer2).frame(width: 30)
                 ForEach(results, id: \.self) { set in
                     Text("\(set[1])").bold(set[1] > set[0])
                         .frame(width: 20)

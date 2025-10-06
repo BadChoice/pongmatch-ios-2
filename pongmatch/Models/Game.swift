@@ -14,8 +14,16 @@ class Game : Codable {
     var status:GameStatus
     var results:[[Int]]?
     
-    let player1:User
-    let player2:User
+    let player1:User?
+    let player2:User?
+    
+    var safePlayer1:User {
+        player1 ?? User.unknown()
+    }
+    
+    var safePlayer2: User{
+        player2 ?? User.unknown()
+    }
     
     let dispute:Dispute?
     
@@ -51,7 +59,7 @@ class Game : Codable {
     }
     
     func hasAnUnknownPlayer() -> Bool {
-        [player1, player2].contains { $0.isUnknown }
+        [safePlayer1, safePlayer2].contains { $0.isUnknown }
     }
     
     func isFinished() -> Bool {
@@ -63,12 +71,17 @@ class Game : Codable {
     }
     
     func hasPlayer(_ player:User) -> Bool {
-        [player1.id, player2.id].contains(player.id)
+        [safePlayer1.id, safePlayer2.id].contains(player.id)
     }
     
     func winner() -> User? {
         guard let finalResult = finalResult else { return nil }
         return finalResult[0] > finalResult[1] ? player1 : player2
+    }
+    
+    func isTheWinner(_ player:User?) -> Bool {
+        guard let winner = winner() else { return false }
+        return winner.id == player?.id
     }
     
     @discardableResult

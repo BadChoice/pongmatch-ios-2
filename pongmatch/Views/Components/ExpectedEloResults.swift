@@ -12,8 +12,8 @@ struct ExpectedEloResults: View {
         let delta2: Int
     }
     
-    private var p1Old: Int { game.player1.ranking }
-    private var p2Old: Int { game.player2.ranking }
+    private var p1Old: Int { game.safePlayer1.ranking }
+    private var p2Old: Int { game.safePlayer2.ranking }
     private var kFactor: Int { game.initial_score.eloConstant }
     
     private var outcomeIfP1Wins: Outcome {
@@ -56,9 +56,9 @@ struct ExpectedEloResults: View {
                 // Details
                 VStack(alignment: .leading, spacing: 10) {
                     EloOutcomeRow(
-                        title: "If \(game.player1.name) wins",
-                        user1: game.player1,
-                        user2: game.player2,
+                        title: "If \(game.safePlayer1.name) wins",
+                        user1: game.safePlayer1,
+                        user2: game.safePlayer2,
                         old1: p1Old,
                         old2: p2Old,
                         new1: outcomeIfP1Wins.new1,
@@ -70,9 +70,9 @@ struct ExpectedEloResults: View {
                     Divider().padding(.vertical, 2)
                     
                     EloOutcomeRow(
-                        title: "If \(game.player2.name) wins",
-                        user1: game.player1,
-                        user2: game.player2,
+                        title: "If \(game.safePlayer2.name) wins",
+                        user1: game.safePlayer1,
+                        user2: game.safePlayer2,
                         old1: p1Old,
                         old2: p2Old,
                         new1: outcomeIfP2Wins.new1,

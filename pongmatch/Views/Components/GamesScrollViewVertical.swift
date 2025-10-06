@@ -37,12 +37,12 @@ struct GameRowView : View {
     
     var body: some View {
         HStack{
-            CompactUserView(user:game.player1, winner: game.winner()?.id == game.player1.id)
+            CompactUserView(user:game.safePlayer1, winner: game.winner()?.id == game.safePlayer1.id)
                 .frame(maxWidth: .infinity)
             
             FinalResult(game.finalResult)
             
-            CompactUserView(user:game.player2, winner: game.winner()?.id == game.player2.id)
+            CompactUserView(user:game.safePlayer2, winner: game.winner()?.id == game.safePlayer2.id)
                 .frame(maxWidth: .infinity)
         }
         .overlay(alignment: .top){

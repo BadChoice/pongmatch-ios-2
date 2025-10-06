@@ -32,8 +32,8 @@ struct UploadResultsView: View {
                 HStack {
                     VStack {
                         Spacer().frame(height:22)
-                        AvatarView(user: game.player1)//.frame(width:40)
-                        AvatarView(user: game.player2)//.frame(width:40)
+                        AvatarView(user: game.safePlayer1)//.frame(width:40)
+                        AvatarView(user: game.safePlayer2)//.frame(width:40)
                     }.frame(height:100)
                     ScrollView(.horizontal) {
                         HStack(spacing: 8){
