@@ -23,6 +23,26 @@ extension Api {
                 throw error
             }
         }
+        
+        
+        struct TournamentDetails : Codable {
+            let games:[Game]
+            let players:[User]
+        }
+        
+        func get(id:Int) async throws -> TournamentDetails {
+            struct Response:Codable {
+                let data:TournamentDetails
+            }
+
+            do {
+                let response:Response = try await client.call(method: .get, url: "tournaments/\(id)")
+                return response.data
+            } catch {
+                print(error)
+                throw error
+            }
+        }
     }
 }
 

@@ -1,13 +1,33 @@
 import SwiftUI
 
 struct TournamentView : View {
+    @EnvironmentObject var auth:AuthViewModel
+        
+    @State var details:Api.Tournaments.TournamentDetails?
+    @StateObject var fetchingDetails = ApiAction()
     let tournament:Tournament
     
     var body: some View {
         List {
             TournamentRow(tournament: tournament)
+            Section {
+                HStack {
+                    ForEach(details?.players ?? [], id:\.id){
+                        AvatarView(user: $0)
+                            .frame(width:20, height:20)
+                    }
+                }
+            }
+            Section {
+                GamesScrollView(games: details?.games ?? [])
+            }
         }
         .navigationTitle(tournament.name)
+        .task {
+            let _ = await fetchingDetails.run {
+                details = try await auth.api.tournaments.get(id: tournament.id)
+            }
+        }
         
     }
 }
