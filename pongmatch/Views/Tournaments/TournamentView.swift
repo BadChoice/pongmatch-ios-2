@@ -7,6 +7,7 @@ struct TournamentView : View {
         List {
             TournamentRow(tournament: tournament)
         }
+        .navigationTitle(tournament.name)
         
     }
 }

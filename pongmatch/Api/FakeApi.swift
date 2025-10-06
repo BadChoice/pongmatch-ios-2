@@ -100,6 +100,7 @@ class FakeApiTorunaments : Api.Tournaments {
                 entry_max_players_slots: 12,
                 entry_min_elo: nil,
                 entry_max_elo: nil,
+                players_count: 24,
                 user: User.me(),
                 winner: nil,
                 location: Location.fake(),

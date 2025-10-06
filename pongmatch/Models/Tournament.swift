@@ -17,7 +17,8 @@ struct Tournament : Codable {
     let entry_max_players_slots:Int?
     let entry_min_elo:Int?
     let entry_max_elo:Int?
-
+    let players_count:Int
+    
     let user:User?
     let winner:User?
     let location:Location?
@@ -49,6 +50,7 @@ struct Tournament : Codable {
             entry_max_players_slots: 100,
             entry_min_elo: 1400,
             entry_max_elo: 1800,
+            players_count: 12,
             user: User.me(),
             winner: User.opponent(),
             location: nil,

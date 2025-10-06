@@ -18,12 +18,13 @@ struct TournamentsView : View {
                 Section {
                     NavigationLink {
                         TournamentView(tournament: tournament)
-                            .navigationLinkIndicatorVisibility(.hidden)
                             .navigationTransition(.zoom(sourceID: "zoom_tournament_\(tournament.id)", in: namespace))
+                            
                     } label: {
                         TournamentRow(tournament:tournament)
                         .matchedTransitionSource(id: "zoom_tournament_\(tournament.id)", in: namespace)
                     }
+                    .navigationLinkIndicatorVisibility(.hidden)
                 }
             }
         }
@@ -75,9 +76,7 @@ struct TournamentRow : View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                
             }
-            
             
             Divider().padding(.vertical)
             
@@ -104,34 +103,11 @@ struct TournamentRow : View {
                 }
             }
             
-            HStack {
-                if let min = tournament.entry_min_elo {
-                    Text("Min ELO:")
-                    Text("\(min)")
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .bold()
-                        .background(Color.accentColor)
-                        .foregroundStyle(.white)
-                        .clipShape(.capsule)
-                }
-                
-                if let max = tournament.entry_max_elo {
-                    Text("Max ELO:")
-                    Text("\(max)")
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .bold()
-                        .background(Color.accentColor)
-                        .foregroundStyle(.white)
-                        .clipShape(.capsule)
-                }
-            }
-            .foregroundStyle(.secondary)
-            .font(.footnote)
+            entranceRanking
             
             if let maxPlayers = tournament.entry_max_players_slots {
                 HStack {
+                    Image(systemName: "person.3.fill")
                     Text("Max Slots:")
                     Text("\(maxPlayers)")
                         .bold()
@@ -140,6 +116,7 @@ struct TournamentRow : View {
                 .foregroundStyle(.secondary)
                 .font(.footnote)
             }
+                            
             
             if let location = tournament.location {
                 HStack {
@@ -150,17 +127,77 @@ struct TournamentRow : View {
                 .font(.footnote)
             }
             
-            Divider().padding(.vertical)
+            Divider().padding(.top, 12)
             
             ModesView(
                 initialScore: tournament.initial_score,
                 rankingType: tournament.ranking_type,
                 winningCondition: tournament.winning_condition,
             )
+            .padding(.vertical, 4)
+            .frame(maxWidth: .infinity)
             .font(.footnote)
             .foregroundStyle(.secondary)
-            .padding(.top, 14)
+            
+            Divider()
+            
+            Text("\(tournament.players_count) players")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .padding(.top, 8)
         }
+    }
+    
+    private var entranceRanking: some View {
+        
+        HStack {
+            Image(systemName: "circle.fill")
+            
+            if tournament.entry_min_elo == nil && tournament.entry_max_elo == nil {
+                Text("All levels")
+            }
+            else if tournament.entry_min_elo == nil && tournament.entry_max_elo != nil {
+                Text("Max ELO:")
+                Text("\(tournament.entry_max_elo!)")
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .bold()
+                    .background(Color.accentColor)
+                    .foregroundStyle(.white)
+                    .clipShape(.capsule)
+            }
+            else if tournament.entry_min_elo != nil && tournament.entry_max_elo == nil {
+                Text("Min ELO:")
+                Text("\(tournament.entry_min_elo!)")
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .bold()
+                    .background(Color.accentColor)
+                    .foregroundStyle(.white)
+                    .clipShape(.capsule)
+            }
+            else {
+                Text("ELO between")
+                Text("\(tournament.entry_min_elo!)")
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .bold()
+                    .background(Color.accentColor)
+                    .foregroundStyle(.white)
+                    .clipShape(.capsule)
+                
+                Text("-")
+                Text("\(tournament.entry_max_elo!)")
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .bold()
+                    .background(Color.accentColor)
+                    .foregroundStyle(.white)
+                    .clipShape(.capsule)
+            }
+        }
+        .foregroundStyle(.secondary)
+        .font(.footnote)
     }
 }
 
