@@ -15,7 +15,7 @@ struct TournamentsView : View {
             
             ForEach(tournaments, id:\.id) { tournament in
                 Section {
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 6) {
                         VStack(alignment: .leading){
                             
                             if let url = tournament.photoUrl {
@@ -69,6 +69,43 @@ struct TournamentsView : View {
                                 .foregroundStyle(.secondary)
                                 .font(.footnote)
                             }
+                        }
+                        
+                        HStack {
+                            if let min = tournament.entry_min_elo {
+                                Text("Min ELO:")
+                                Text("\(min)")
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 2)
+                                    .bold()
+                                    .background(Color.accentColor)
+                                    .foregroundStyle(.white)
+                                    .clipShape(.capsule)
+                            }
+                            
+                            if let max = tournament.entry_max_elo {
+                                Text("Max ELO:")
+                                Text("\(max)")
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 2)
+                                    .bold()
+                                    .background(Color.accentColor)
+                                    .foregroundStyle(.white)
+                                    .clipShape(.capsule)
+                            }
+                        }
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                        
+                        if let maxPlayers = tournament.entry_max_players_slots {
+                            HStack {
+                                Text("Max Slots:")
+                                Text("\(maxPlayers)")
+                                    .bold()
+                                    .foregroundStyle(.primary)
+                            }
+                            .foregroundStyle(.secondary)
+                            .font(.footnote)
                         }
                         
                         if let location = tournament.location {
