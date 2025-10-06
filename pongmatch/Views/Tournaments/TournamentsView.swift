@@ -5,6 +5,7 @@ struct TournamentsView : View {
     
     @StateObject private var fetchingTournaments = ApiAction()
     @State var tournaments: [Tournament] = []
+    @Namespace private var namespace
     
     var body: some View {
         List {
@@ -15,118 +16,124 @@ struct TournamentsView : View {
             
             ForEach(tournaments, id:\.id) { tournament in
                 Section {
-                    VStack(alignment: .leading, spacing: 6) {
-                        VStack(alignment: .leading){
-                            
-                            if let url = tournament.photoUrl {
-                                AsyncImage(url: url) { image in
-                                    image.image?.resizable()
-                                        .scaledToFill()
+                    NavigationLink {
+                        TournamentView(tournament: tournament)
+                            .navigationTransition(.zoom(sourceID: "zoom_tournament_\(tournament.id)", in: namespace))
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+                            VStack(alignment: .leading){
+                                
+                                if let url = tournament.photoUrl {
+                                    AsyncImage(url: url) { image in
+                                        image.image?.resizable()
+                                            .scaledToFill()
                                         
+                                    }
+                                    .frame(height: 140)
                                 }
-                                .frame(height: 140)
+                                
+                                HStack {
+                                    Text(tournament.name)
+                                        .font(.headline)
+                                    
+                                    Spacer()
+                                    
+                                    Label(tournament.status.description, systemImage: tournament.status.icon)
+                                        .font(.caption)
+                                }
+                                
+                                if let info = tournament.information {
+                                    Text(info)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                }
+                                
                             }
                             
+                            
+                            Divider().padding(.vertical)
+                            
                             HStack {
-                                Text(tournament.name)
-                                    .font(.headline)
+                                if let organizer = tournament.user {
+                                    HStack {
+                                        AvatarView(user: organizer)
+                                            .frame(width:20, height:20)
+                                        Text(organizer.name)
+                                    }
+                                    .foregroundStyle(.secondary)
+                                    .font(.footnote)
+                                }
                                 
                                 Spacer()
                                 
-                                Label(tournament.status.description, systemImage: tournament.status.icon)
-                                    .font(.caption)
-                            }
-                            
-                            if let info = tournament.information {
-                                Text(info)
-                                    .font(.subheadline)
+                                if let date = tournament.date?.displayForHumans {
+                                    HStack {
+                                        Image(systemName: "calendar")
+                                        Text(date)
+                                    }
                                     .foregroundStyle(.secondary)
+                                    .font(.footnote)
+                                }
                             }
                             
-                        }
-                        
-                        
-                        Divider().padding(.vertical)
-                        
-                        HStack {
-                            if let organizer = tournament.user {
+                            HStack {
+                                if let min = tournament.entry_min_elo {
+                                    Text("Min ELO:")
+                                    Text("\(min)")
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 2)
+                                        .bold()
+                                        .background(Color.accentColor)
+                                        .foregroundStyle(.white)
+                                        .clipShape(.capsule)
+                                }
+                                
+                                if let max = tournament.entry_max_elo {
+                                    Text("Max ELO:")
+                                    Text("\(max)")
+                                        .padding(.horizontal, 4)
+                                        .padding(.vertical, 2)
+                                        .bold()
+                                        .background(Color.accentColor)
+                                        .foregroundStyle(.white)
+                                        .clipShape(.capsule)
+                                }
+                            }
+                            .foregroundStyle(.secondary)
+                            .font(.footnote)
+                            
+                            if let maxPlayers = tournament.entry_max_players_slots {
                                 HStack {
-                                    AvatarView(user: organizer)
-                                        .frame(width:20, height:20)
-                                    Text(organizer.name)
+                                    Text("Max Slots:")
+                                    Text("\(maxPlayers)")
+                                        .bold()
+                                        .foregroundStyle(.primary)
                                 }
                                 .foregroundStyle(.secondary)
                                 .font(.footnote)
                             }
                             
-                            Spacer()
-                            
-                            if let date = tournament.date?.displayForHumans {
+                            if let location = tournament.location {
                                 HStack {
-                                    Image(systemName: "calendar")
-                                    Text(date)
+                                    Image(systemName: "mappin.and.ellipse")
+                                    Text(location.name)
                                 }
                                 .foregroundStyle(.secondary)
                                 .font(.footnote)
                             }
-                        }
-                        
-                        HStack {
-                            if let min = tournament.entry_min_elo {
-                                Text("Min ELO:")
-                                Text("\(min)")
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 2)
-                                    .bold()
-                                    .background(Color.accentColor)
-                                    .foregroundStyle(.white)
-                                    .clipShape(.capsule)
-                            }
                             
-                            if let max = tournament.entry_max_elo {
-                                Text("Max ELO:")
-                                Text("\(max)")
-                                    .padding(.horizontal, 4)
-                                    .padding(.vertical, 2)
-                                    .bold()
-                                    .background(Color.accentColor)
-                                    .foregroundStyle(.white)
-                                    .clipShape(.capsule)
-                            }
-                        }
-                        .foregroundStyle(.secondary)
-                        .font(.footnote)
-                        
-                        if let maxPlayers = tournament.entry_max_players_slots {
-                            HStack {
-                                Text("Max Slots:")
-                                Text("\(maxPlayers)")
-                                    .bold()
-                                    .foregroundStyle(.primary)
-                            }
-                            .foregroundStyle(.secondary)
+                            Divider().padding(.vertical)
+                            
+                            ModesView(
+                                initialScore: tournament.initial_score,
+                                rankingType: tournament.ranking_type,
+                                winningCondition: tournament.winning_condition,
+                            )
                             .font(.footnote)
-                        }
-                        
-                        if let location = tournament.location {
-                            HStack {
-                                Image(systemName: "mappin.and.ellipse")
-                                Text(location.name)
-                            }
                             .foregroundStyle(.secondary)
-                            .font(.footnote)
+                            .padding(.top, 14)
                         }
-                        
-                        Divider().padding(.vertical)
-                        
-                        ModesView(
-                            initialScore: tournament.initial_score,
-                            rankingType: tournament.ranking_type,
-                            winningCondition: tournament.winning_condition,
-                        )
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 14)
+                        .matchedTransitionSource(id: "zoom_tournament_\(tournament.id)", in: namespace)
                     }
                 }
             }
