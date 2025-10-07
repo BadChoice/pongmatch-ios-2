@@ -11,10 +11,12 @@ struct TournamentView : View {
         List {
             TournamentRow(tournament: tournament)
             Section {
-                HStack {
-                    ForEach(details?.players ?? [], id:\.id){
-                        AvatarView(user: $0)
-                            .frame(width:40, height:40)
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(details?.players ?? [], id:\.id){
+                            AvatarView(user: $0)
+                                .frame(width:40, height:40)
+                        }
                     }
                 }
             }

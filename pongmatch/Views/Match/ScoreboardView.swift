@@ -339,7 +339,7 @@ struct ScoreboardScoreView: View {
     var body: some View {
         VStack(alignment: .center){
             Text("\(score.score.forPlayer(player))")
-                .font(.system(size: 50, weight:.bold))
+                .font(.system(size: 90, weight:.bold))
                 .frame(width:200, height:180)
                 .foregroundStyle(.white)
                 .background(

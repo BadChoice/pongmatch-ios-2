@@ -10,6 +10,7 @@ class Game : Codable {
     
     let information:String?
     let date:Date
+    let round:Int?
     
     var status:GameStatus
     var results:[[Int]]?
@@ -40,6 +41,7 @@ class Game : Codable {
         self.player1 = player1
         self.player2 = player2
         self.dispute = dispute
+        self.round = nil
     }
     
     var needsId: Bool {
