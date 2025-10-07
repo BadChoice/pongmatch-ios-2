@@ -29,7 +29,7 @@ class Game : Codable {
     let dispute:Dispute?
     
     
-    init(id: Int? = nil, initial_score:InitialScore, ranking_type: RankingType, winning_condition: WinningCondition, information: String? = nil, date: Date = Date(), status: GameStatus, results: [[Int]]? = nil, player1: User, player2: User, dispute:Dispute? = nil, disputed_reason:String? = nil) {
+    init(id: Int? = nil, initial_score:InitialScore, ranking_type: RankingType, winning_condition: WinningCondition, information: String? = nil, date: Date = Date(), status: GameStatus, results: [[Int]]? = nil, player1: User, player2: User, round:Int? = nil, dispute:Dispute? = nil, disputed_reason:String? = nil) {
         self.id = id ?? Int.random(in: 1...9999) * -1
         self.initial_score = initial_score
         self.ranking_type = ranking_type
@@ -41,7 +41,7 @@ class Game : Codable {
         self.player1 = player1
         self.player2 = player2
         self.dispute = dispute
-        self.round = nil
+        self.round = round
     }
     
     var needsId: Bool {
@@ -116,7 +116,7 @@ class Game : Codable {
         )
     }
     
-    static func fake(id:Int? = nil, status:GameStatus = .planned, player1:User = User.me(), player2:User = User.unknown()) -> Game {
+    static func fake(id:Int? = nil, status:GameStatus = .planned, player1:User = User.me(), player2:User = User.unknown(), round:Int? = nil) -> Game {
         Game(
             id: id ?? Int.random(in: 1...9999) * -1,
             initial_score: .standard,
@@ -127,7 +127,8 @@ class Game : Codable {
             status: status,
             results: [[11, 7], [5, 11], [11, 9]],
             player1: player1,
-            player2: player2
+            player2: player2,
+            round:round
         )
     }
     
