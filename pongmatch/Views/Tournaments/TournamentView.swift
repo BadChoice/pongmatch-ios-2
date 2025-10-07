@@ -20,6 +20,11 @@ struct TournamentView : View {
                     }
                 }
             }
+            
+            Section {
+                BracketsView(games: details?.games ?? [] )
+            }
+            
             Section {
                 GamesScrollView(games: details?.games ?? [])
             }
