@@ -122,6 +122,11 @@ class Score: Codable {
         history     = []
     }
     
+    
+    func swapServer(){
+        firstServer = Player(rawValue:(firstServer.rawValue + 1) % 2)!
+    }
+    
     func gameFinished(){
         ended_at = Date()
     }

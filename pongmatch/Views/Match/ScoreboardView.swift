@@ -248,6 +248,21 @@ struct ScoreBoardActionsView:View {
                             }
                     }
                     
+                    if syncedScore.score.history.count == 0 {
+                        Image(systemName: "person.fill.and.arrow.left.and.arrow.right.outward")
+                            .frame(width: 50.0, height: 50.0)
+                            .contentShape(Rectangle())
+                            .glassEffect()
+                            .glassEffectID("reset", in: namespace)
+                            .glassEffectUnion(id: "1", namespace: namespace)
+                            .onTapGesture{
+                                withAnimation {
+                                    syncedScore.score.swapServer()
+                                    syncedScore.sync()
+                                }
+                            }
+                    }
+                    
                     if syncedScore.score.history.count > 0 || syncedScore.score.sets.count > 0 {
                         Image(systemName: "trash")
                             .frame(width: 50.0, height: 50.0)

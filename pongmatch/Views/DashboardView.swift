@@ -8,7 +8,6 @@ struct DashboardView : View {
         case tournaments = 2
         case community   = 3
         case groups      = 4
-        case locations   = 5
         case search      = 6
     }
     
@@ -74,13 +73,7 @@ struct DashboardView : View {
                         GroupsView()
                     }
                 }
-                
-                Tab("Locations", systemImage: "map.fill", value:.locations) {
-                    NavigationStack(path: $communityPath) {
-                        LocationsView()
-                    }
-                }
-                
+                                
                 if [.community, .search].contains(activeTab) {
                     Tab("Search", systemImage: "magnifyingglass", value:.search, role: .search) {
                         SearchFriendsView()
@@ -182,6 +175,14 @@ struct HomeView : View {
                         AccountView()
                     } label: {
                         Label("Account", systemImage: "person.fill")
+                    }
+                    
+                    Divider()
+                    
+                    NavigationLink {
+                        LocationsView()
+                    } label: {
+                        Label("Locations", systemImage: "map.fill")
                     }
                                         
                     
