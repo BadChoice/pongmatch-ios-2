@@ -108,6 +108,16 @@ struct ScoreboardView: View {
                             }
                         }*/
                         
+                        if syncedScore.score.history.count == 0 {
+                            Image(systemName: "person.fill.and.arrow.left.and.arrow.right.outward")
+                            .onTapGesture{
+                                withAnimation {
+                                    syncedScore.score.swapServer()
+                                    syncedScore.sync()
+                                }
+                            }
+                        }
+                        
                         if syncedScore.score.history.count > 0 {
                             Image(systemName: "arrow.uturn.backward").onTapGesture {
                                 withAnimation {
