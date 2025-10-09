@@ -73,7 +73,7 @@ extension Api {
                 }
                 
                 let request = MultipartHttpRequest(method: .post, url: Pongmatch.url + "api/locations/\(location.id)/photo", headers: client.headers)
-                let _ = request.addMultipart(paramName: "avatar", fileName: "avatar.jpg", image: image.resized(to: CGSize(width: 256, height: 256)))
+                let _ = request.addMultipart(paramName: "avatar", fileName: "avatar.jpg", image: image)
                 
                 Http().callMultipart(request) { response in
                     do {
