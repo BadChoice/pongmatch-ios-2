@@ -225,7 +225,7 @@ struct HomeView : View {
                 showScoreboardSelectionModal = false
                 onStartScoreboard(game)
             }
-            .presentationDetents([.medium, .large])
+            .presentationDetents([.fraction(0.65), .large])
             .presentationDragIndicator(.visible)
         }
         .onAppear {
