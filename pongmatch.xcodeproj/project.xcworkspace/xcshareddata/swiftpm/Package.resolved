@@ -1,5 +1,5 @@
 {
-  "originHash" : "1700cf50b74e6eaaa0fd21ca716e01a289674a2f15853c27d2a7b36618db0d4a",
+  "originHash" : "1734d6f7fe034c13723b2cc54991def8e62c0f26746585b88b4bbee80daa646b",
   "pins" : [
     {
       "identity" : "confettiswiftui",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "79666d42b882bf7921b1941fa7c636d681d77980",
         "version" : "2.0.3"
+      }
+    },
+    {
+      "identity" : "flic2lib-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/50ButtonsEach/flic2lib-ios",
+      "state" : {
+        "revision" : "9c8760024a70c1d060353390b822152050908640",
+        "version" : "1.4.1"
       }
     },
     {

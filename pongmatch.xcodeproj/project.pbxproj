@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		BB2F53CB2E6D780000F1BD62 /* RevoHttp in Frameworks */ = {isa = PBXBuildFile; productRef = BB2F53CA2E6D780000F1BD62 /* RevoHttp */; };
+		BB3A9BA12EAA6182005B4EA6 /* flic2lib in Frameworks */ = {isa = PBXBuildFile; productRef = BB3A9BA02EAA6182005B4EA6 /* flic2lib */; };
 		BBCD8F892E72E50000E4D04A /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = BBCD8F882E72E50000E4D04A /* ConfettiSwiftUI */; };
 		EACDCA512E73FC5200FACC72 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EACDCA502E73FC5200FACC72 /* WidgetKit.framework */; };
 		EACDCA532E73FC5200FACC72 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EACDCA522E73FC5200FACC72 /* SwiftUI.framework */; };
@@ -216,6 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BBCD8F892E72E50000E4D04A /* ConfettiSwiftUI in Frameworks */,
+				BB3A9BA12EAA6182005B4EA6 /* flic2lib in Frameworks */,
 				BB2F53CB2E6D780000F1BD62 /* RevoHttp in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -331,6 +333,7 @@
 			packageProductDependencies = (
 				BB2F53CA2E6D780000F1BD62 /* RevoHttp */,
 				BBCD8F882E72E50000E4D04A /* ConfettiSwiftUI */,
+				BB3A9BA02EAA6182005B4EA6 /* flic2lib */,
 			);
 			productName = pongmatch;
 			productReference = BBD09A0C2E6B5B4200110F8C /* pongmatch.app */;
@@ -521,6 +524,7 @@
 			packageReferences = (
 				BB2F53C92E6D780000F1BD62 /* XCRemoteSwiftPackageReference "revohttp" */,
 				BBCD8F872E72E50000E4D04A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
+				BB3A9B9F2EAA6182005B4EA6 /* XCRemoteSwiftPackageReference "flic2lib-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BBD09A0D2E6B5B4200110F8C /* Products */;
@@ -819,6 +823,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "To use Flic Buttons";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "To use Flic Buttons";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To find the Ping Pong tables near you";
@@ -872,6 +878,8 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Pongmatch;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.sports";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "To use Flic Buttons";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "To use Flic Buttons";
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "To track activity";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "Track your table tennis workout";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To find the Ping Pong tables near you";
@@ -1368,6 +1376,14 @@
 				minimumVersion = 0.3.10;
 			};
 		};
+		BB3A9B9F2EAA6182005B4EA6 /* XCRemoteSwiftPackageReference "flic2lib-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/50ButtonsEach/flic2lib-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.0;
+			};
+		};
 		BBCD8F872E72E50000E4D04A /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
@@ -1383,6 +1399,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BB2F53C92E6D780000F1BD62 /* XCRemoteSwiftPackageReference "revohttp" */;
 			productName = RevoHttp;
+		};
+		BB3A9BA02EAA6182005B4EA6 /* flic2lib */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BB3A9B9F2EAA6182005B4EA6 /* XCRemoteSwiftPackageReference "flic2lib-ios" */;
+			productName = flic2lib;
 		};
 		BBCD8F882E72E50000E4D04A /* ConfettiSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

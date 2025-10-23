@@ -7,6 +7,7 @@ class Storage {
         case apnToken = "apn_token"
         case apnTokenSaved = "apn_token_saved"
         case gamesFinishedOnWatch = "gamesFinishedOnWatch"
+        case flicButtonsAssignments = "flic_buttons_assignments"
     }
     
     let defaults:UserDefaults

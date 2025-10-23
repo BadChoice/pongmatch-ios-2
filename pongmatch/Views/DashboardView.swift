@@ -195,6 +195,12 @@ struct HomeView : View {
                     }
                     
                     NavigationLink {
+                        SetupFlicButtons()
+                    } label: {
+                        Label("Setup Flic Buttons", systemImage: "circle.grid.3x3.fill")
+                    }
+                    
+                    NavigationLink {
                         BuyMeACoffeeView()
                     } label: {
                         Label("Buy me a Coffee", systemImage: "cup.and.saucer.fill")
