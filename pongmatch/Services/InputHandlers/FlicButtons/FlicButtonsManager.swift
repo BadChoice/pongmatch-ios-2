@@ -3,9 +3,19 @@ import flic2lib
 import SwiftUI
 import Combine
 
+enum FlicButtonClickType {
+    case buttonUp
+    case buttonDown
+    case doubleClick
+    case hold
+    case click
+}
+    
 class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, ObservableObject {
 
     static var shared = FlicButtonsManager.init()
+    
+    var clickDelegate:((_ identifier:String, _ type:FlicButtonClickType)->Void)?
     
     @Published var buttons:[FLICButton] = []
     @Published var isScanning:Bool = false
@@ -21,13 +31,7 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
         print("[FLIC] Scanning for buttons...")
         isScanning = true
         FLICManager.shared()?.scanForButtons { event in
-            switch event {
-            case .discovered:           print("discovered")
-            case .connected:            print("connected")
-            case .verified:             print("Verified")
-            case .verificationFailed:   print("verify failed")
-            @unknown default:           print("unknown event")
-            }
+            print("[FLIC] \(event)")
         } completion: { [unowned self] button, error in
             isScanning = false
             if let error {
@@ -35,7 +39,6 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
             } else if let button {
                 print("[FLIC] Successfully verified: \(button.name ?? "Unknown"), \(button.bluetoothAddress), \(button.serialNumber)")
                 button.triggerMode = .clickAndDoubleClickAndHold
-                //buttons.append(button)
                 refreshButtons()
             }
        }
@@ -50,10 +53,19 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
         }
     }
     
+    func clickDelegate( delegate:@escaping(_ identifier:String, _ type:FlicButtonClickType)->Void ) {
+        setup()
+        clickDelegate = delegate
+    }
+    
     func rename(_ button:FLICButton, to newName:String) async {
         isScanning = true
-        button.nickname = newName
+        //button.nickname = newName
         isScanning = false
+    }
+    
+    func buttonForIdentifier(_ identifier:String) -> FLICButton? {
+        buttons.first { $0.identifier.uuidString == identifier }
     }
     
     func manager(_ manager: FLICManager, didUpdate state: FLICManagerState) {
@@ -61,12 +73,18 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
         refreshButtons()
     }
     
-    
     func managerDidRestoreState(_ manager: FLICManager) {
         print("[FLIC] Manager did restore state")
         refreshButtons()
     }
+
+    private func refreshButtons(){
+        buttons = FLICManager.shared()?.buttons() ?? []
+    }
     
+    //---------------------------------------------------------------
+    // MARK: - FLICButtonDelegate - Button Connection Events
+    //---------------------------------------------------------------
     func buttonIsReady(_ button: FLICButton) {
         print("[FLIC] Button is ready: \(button.name ?? "Unknown")")
         refreshButtons()
@@ -93,38 +111,33 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
         print("[FLIC] Button did update nickname: \(button.name ?? "Unknown") to \(nickname)")
     }
     
+    //---------------------------------------------------------------
     // MARK: - FLICButtonDelegate - Button Events
+    //---------------------------------------------------------------
     func button(_ button: FLICButton, didReceiveButtonUp queued: Bool, age: Int) {
         print("[Flic] \(button.name ?? "Unkwnown") was clicked up with age \(age)")
+        clickDelegate?(button.identifier.uuidString, .buttonUp)
     }
     
     func button(_ button: FLICButton, didReceiveButtonDown queued: Bool, age: Int) {
         print("[FLIC] \(button.name ?? "Unkwnown") was clicked down with age \(age)")
+        clickDelegate?(button.identifier.uuidString, .buttonDown)
     }
     
     func button(_ button: FLICButton, didReceiveButtonDoubleClick queued: Bool, age: Int) {
         print("[FLIC] \(button.name ?? "Unkwnown") was doubleclicked down with age \(age)")
+        clickDelegate?(button.identifier.uuidString, .doubleClick)
     }
     
     func button(_ button: FLICButton, didReceiveButtonHold queued: Bool, age: Int) {
         print("[FLIC] \(button.name ?? "Unkwnown") was hold down with age \(age)")
+        clickDelegate?(button.identifier.uuidString, .hold)
     }
     
     func button(_ button: FLICButton, didReceiveButtonClick queued: Bool, age: Int) {
         print("[FLIC] \(button.name ?? "Unkwnown") was clicked down with age \(age)")
+        clickDelegate?(button.identifier.uuidString, .click)
     }
-    
-    private func refreshButtons(){
-        buttons = FLICManager.shared()?.buttons() ?? []
-        
-        /*if (buttons.contains {
-            $0.identifier == button.identifier
-        }) {
-            return
-        }
-        
-        print("[FLIC] Adding button to known buttons: \(button.name ?? "Unknown")")
-        buttons.append(button)*/
-    }
+
 }
 

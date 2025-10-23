@@ -116,6 +116,34 @@ struct ScoreboardView : View {
                     syncedScore.replace(score: newScore)
                     syncedScore.sync()
                 }
+                                
+                FlicButtonsManager.shared.clickDelegate { button, event in
+                    withAnimation {
+                        if event == .click && FlicAssignment.get().player1 == button {
+                            syncedScore.score.addScore(player: .player1)
+                            syncedScore.sync()
+                        }
+                        
+                        if event == .click && FlicAssignment.get().player2 == button {
+                            syncedScore.score.addScore(player: .player2)
+                            syncedScore.sync()
+                        }
+                        
+                        if event == .hold {
+                            syncedScore.score.undo()
+                            syncedScore.sync()
+                        }
+                        
+                        if event == .doubleClick {
+                            syncedScore.score.redo()
+                            syncedScore.sync()
+                        }
+                        
+                        if syncedScore.score.winner() != nil {
+                            confetti += 1
+                        }
+                    }
+                }
             }
             .background {
                 KeyCommandHandler { key in
@@ -163,6 +191,12 @@ struct ScoreboardView : View {
                             WatchSyncInfoView()
                         } label: {
                             Label("Watch Sync", systemImage: "applewatch")
+                        }
+                        
+                        NavigationLink {
+                            SetupFlicButtons()
+                        } label: {
+                            Label("Setup flic buttons", systemImage: "circle.grid.3x3.fill")
                         }
                         
                         NavigationLink {

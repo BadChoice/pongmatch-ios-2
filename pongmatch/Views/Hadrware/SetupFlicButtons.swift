@@ -50,8 +50,8 @@ struct SetupFlicButtons: View {
                 Label("Player 1", systemImage: "1.circle")
                 Spacer()
                 if let buttonId = assignment.player1 {
-                    Text(buttonId).foregroundStyle(.secondary)
-                }else {
+                    Text(flicManager.buttonForIdentifier(buttonId)?.name ?? "Unknown").foregroundStyle(.secondary)
+                } else {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
             }
@@ -59,7 +59,7 @@ struct SetupFlicButtons: View {
                 Label("Player 2", systemImage: "2.circle")
                 Spacer()
                 if let buttonId = assignment.player2  {
-                    Text(buttonId).foregroundStyle(.secondary)
+                    Text(flicManager.buttonForIdentifier(buttonId)?.name ?? "Unknown").foregroundStyle(.secondary)
                 } else {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
