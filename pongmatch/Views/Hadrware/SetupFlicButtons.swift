@@ -97,12 +97,21 @@ struct SetupFlicButtons: View {
     
     private func knownButtonRow(_ button: FLICButton) -> some View {
         HStack(alignment: .firstTextBaseline) {
+            Image(systemName: "circle.fill").foregroundStyle(
+                button.isReady ? .green : .red)
+                .font(.caption)
+            
+            Image(
+                systemName: "battery.100percent.circle",
+                variableValue: Double(button.batteryVoltage * 100.0) / 3
+            )
+            
             VStack(alignment: .leading, spacing: 4) {
                 Text(button.name ?? "Flic Button")
                     .font(.subheadline.weight(.semibold))
             }
             Spacer()
-            Text("\(button.batteryVoltage)")
+            
             Menu {
                 // Assign to Player 1
                 Button {
