@@ -49,8 +49,8 @@ struct SetupFlicButtons: View {
             HStack {
                 Label("Player 1", systemImage: "1.circle")
                 Spacer()
-                if let buttonId = assignment.player1 {
-                    Text(flicManager.buttonForIdentifier(buttonId)?.name ?? "Unknown").foregroundStyle(.secondary)
+                if let button = flicManager.buttonForIdentifier(assignment.player1) {
+                    Text(button.nickname ?? button.name ?? "Unkwnown").foregroundStyle(.secondary)
                 } else {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
@@ -58,8 +58,8 @@ struct SetupFlicButtons: View {
             HStack {
                 Label("Player 2", systemImage: "2.circle")
                 Spacer()
-                if let buttonId = assignment.player2  {
-                    Text(flicManager.buttonForIdentifier(buttonId)?.name ?? "Unknown").foregroundStyle(.secondary)
+                if let button = flicManager.buttonForIdentifier(assignment.player2)  {
+                    Text(button.nickname ?? button.name ?? "Unkwnown").foregroundStyle(.secondary)
                 } else {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
@@ -107,7 +107,7 @@ struct SetupFlicButtons: View {
             )
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(button.name ?? "Flic Button")
+                Text(button.nickname ?? button.name ?? "Flic Button")
                     .font(.subheadline.weight(.semibold))
             }
             Spacer()
@@ -136,14 +136,13 @@ struct SetupFlicButtons: View {
                     Text("Forget")
                 }
                 
-                Button {
+                /*Button {
                     Task {
                         await flicManager.rename(button, to:"New name")
                     }
                 } label: {
                     Text("Rename")
-                }
-                
+                }*/
                 
                 Divider()
             } label: {

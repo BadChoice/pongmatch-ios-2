@@ -58,14 +58,15 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
         clickDelegate = delegate
     }
     
-    func rename(_ button:FLICButton, to newName:String) async {
+    /*func rename(_ button:FLICButton, to newName:String) async {
         isScanning = true
         //button.nickname = newName
         isScanning = false
-    }
+    }*/
     
-    func buttonForIdentifier(_ identifier:String) -> FLICButton? {
-        buttons.first { $0.identifier.uuidString == identifier }
+    func buttonForIdentifier(_ identifier:String?) -> FLICButton? {
+        guard let identifier else { return nil }
+        return buttons.first { $0.identifier.uuidString == identifier }
     }
     
     func manager(_ manager: FLICManager, didUpdate state: FLICManagerState) {
