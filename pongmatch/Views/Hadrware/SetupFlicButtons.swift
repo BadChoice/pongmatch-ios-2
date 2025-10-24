@@ -139,7 +139,7 @@ struct SetupFlicButtons: View {
                 
             }
             
-            if assignment.player1 == button.identifier.uuidString {
+            if assignment.player2 == button.identifier.uuidString {
                 Text(assignment.mode == .courtSide ? "Right Side" : "Player 2")
                     .font(.caption)
                     .foregroundStyle(.secondary)
