@@ -142,3 +142,14 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
 
 }
 
+extension FLICButton {
+    var displayName : String {
+        if let nickname, !nickname.isEmpty {
+            return nickname
+        }
+        if let name, !name.isEmpty {
+            return name
+        }
+        return "Unknown"
+    }
+}

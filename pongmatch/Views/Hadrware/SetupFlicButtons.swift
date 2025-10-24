@@ -65,7 +65,7 @@ struct SetupFlicButtons: View {
                 }
                 Spacer()
                 if let button = flicManager.buttonForIdentifier(assignment.player1) {
-                    Text(button.nickname ?? button.name ?? "Unkwnown").foregroundStyle(.secondary)
+                    Text(button.displayName).foregroundStyle(.secondary)
                 } else {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
@@ -78,7 +78,7 @@ struct SetupFlicButtons: View {
                 }
                 Spacer()
                 if let button = flicManager.buttonForIdentifier(assignment.player2)  {
-                    Text(button.nickname ?? button.name ?? "Unkwnown").foregroundStyle(.secondary)
+                    Text(button.displayName).foregroundStyle(.secondary)
                 } else {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
@@ -126,7 +126,7 @@ struct SetupFlicButtons: View {
             )
             
             VStack(alignment: .leading, spacing: 4) {
-                Text(button.nickname ?? button.name ?? "Flic Button")
+                Text(button.displayName)
                     .font(.subheadline.weight(.semibold))
             }
             Spacer()
