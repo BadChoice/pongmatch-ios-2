@@ -203,7 +203,7 @@ struct ScoreboardView : View {
                         NavigationLink {
                             ExternalButtonInfoView()
                         } label: {
-                            Label("External buttons", systemImage: "button.horizontal.top.press")                            
+                            Label("External buttons", systemImage: "button.horizontal.top.press")
                         }
                                                 
                         Button("Stop Scoreboard", systemImage: "stop.fill") {
