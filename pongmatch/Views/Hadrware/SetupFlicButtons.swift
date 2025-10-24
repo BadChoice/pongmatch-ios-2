@@ -156,7 +156,7 @@ struct SetupFlicButtons: View {
                     assignment.player2 = button.identifier.uuidString
                     assignment.save()
                 } label: {
-                    Text("Assign to Player 2" + (assignment.mode == .courtSide ? "Right Side" : "Player 2"))
+                    Text("Assign to " + (assignment.mode == .courtSide ? "Right Side" : "Player 2"))
                 }
                 
                 Button {
