@@ -129,7 +129,21 @@ struct SetupFlicButtons: View {
                 Text(button.displayName)
                     .font(.subheadline.weight(.semibold))
             }
+            
             Spacer()
+            
+            if assignment.player1 == button.identifier.uuidString {
+                Text(assignment.mode == .courtSide ? "Left Side" : "Player 1")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                
+            }
+            
+            if assignment.player1 == button.identifier.uuidString {
+                Text(assignment.mode == .courtSide ? "Right Side" : "Player 2")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             
             Menu {
                 // Assign to Player 1
