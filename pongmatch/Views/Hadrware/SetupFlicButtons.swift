@@ -13,7 +13,7 @@ struct SetupFlicButtons: View {
             pairingSection
             knownButtonsSection
         }
-        .navigationTitle("Flic Buttons Setup")
+        /*.navigationTitle("Flic Buttons Setup")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
@@ -23,9 +23,12 @@ struct SetupFlicButtons: View {
                 }
                 .help("Refresh")
             }
-        }
+        }*/
         .onAppear {
             flicManager.setup()
+        }
+        .onDisappear{
+            assignment.save()
         }
     }
     
@@ -46,8 +49,20 @@ struct SetupFlicButtons: View {
     
     private var assignmentSection: some View {
         Section("Assignments") {
+            
+            Picker("Assignment Mode", selection: $assignment.mode) {
+                Text("Court").tag(FlicAssignmentMode.courtSide)
+                Text("Player").tag(FlicAssignmentMode.player)
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal)
+            
             HStack {
-                Label("Player 1", systemImage: "1.circle")
+                if assignment.mode == .courtSide {
+                    Label("Left side", systemImage: "square.lefthalf.filled")
+                } else {
+                    Label("Player 1", systemImage: "2.circle")
+                }
                 Spacer()
                 if let button = flicManager.buttonForIdentifier(assignment.player1) {
                     Text(button.nickname ?? button.name ?? "Unkwnown").foregroundStyle(.secondary)
@@ -56,7 +71,11 @@ struct SetupFlicButtons: View {
                 }
             }
             HStack {
-                Label("Player 2", systemImage: "2.circle")
+                if assignment.mode == .courtSide {
+                    Label("Right side", systemImage: "square.righthalf.filled")
+                } else {
+                    Label("Player 2", systemImage: "2.circle")
+                }
                 Spacer()
                 if let button = flicManager.buttonForIdentifier(assignment.player2)  {
                     Text(button.nickname ?? button.name ?? "Unkwnown").foregroundStyle(.secondary)

@@ -118,14 +118,15 @@ struct ScoreboardView : View {
                 }
                                 
                 FlicButtonsManager.shared.clickDelegate { button, event in
+                    let assignment = FlicAssignment.get()
                     withAnimation {
-                        if event == .click && FlicAssignment.get().player1 == button {
-                            syncedScore.score.addScore(player: .player1)
+                        if event == .click && assignment.player1 == button {
+                            syncedScore.score.addScore(player: assignment.mode == .courtSide ? player1 : .player1)
                             syncedScore.sync()
                         }
                         
-                        if event == .click && FlicAssignment.get().player2 == button {
-                            syncedScore.score.addScore(player: .player2)
+                        if event == .click && assignment.player2 == button {
+                            syncedScore.score.addScore(player: assignment.mode == .courtSide ? player2 : .player2)
                             syncedScore.sync()
                         }
                         
