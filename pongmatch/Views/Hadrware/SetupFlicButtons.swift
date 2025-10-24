@@ -137,7 +137,7 @@ struct SetupFlicButtons: View {
                     Text(assignment.mode == .courtSide ? "Left Side" : "Player 1")
                 }
                 if assignment.player2 == button.identifier.uuidString {
-                    Text(assignment.mode == .courtSide ? "Right Side" : "Player 2")                        
+                    Text(assignment.mode == .courtSide ? "Right Side" : "Player 2")
                 }
             }
             .font(.caption)
@@ -149,14 +149,14 @@ struct SetupFlicButtons: View {
                     assignment.player1 = button.identifier.uuidString
                     assignment.save()
                 } label: {
-                    Text("Assign to Player 1")
+                    Text("Assign to " + (assignment.mode == .courtSide ? "Left Side" : "Player 1"))
                 }
                 // Assign to Player 2
                 Button {
                     assignment.player2 = button.identifier.uuidString
                     assignment.save()
                 } label: {
-                    Text("Assign to Player 2")
+                    Text("Assign to Player 2" + (assignment.mode == .courtSide ? "Right Side" : "Player 2"))
                 }
                 
                 Button {
