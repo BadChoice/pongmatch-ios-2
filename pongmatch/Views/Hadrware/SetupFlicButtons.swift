@@ -58,11 +58,7 @@ struct SetupFlicButtons: View {
             .padding(.horizontal)
             
             HStack {
-                if assignment.mode == .courtSide {
-                    Label("Left side", systemImage: "square.lefthalf.filled")
-                } else {
-                    Label("Player 1", systemImage: "2.circle")
-                }
+                Label(assignment.display(for: .player1), systemImage: assignment.icon(for: .player1))
                 Spacer()
                 if let button = flicManager.buttonForIdentifier(assignment.player1) {
                     Text(button.displayName).foregroundStyle(.secondary)
@@ -71,11 +67,7 @@ struct SetupFlicButtons: View {
                 }
             }
             HStack {
-                if assignment.mode == .courtSide {
-                    Label("Right side", systemImage: "square.righthalf.filled")
-                } else {
-                    Label("Player 2", systemImage: "2.circle")
-                }
+                Label(assignment.display(for: .player2), systemImage: assignment.icon(for: .player2))
                 Spacer()
                 if let button = flicManager.buttonForIdentifier(assignment.player2)  {
                     Text(button.displayName).foregroundStyle(.secondary)
@@ -134,10 +126,10 @@ struct SetupFlicButtons: View {
             
             Group {
                 if assignment.player1 == button.identifier.uuidString {
-                    Text(assignment.mode == .courtSide ? "Left Side" : "Player 1")
+                    Text(assignment.display(for: .player1))
                 }
                 if assignment.player2 == button.identifier.uuidString {
-                    Text(assignment.mode == .courtSide ? "Right Side" : "Player 2")
+                    Text(assignment.display(for: .player2))
                 }
             }
             .font(.caption)
@@ -149,14 +141,14 @@ struct SetupFlicButtons: View {
                     assignment.player1 = button.identifier.uuidString
                     assignment.save()
                 } label: {
-                    Text("Assign to " + (assignment.mode == .courtSide ? "Left Side" : "Player 1"))
+                    Text("Assign to " + assignment.display(for: .player1))
                 }
                 // Assign to Player 2
                 Button {
                     assignment.player2 = button.identifier.uuidString
                     assignment.save()
                 } label: {
-                    Text("Assign to " + (assignment.mode == .courtSide ? "Right Side" : "Player 2"))
+                    Text("Assign to " + assignment.display(for: .player2))
                 }
                 
                 Button {
