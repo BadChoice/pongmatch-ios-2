@@ -3,6 +3,32 @@ import SwiftUI
 struct ExternalButtonInfoView: View {
     @Environment(\.dismiss) private var dismiss
 
+    // MARK: - Integration model
+
+    enum Integration: String, CaseIterable, Identifiable {
+        case flic
+        case gamepad
+        case volume
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .flic: return "Flic Buttons"
+            case .gamepad: return "Mini Gamepad"
+            case .volume: return "Volume Button"
+            }
+        }
+
+        var iconSystemName: String {
+            switch self {
+            case .flic: return "circle.circle" // representative; Flic doesn’t have an SF Symbol
+            case .gamepad: return "gamecontroller"
+            case .volume: return "camera.circle"
+            }
+        }
+    }
+
     struct Step: Identifiable {
         let id = UUID()
         let number: Int
@@ -11,40 +37,172 @@ struct ExternalButtonInfoView: View {
         let symbol: String
     }
 
-    // MARK: - Content
+    // MARK: - State
 
-    private let steps: [Step] = [
-        .init(
-            number: 1,
-            title: "Pair your controller",
-            detail: "Turn on the mini gamepad or shutter remote and pair it in Settings → Bluetooth.",
-            symbol: "bluetooth"
-        ),
-        .init(
-            number: 2,
-            title: "Open the scoreboard",
-            detail: "Start a match—your button presses will control the score.",
-            symbol: "sportscourt"
-        ),
-        .init(
-            number: 3,
-            title: "Use the buttons",
-            detail: "Gamepad: Player 1+, Player 2+, Undo, Redo.\nShutter: single, double, triple press to score and undo.",
-            symbol: "rectangle.and.hand.point.up.left.filled"
-        ),
-        .init(
-            number: 4,
-            title: "Play hands‑free",
-            detail: "Keep your phone away and focus on the match. Great when mirroring the scoreboard to a TV with AirPlay.",
-            symbol: "airplayvideo"
-        ),
-        .init(
-            number: 5,
-            title: "Finish and review",
-            detail: "End the match anytime. Undo/redo keeps your scoring accurate.",
-            symbol: "checkmark.circle"
-        )
-    ]
+    @State private var selected: Integration = .flic
+
+    // MARK: - Content providers
+
+    private func steps(for integration: Integration) -> [Step] {
+        switch integration {
+        case .flic:
+            return [
+                .init(
+                    number: 1,
+                    title: "Attach to each side",
+                    detail: "Place one Flic button on each side of the court so players can reach them.",
+                    symbol: "mappin.and.ellipse"
+                ),
+                .init(
+                    number: 2,
+                    title: "Set up Flic buttons",
+                    detail: "Use the “Set up Flic buttons” option in the app to pair and assign each button.",
+                    symbol: "link.circle"
+                ),
+                .init(
+                    number: 3,
+                    title: "Press to score",
+                    detail: "Press the button on a court side to increase that side’s score.",
+                    symbol: "plus.circle"
+                ),
+                .init(
+                    number: 4,
+                    title: "Long press to undo",
+                    detail: "Long press either button to undo the last point.",
+                    symbol: "arrow.uturn.left"
+                ),
+                .init(
+                    number: 5,
+                    title: "Double press to redo",
+                    detail: "Double press either button to redo the last undone action.",
+                    symbol: "arrow.uturn.right"
+                )
+            ]
+        case .gamepad:
+            return [
+                .init(
+                    number: 1,
+                    title: "Pair your controller",
+                    detail: "Turn on the mini gamepad and pair it in Settings → Bluetooth.",
+                    symbol: "bluetooth"
+                ),
+                .init(
+                    number: 2,
+                    title: "Open the scoreboard",
+                    detail: "Start a match—your button presses will control the score.",
+                    symbol: "sportscourt"
+                ),
+                .init(
+                    number: 3,
+                    title: "Use the buttons",
+                    detail: "Player 1+, Player 2+, Undo, Redo.",
+                    symbol: "rectangle.and.hand.point.up.left.filled"
+                ),
+                .init(
+                    number: 4,
+                    title: "Play hands‑free",
+                    detail: "Keep your phone away and focus on the match. Great when mirroring the scoreboard to a TV with AirPlay.",
+                    symbol: "airplayvideo"
+                ),
+                .init(
+                    number: 5,
+                    title: "Finish and review",
+                    detail: "End the match anytime. Undo/redo keeps your scoring accurate.",
+                    symbol: "checkmark.circle"
+                )
+            ]
+        case .volume:
+            return [
+                .init(
+                    number: 1,
+                    title: "Pair your remote",
+                    detail: "Turn on the Bluetooth shutter remote and pair it in Settings → Bluetooth.",
+                    symbol: "bluetooth"
+                ),
+                .init(
+                    number: 2,
+                    title: "Open the scoreboard",
+                    detail: "Start a match—your button presses will control the score.",
+                    symbol: "sportscourt"
+                ),
+                .init(
+                    number: 3,
+                    title: "Use the buttons",
+                    detail: "Single, double, triple press to score and undo.",
+                    symbol: "rectangle.and.hand.point.up.left.filled"
+                ),
+                .init(
+                    number: 4,
+                    title: "Play hands‑free",
+                    detail: "Keep your phone away and focus on the match. Great when mirroring the scoreboard to a TV with AirPlay.",
+                    symbol: "airplayvideo"
+                ),
+                .init(
+                    number: 5,
+                    title: "Finish and review",
+                    detail: "End the match anytime. Undo/redo keeps your scoring accurate.",
+                    symbol: "checkmark.circle"
+                )
+            ]
+        }
+    }
+
+    private func mappingRows(for integration: Integration) -> [MappingRow.Model] {
+        switch integration {
+        case .flic:
+            return [
+                .init(symbol: "plus.circle", title: "Single press (left/right)", detail: "Increase the score for that court side."),
+                .init(symbol: "arrow.uturn.left", title: "Long press (any side)", detail: "Undo the last point."),
+                .init(symbol: "arrow.uturn.right", title: "Double press (any side)", detail: "Redo the last undone action.")
+            ]
+        case .gamepad:
+            return [
+                .init(symbol: "plus.circle", title: "Player 1 +", detail: "Increase Player 1’s score."),
+                .init(symbol: "plus.circle", title: "Player 2 +", detail: "Increase Player 2’s score."),
+                .init(symbol: "arrow.uturn.left", title: "Undo", detail: "Revert the last action."),
+                .init(symbol: "arrow.uturn.right", title: "Redo", detail: "Re‑apply the last undone action.")
+            ]
+        case .volume:
+            return [
+                .init(symbol: "1.circle", title: "Single press", detail: "Player 1 +"),
+                .init(symbol: "2.circle", title: "Double press", detail: "Player 2 +"),
+                .init(symbol: "3.circle", title: "Triple press", detail: "Undo")
+            ]
+        }
+    }
+
+    private struct AccessoryLink {
+        let icon: String
+        let title: String
+        let description: String
+        let url: URL
+    }
+
+    private func accessory(for integration: Integration) -> AccessoryLink {
+        switch integration {
+        case .flic:
+            return .init(
+                icon: "circle.circle",
+                title: "Flic 2 Smart Button",
+                description: "Attachable wireless buttons. Assign each side and control scoring with single, double, and long press.",
+                url: URL(string: "https://flic.io/flic2")!
+            )
+        case .gamepad:
+            return .init(
+                icon: "gamecontroller",
+                title: "Mini Gamepad",
+                description: "Compact controller with dedicated buttons for Player 1, Player 2, Undo, and Redo.",
+                url: URL(string: "https://www.amazon.es/dp/B0C7BC5QM4")!
+            )
+        case .volume:
+            return .init(
+                icon: "camera.circle",
+                title: "Bluetooth shutter remote",
+                description: "Uses volume up/down. Single press for Player 1, double for Player 2, triple to undo.",
+                url: URL(string: "https://www.amazon.es/Temporizador-Fotografía-Disparador-Automático-Compatibilidad/dp/B0D2HG7ZLJ")!
+            )
+        }
+    }
 
     // MARK: - Body
 
@@ -64,9 +222,19 @@ struct ExternalButtonInfoView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                stepsCard
-                mappingsCard
-                recommendationsCard
+                // Segmented control for integrations
+                Picker("Integration", selection: $selected) {
+                    ForEach(Integration.allCases) { integration in
+                        Label(integration.title, systemImage: integration.iconSystemName)
+                            .tag(integration)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .accessibilityIdentifier("externalButtonInfo.integrationPicker")
+
+                stepsCard(for: selected)
+                mappingsCard(for: selected)
+                recommendationsCard(for: selected)
 
                 Spacer(minLength: 8)
 
@@ -83,14 +251,9 @@ struct ExternalButtonInfoView: View {
             .padding(.vertical, 24)
             .padding(.horizontal, 20)
         }
-        // Let content extend under the navigation bar for a full-bleed hero,
-        // matching the Apple Watch sync screen behavior.
         .navigationTitle("External Button Control")
         .navigationBarTitleDisplayMode(.inline)
-        // Make the navigation bar overlay the scroll view (transparent background).
-        //.toolbarBackground(.hidden, for: .navigationBar)
-        //.toolbarBorderHidden(true, for: .navigationBar)
-        .background(Color(.systemBackground)) // Ensure correct background behind the nav bar
+        .background(Color(.systemBackground))
     }
 
     // MARK: - Subviews
@@ -140,11 +303,12 @@ struct ExternalButtonInfoView: View {
         .frame(maxWidth: .infinity)
         .frame(height: 160)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Control the scoreboard with a gamepad or shutter remote")
+        .accessibilityLabel("Control the scoreboard with a gamepad, Flic buttons, or shutter remote")
     }
 
-    private var stepsCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+    private func stepsCard(for integration: Integration) -> some View {
+        let steps = steps(for: integration)
+        return VStack(alignment: .leading, spacing: 16) {
             ForEach(steps) { step in
                 StepRow(step: step)
                 if step.number != steps.count {
@@ -163,81 +327,74 @@ struct ExternalButtonInfoView: View {
                 .opacity(0.5)
         )
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("How it works")
+        .accessibilityLabel("\(integration.title) - How it works")
     }
 
-    private var mappingsCard: some View {
+    private func mappingsCard(for integration: Integration) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Default button mapping")
                 .font(.headline)
 
-            // Gamepad
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
-                    Image(systemName: "gamecontroller")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-                    Text("Mini Gamepad")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
+            switch integration {
+            case .gamepad:
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "gamecontroller")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                        Text("Mini Gamepad")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(mappingRows(for: .gamepad)) { model in
+                        MappingRow(model: model)
+                    }
+                }
+            case .volume:
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "camera.circle")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                        Text("Volume shutter remote")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(mappingRows(for: .volume)) { model in
+                        MappingRow(model: model)
+                    }
+                }
+            case .flic:
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "circle.circle")
+                            .font(.headline)
+                            .foregroundStyle(.secondary)
+                        Text("Flic Buttons")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(mappingRows(for: .flic)) { model in
+                        MappingRow(model: model)
+                    }
                 }
 
-                MappingRow(
-                    symbol: "plus.circle",
-                    title: "Player 1 +",
-                    detail: "Increase Player 1’s score."
-                )
-                MappingRow(
-                    symbol: "plus.circle",
-                    title: "Player 2 +",
-                    detail: "Increase Player 2’s score."
-                )
-                MappingRow(
-                    symbol: "arrow.uturn.left",
-                    title: "Undo",
-                    detail: "Revert the last action."
-                )
-                MappingRow(
-                    symbol: "arrow.uturn.right",
-                    title: "Redo",
-                    detail: "Re‑apply the last undone action."
-                )
+                Text("Tip: Assign one button to each court side. You can change the assignment mode in settings.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
-            Divider()
-
-            // Shutter remote
-            VStack(alignment: .leading, spacing: 12) {
-                HStack(spacing: 8) {
-                    Image(systemName: "camera.circle")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-                    Text("Volume shutter remote")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.secondary)
-                }
-
-                MappingRow(
-                    symbol: "1.circle",
-                    title: "Single press",
-                    detail: "Player 1 +"
-                )
-                MappingRow(
-                    symbol: "2.circle",
-                    title: "Double press",
-                    detail: "Player 2 +"
-                )
-                MappingRow(
-                    symbol: "3.circle",
-                    title: "Triple press",
-                    detail: "Undo"
-                )
+            if integration != .flic {
+                Divider()
+                Text("Tip: Many remotes act like keyboards or volume buttons. If your controller has modes, use the one that works as a Bluetooth keyboard/media remote.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-
-            Text("Tip: Many remotes act like keyboards or volume buttons. If your controller has modes, use the one that works as a Bluetooth keyboard/media remote.")
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(16)
         .background(
@@ -250,47 +407,28 @@ struct ExternalButtonInfoView: View {
                 .opacity(0.5)
         )
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Default button mapping")
+        .accessibilityLabel("\(integration.title) - Default button mapping")
     }
 
-    private var recommendationsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Recommended accessories")
+    private func recommendationsCard(for integration: Integration) -> some View {
+        let accessory = accessory(for: integration)
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Text("Recommended accessory")
                 .font(.headline)
 
-            VStack(alignment: .leading, spacing: 10) {
-                HStack(alignment: .top, spacing: 10) {
-                    Image(systemName: "gamecontroller")
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: accessory.icon)
+                    .foregroundStyle(.secondary)
+                    .frame(width: 24)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(accessory.title)
+                        .font(.subheadline.weight(.semibold))
+                    Text(accessory.description)
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
-                        .frame(width:24)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Mini Gamepad")
-                            .font(.subheadline.weight(.semibold))
-                        Text("Compact controller with dedicated buttons for Player 1, Player 2, Undo, and Redo.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                        Link("View on Amazon",
-                             destination: URL(string: "https://www.amazon.es/dp/B0C7BC5QM4")!)
-                            .font(.footnote.weight(.semibold))
-                    }
-                }
-
-                Spacer().frame(height: 8)
-                
-                HStack(alignment: .top, spacing: 10) {
-                    Image(systemName: "camera.circle")
-                        .foregroundStyle(.secondary)
-                        .frame(width:24)
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Bluetooth shutter remote")
-                            .font(.subheadline.weight(.semibold))
-                        Text("Uses volume up/down. Single press for Player 1, double for Player 2, triple to undo.")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                        Link("View on Amazon",
-                             destination: URL(string: "https://www.amazon.es/Temporizador-Fotografía-Disparador-Automático-Compatibilidad/dp/B0D2HG7ZLJ")!)
-                            .font(.footnote.weight(.semibold))
-                    }
+                    Link("View", destination: accessory.url)
+                        .font(.footnote.weight(.semibold))
                 }
             }
 
@@ -309,7 +447,7 @@ struct ExternalButtonInfoView: View {
                 .opacity(0.5)
         )
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("Recommended accessories")
+        .accessibilityLabel("\(integration.title) - Recommended accessory")
     }
 }
 
@@ -360,27 +498,40 @@ private struct StepRow: View {
 }
 
 private struct MappingRow: View {
-    let symbol: String
-    let title: String
-    let detail: String
+    struct Model: Identifiable {
+        let id = UUID()
+        let symbol: String
+        let title: String
+        let detail: String
+    }
+
+    let model: Model
+
+    init(symbol: String, title: String, detail: String) {
+        self.model = .init(symbol: symbol, title: title, detail: detail)
+    }
+
+    init(model: Model) {
+        self.model = model
+    }
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
-            Image(systemName: symbol)
+            Image(systemName: model.symbol)
                 .font(.headline)
                 .frame(width: 20)
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(title)
+                Text(model.title)
                     .font(.subheadline.weight(.semibold))
-                Text(detail)
+                Text(model.detail)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title). \(detail)")
+        .accessibilityLabel("\(model.title). \(model.detail)")
     }
 }
 

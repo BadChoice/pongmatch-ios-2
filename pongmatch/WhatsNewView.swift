@@ -16,6 +16,11 @@ struct WhatsNewView: View {
             subtitle: "Enjoy the convenience of a digital scoreboard for all your ping pong games.",
         ),
         WhatsNewFeature(
+            symbol: "circle.fill",
+            title: "Added support for Flic buttons",
+            subtitle: "Attach them to the table and have joy updating the scoreboard.",
+        ),
+        WhatsNewFeature(
             symbol: "sportscourt",
             title: "Track your matches",
             subtitle: "Log games, results and keep your ELO up to date.",
