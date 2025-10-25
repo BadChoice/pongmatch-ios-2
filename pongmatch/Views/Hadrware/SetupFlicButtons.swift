@@ -57,6 +57,7 @@ struct SetupFlicButtons: View {
             .pickerStyle(.segmented)
             .padding(.horizontal)
             
+            // Player 1 row
             HStack {
                 Label(assignment.display(for: .player1), systemImage: assignment.icon(for: .player1))
                 Spacer()
@@ -66,6 +67,9 @@ struct SetupFlicButtons: View {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
             }
+            .rowHighlight(intensity: flicManager.highlights.intensity(for: assignment.player1))
+            
+            // Player 2 row
             HStack {
                 Label(assignment.display(for: .player2), systemImage: assignment.icon(for: .player2))
                 Spacer()
@@ -75,6 +79,7 @@ struct SetupFlicButtons: View {
                     Text("Not assigned").foregroundStyle(.secondary)
                 }
             }
+            .rowHighlight(intensity: flicManager.highlights.intensity(for: assignment.player2))
         }
     }
     
@@ -101,6 +106,7 @@ struct SetupFlicButtons: View {
             } else {
                 ForEach(flicManager.buttons, id:\.identifier) { button in
                     knownButtonRow(button)
+                        .rowHighlight(intensity: flicManager.highlights.intensity(for: button.identifier))
                 }
             }
         }
@@ -178,8 +184,21 @@ struct SetupFlicButtons: View {
     }
 }
 
+private extension View {
+    func rowHighlight(intensity: Double) -> some View {
+        let clamped = max(0, min(1, intensity))
+        return self
+            .background(
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(Color.accentColor.opacity(0.18 * clamped))
+            )
+            .animation(.easeOut(duration: 0.2), value: clamped)
+    }
+}
+
 #Preview {
     NavigationStack {
         SetupFlicButtons()
     }
 }
+

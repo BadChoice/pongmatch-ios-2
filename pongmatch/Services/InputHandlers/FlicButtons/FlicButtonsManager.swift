@@ -11,6 +11,7 @@ enum FlicButtonClickType {
     case click
 }
     
+@MainActor
 class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, ObservableObject {
 
     static var shared = FlicButtonsManager.init()
@@ -19,6 +20,23 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
     
     @Published var buttons:[FLICButton] = []
     @Published var isScanning:Bool = false
+
+    // Extracted pressed highlight logic into its own observable object
+    @Published var highlights = PressedButtonHighlights()
+    
+    // Keep Combine subscriptions alive
+    private var cancellables = Set<AnyCancellable>()
+    
+    override init() {
+        super.init()
+        
+        // Forward nested object changes so views observing the manager refresh
+        highlights.objectWillChange
+            .sink { [weak self] _ in
+                self?.objectWillChange.send()
+            }
+            .store(in: &cancellables)
+    }
     
     @discardableResult
     func setup() -> Self {
@@ -57,13 +75,7 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
         setup()
         clickDelegate = delegate
     }
-    
-    /*func rename(_ button:FLICButton, to newName:String) async {
-        isScanning = true
-        //button.nickname = newName
-        isScanning = false
-    }*/
-    
+        
     func buttonForIdentifier(_ identifier:String?) -> FLICButton? {
         guard let identifier else { return nil }
         return buttons.first { $0.identifier.uuidString == identifier }
@@ -80,7 +92,11 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
     }
 
     private func refreshButtons(){
-        buttons = FLICManager.shared()?.buttons() ?? []
+        Task {
+            await MainActor.run {
+                buttons = FLICManager.shared()?.buttons() ?? []
+            }
+        }
     }
     
     //---------------------------------------------------------------
@@ -122,6 +138,7 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
     
     func button(_ button: FLICButton, didReceiveButtonDown queued: Bool, age: Int) {
         print("[FLIC] \(button.name ?? "Unkwnown") was clicked down with age \(age)")
+        highlights.trigger(id: button.identifier) // start the 1s fade
         clickDelegate?(button.identifier.uuidString, .buttonDown)
     }
     
@@ -139,7 +156,6 @@ class FlicButtonsManager : NSObject, FLICButtonDelegate, FLICManagerDelegate, Ob
         print("[FLIC] \(button.name ?? "Unkwnown") was clicked down with age \(age)")
         clickDelegate?(button.identifier.uuidString, .click)
     }
-
 }
 
 extension FLICButton {
