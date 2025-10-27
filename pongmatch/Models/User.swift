@@ -90,8 +90,15 @@ struct User : Codable {
     }
     
     static func unknown() -> User {
-        let randomEmails = ["unknown", "random", "notknown", "nobody", "anon", "john.doe", "jane.doe", "noone"]
-        let diceBear     = Dicebear(email:"\(randomEmails.randomElement()!)@codepassion.io", style:.bigSmile)
+        let randomEmails = [
+            "unknown", "random", "notknown", "nobody", "anon", "john.doe", "jane.doe", "noone", "whoknows",
+            "mystery", "ghost", "stranger", "enigmatic", "faceless", "nameless", "invisible", "unseen",
+            "shadow", "phantom", "cipher", "specter", "wanderer", "seeker", "roamer", "drifter", "vagabond",
+            "ghostly", "ethereal", "aetheric", "aureate", "celestial", "lunar", "starlit", "astral", "cosmic",
+            "stargazer", "moonwalker", "skyward", "nebula", "quasar", "pulsar", "comet", "meteor", "orbit",
+        ]
+        
+        let diceBear     = Dicebear(email:"\(randomEmails.randomElement()!)@pongmatch.app", style:.bigSmile)
         
         return User(
             id: 0,
