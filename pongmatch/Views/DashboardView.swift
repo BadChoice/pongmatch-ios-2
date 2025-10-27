@@ -56,11 +56,11 @@ struct DashboardView : View {
                     }
                 }
                 
-                Tab("Tournaments", systemImage: "trophy.fill", value:.community) {
+                /*Tab("Tournaments", systemImage: "trophy.fill", value:.community) {
                     NavigationStack(path: $communityPath) {
                         TournamentsView()
                     }
-                }
+                }*/
                 
                 Tab("Community", systemImage: "person.3", value:.community) {
                     NavigationStack(path: $communityPath) {
