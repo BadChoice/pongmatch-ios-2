@@ -1,4 +1,4 @@
-import HealthKit
+/*import HealthKit
 
 class HealthManager {
     static let shared = HealthManager()
@@ -20,4 +20,4 @@ class HealthManager {
             completion(success)
         }
     }
-}
+}*/

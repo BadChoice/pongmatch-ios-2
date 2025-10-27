@@ -98,7 +98,7 @@ struct User : Codable {
             "stargazer", "moonwalker", "skyward", "nebula", "quasar", "pulsar", "comet", "meteor", "orbit",
         ]
         
-        let diceBear     = Dicebear(email:"\(randomEmails.randomElement()!)@pongmatch.app", style:.bigSmile)
+        let diceBear = Dicebear(email:"\(randomEmails.randomElement()!)@pongmatch.app", style:.bigSmile)
         
         return User(
             id: 0,
