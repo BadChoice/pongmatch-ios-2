@@ -173,7 +173,9 @@ struct ScoreboardView : View {
                 }
             )
             .sheet(isPresented: $showFinishGame) {
-                dismiss()
+                if syncedScore.score == nil {
+                    dismiss()
+                }
             } content: {
                 FinishGameView(game:syncedScore.score.game.finish(syncedScore.score))
                     .presentationDetents([.medium, .large]) // Bottom sheet style

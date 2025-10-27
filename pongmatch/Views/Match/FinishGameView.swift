@@ -113,16 +113,18 @@ struct FinishGameView: View {
                     .disabled(uploadGame.loading)
                 }
             } else {
-                Button {
-                    rematch()
-                } label: {
-                    if uploadGame.loading {
-                        ProgressView()
-                    } else {
-                        Label("Rematch", systemImage: "repeat")
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        rematch()
+                    } label: {
+                        if uploadGame.loading {
+                            ProgressView()
+                        } else {
+                            Label("Rematch", systemImage: "repeat")
+                        }
                     }
+                    .buttonStyle(.glassProminent)
                 }
-                .buttonStyle(.glassProminent)
             }
         }
         //.toolbarBackground(.regularMaterial, for: .bottomBar)
@@ -186,27 +188,7 @@ struct FinishGameView: View {
         Task {
             if await uploadResultsIfNeeded() {
                 try? await auth.loadGames()
-                
-                // Create a new game with the same players and configuration
-                let rematchGame = Game(
-                    id: nil,
-                    initial_score: game.initial_score,
-                    ranking_type: game.ranking_type,
-                    winning_condition: game.winning_condition,
-                    information: nil,
-                    date: Date(),
-                    status: .ongoing,
-                    results: nil,
-                    player1: game.safePlayer1,
-                    player2: game.safePlayer2
-                )
-                
-                // Seed a fresh Score so the presenting Scoreboard continues with it
-                let newScore = Score(game: rematchGame)
-                SyncedScore.shared.replace(score: newScore)
-                SyncedScore.shared.sync()
-                
-                dismiss()
+                rematch()
             }
         }
     }
