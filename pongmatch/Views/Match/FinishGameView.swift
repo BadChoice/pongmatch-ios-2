@@ -99,31 +99,35 @@ struct FinishGameView: View {
                     .disabled(uploadGame.loading)
                 }
                 
-                ToolbarItem(placement: .bottomBar) {
-                    Button {
-                        uploadGameResultsAndRematch()
-                    } label: {
-                        if uploadGame.loading {
-                            ProgressView()
-                        } else {
-                            Label("Upload and Rematch", systemImage: "checkmark.arrow.trianglehead.counterclockwise")
+                if game.canRematch() {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button {
+                            uploadGameResultsAndRematch()
+                        } label: {
+                            if uploadGame.loading {
+                                ProgressView()
+                            } else {
+                                Label("Upload and Rematch", systemImage: "checkmark.arrow.trianglehead.counterclockwise")
+                            }
                         }
+                        .buttonStyle(uploadGame.loading ? .glassProminent : .glassProminent)
+                        .disabled(uploadGame.loading)
                     }
-                    .buttonStyle(uploadGame.loading ? .glassProminent : .glassProminent)
-                    .disabled(uploadGame.loading)
                 }
             } else {
-                ToolbarItem(placement: .bottomBar) {
-                    Button {
-                        rematch()
-                    } label: {
-                        if uploadGame.loading {
-                            ProgressView()
-                        } else {
-                            Label("Rematch", systemImage: "repeat")
+                if game.canRematch() {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button {
+                            rematch()
+                        } label: {
+                            if uploadGame.loading {
+                                ProgressView()
+                            } else {
+                                Label("Rematch", systemImage: "repeat")
+                            }
                         }
+                        .buttonStyle(.glassProminent)
                     }
-                    .buttonStyle(.glassProminent)
                 }
             }
         }

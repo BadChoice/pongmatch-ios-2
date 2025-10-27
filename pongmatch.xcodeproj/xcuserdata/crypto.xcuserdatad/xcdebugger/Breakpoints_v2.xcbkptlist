@@ -46,9 +46,9 @@
             filePath = "pongmatch/Models/Game.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "fake(id:status:player1:player2:)"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "fake(id:status:player1:player2:round:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

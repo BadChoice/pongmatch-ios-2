@@ -86,13 +86,18 @@ class Game : Codable {
         return winner.id == player?.id
     }
     
+    func canRematch() -> Bool {
+        true
+        // TODO: Add tournament_id and league_id
+        //game.tournament_id == nil && game.league_id == nil
+    }
+    
     @discardableResult
     func finish(_ score:Score) -> Self {
         results = score.sets.map { [$0.player1, $0.player2] }
         status = .finished
         return self
     }
-    
     
     func canBeDisputed() -> Bool {
         status == .finished
