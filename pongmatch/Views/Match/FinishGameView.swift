@@ -98,6 +98,31 @@ struct FinishGameView: View {
                     .buttonStyle(uploadGame.loading ? .glassProminent : .glassProminent)
                     .disabled(uploadGame.loading)
                 }
+                
+                ToolbarItem(placement: .bottomBar) {
+                    Button {
+                        uploadGameResultsAndRematch()
+                    } label: {
+                        if uploadGame.loading {
+                            ProgressView()
+                        } else {
+                            Label("Upload and Rematch", systemImage: "checkmark.arrow.trianglehead.counterclockwise")
+                        }
+                    }
+                    .buttonStyle(uploadGame.loading ? .glassProminent : .glassProminent)
+                    .disabled(uploadGame.loading)
+                }
+            } else {
+                Button {
+                    rematch()
+                } label: {
+                    if uploadGame.loading {
+                        ProgressView()
+                    } else {
+                        Label("Rematch", systemImage: "repeat")
+                    }
+                }
+                .buttonStyle(.glassProminent)
             }
         }
         //.toolbarBackground(.regularMaterial, for: .bottomBar)
@@ -127,17 +152,73 @@ struct FinishGameView: View {
     
     private func uploadGameResultsAndDismiss(){
         Task {
-            if (await uploadGame.run {
-                if game.needsId {
-                    let newGame = try await auth.api.games.store(game)
-                    let _ = try await auth.api.games.uploadResults(newGame, results: game.results)
-                } else {
-                    let _ = try await auth.api.games.uploadResults(game, results: game.results)
-                }
-            }) {
+            if await uploadResultsIfNeeded() {
                 try? await auth.loadGames()
                 SyncedScore.shared.clear()
                 dismiss()
+            }
+        }
+    }
+    
+    private func rematch(){
+        let rematchGame = Game(
+            id: nil,
+            initial_score: game.initial_score,
+            ranking_type: game.ranking_type,
+            winning_condition: game.winning_condition,
+            information: nil,
+            date: Date(),
+            status: .ongoing,
+            results: nil,
+            player1: game.safePlayer1,
+            player2: game.safePlayer2
+        )
+        
+        // Seed a fresh Score so the presenting Scoreboard continues with it
+        let newScore = Score(game: rematchGame)
+        SyncedScore.shared.replace(score: newScore)
+        SyncedScore.shared.sync()
+        
+        dismiss()
+    }
+    
+    private func uploadGameResultsAndRematch() {
+        Task {
+            if await uploadResultsIfNeeded() {
+                try? await auth.loadGames()
+                
+                // Create a new game with the same players and configuration
+                let rematchGame = Game(
+                    id: nil,
+                    initial_score: game.initial_score,
+                    ranking_type: game.ranking_type,
+                    winning_condition: game.winning_condition,
+                    information: nil,
+                    date: Date(),
+                    status: .ongoing,
+                    results: nil,
+                    player1: game.safePlayer1,
+                    player2: game.safePlayer2
+                )
+                
+                // Seed a fresh Score so the presenting Scoreboard continues with it
+                let newScore = Score(game: rematchGame)
+                SyncedScore.shared.replace(score: newScore)
+                SyncedScore.shared.sync()
+                
+                dismiss()
+            }
+        }
+    }
+    
+    // MARK: - Shared upload logic
+    private func uploadResultsIfNeeded() async -> Bool {
+        await uploadGame.run {
+            if game.needsId {
+                let newGame = try await auth.api.games.store(game)
+                let _ = try await auth.api.games.uploadResults(newGame, results: game.results)
+            } else {
+                let _ = try await auth.api.games.uploadResults(game, results: game.results)
             }
         }
     }
